@@ -634,7 +634,9 @@ export class Sidebar{
 				let jsonNode = measurementsRoot.children.find(child => child.data.uuid === item.uuid);
 				$.jstree.reference(jsonNode.id).deselect_all();
 				$.jstree.reference(jsonNode.id).select_node(jsonNode.id);
-			}
+			},
+			'clip_volume',
+			'clip_volume'
 		));
 
 		// CLIP POLYGON
@@ -811,16 +813,16 @@ export class Sidebar{
 		};
 
 		addClassificationItem(0, 'never classified');
-		addClassificationItem(1, 'unclassified');
-		addClassificationItem(2, 'ground');
-		addClassificationItem(3, 'low vegetation');
-		addClassificationItem(4, 'medium vegetation');
-		addClassificationItem(5, 'high vegetation');
-		addClassificationItem(6, 'building');
-		addClassificationItem(7, 'low point(noise)');
-		addClassificationItem(8, 'key-point');
-		addClassificationItem(9, 'water');
-		addClassificationItem(12, 'overlap');
+		addClassificationItem(1, '1');
+		addClassificationItem(2, '2');
+		addClassificationItem(3, '3');
+		// addClassificationItem(4, 'medium vegetation');
+		// addClassificationItem(5, 'high vegetation');
+		// addClassificationItem(6, 'building');
+		// addClassificationItem(7, 'low point(noise)');
+		// addClassificationItem(8, 'key-point');
+		// addClassificationItem(9, 'water');
+		// addClassificationItem(12, 'overlap');
 	}
 
 	initAccordion(){

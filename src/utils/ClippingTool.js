@@ -37,6 +37,7 @@ export class ClippingTool extends EventDispatcher {
 			let polyVolumes = e.selection.filter(e => (e instanceof PolygonClipVolume));
 			polyVolumes.forEach(e => this.viewer.scene.removePolygonClipVolume(e));
 		});
+		this.cancelReset = () => {}
 	}
 
 	setScene(scene) {
@@ -59,6 +60,19 @@ export class ClippingTool extends EventDispatcher {
 		this.scene.addEventListener("polygon_clip_volume_removed", this.onRemove);
 	}
 
+	cancelResetFactory(onMouseDown, insertionCallback, onMouseUp, cancel) {
+		return () => {
+			this.viewer.renderer.domElement.removeEventListener("mousedown", onMouseDown, true);
+			this.viewer.renderer.domElement.removeEventListener("mousemove", insertionCallback, true);
+			this.viewer.renderer.domElement.removeEventListener("mouseup", onMouseUp, true);
+			// this.viewer.renderer.domElement.removeEventListener("mouseup", insertionCallback, true);
+			this.viewer.removeEventListener("cancel_insertions", cancel.callback);
+			$('.clip_polygon').css({ "background-color": '' })
+			document.body.style.cursor = 'default'
+			this.viewer.inputHandler.enabled = true;
+		}
+	}
+
 	startInsertion(args = {}) {
 		let type = args.type || null;
 
@@ -73,12 +87,12 @@ export class ClippingTool extends EventDispatcher {
 			<defs>
 				 <marker id="diamond" markerWidth="24" markerHeight="24" refX="12" refY="12"
 						markerUnits="userSpaceOnUse">
-					<circle cx="12" cy="12" r="6" fill="white" stroke="black" stroke-width="3"/>
+					<circle cx="12" cy="12" r="3" fill="white" stroke="black" stroke-width="1.5"/>
 				</marker>
 			</defs>
 
 			<polyline fill="none" stroke="black" 
-				style="stroke:rgb(0, 0, 0);
+				style="stroke:rgb(255, 255, 255);
 				stroke-width:6;"
 				stroke-dasharray="9, 6"
 				stroke-dashoffset="2"
@@ -98,6 +112,7 @@ export class ClippingTool extends EventDispatcher {
 		let polyClipVol = new PolygonClipVolume(this.viewer.scene.getActiveCamera().clone());
 
 		this.dispatchEvent({ type: "start_inserting_clipping_volume" });
+		// clean
 		this.viewer.scene.removeAllClipVolumes();
 		$('.clip_polygon').css({ "background-color": 'red' })
 		document.body.style.cursor = 'crosshair'
@@ -111,7 +126,7 @@ export class ClippingTool extends EventDispatcher {
 
 		let click = false
 		let insertionCallback = (e) => {
-			if(!click) return
+			if (!click) return
 			if (e.button === THREE.MOUSE.LEFT) {
 
 				polyClipVol.addMarker();
@@ -136,13 +151,13 @@ export class ClippingTool extends EventDispatcher {
 		};
 		const onMouseDown = () => {
 			click = true
-	
+
 		}
 		const onMouseUp = e => {
 			click = false
 			cancel.callback(e)
 		}
-
+		this.cancelReset = this.cancelResetFactory(onMouseUp, insertionCallback, onMouseDown, cancel)
 		cancel.callback = e => {
 
 			//let first = svg.find("polyline")[0].points[0];
@@ -160,15 +175,7 @@ export class ClippingTool extends EventDispatcher {
 			} else {
 				this.viewer.scene.removePolygonClipVolume(polyClipVol);
 			}
-
-			this.viewer.renderer.domElement.removeEventListener("mousedown", onMouseDown, true);
-			this.viewer.renderer.domElement.removeEventListener("mousemove", insertionCallback, true);
-			this.viewer.renderer.domElement.removeEventListener("mouseup", onMouseUp, true);
-			// this.viewer.renderer.domElement.removeEventListener("mouseup", insertionCallback, true);
-			this.viewer.removeEventListener("cancel_insertions", cancel.callback);
-			this.viewer.inputHandler.enabled = true;
-			$('.clip_polygon').css({ "background-color": '' })
-			document.body.style.cursor = 'default'
+			this.cancelReset()
 		};
 
 		this.viewer.addEventListener("cancel_insertions", cancel.callback);
