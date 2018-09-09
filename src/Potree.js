@@ -60,13 +60,13 @@ import "./extensions/OrthographicCamera.js";
 import "./extensions/PerspectiveCamera.js";
 import "./extensions/Ray.js";
 
-import {PointColorType} from "./defines";
-import {Enum} from "./Enum";
-import {LRU} from "./LRU";
-import {POCLoader} from "./loader/POCLoader";
-import {GreyhoundLoader} from "./loader/GreyhoundLoader";
-import {PointCloudOctree} from "./PointCloudOctree";
-import {WorkerPool} from "./WorkerPool";
+import { PointColorType } from "./defines";
+import { Enum } from "./Enum";
+import { LRU } from "./LRU";
+import { POCLoader } from "./loader/POCLoader";
+import { GreyhoundLoader } from "./loader/GreyhoundLoader";
+import { PointCloudOctree } from "./PointCloudOctree";
+import { WorkerPool } from "./WorkerPool";
 
 export const workerPool = new WorkerPool();
 
@@ -99,19 +99,19 @@ if (document.currentScript.src) {
 
 let resourcePath = scriptPath + '/resources';
 
-export {scriptPath, resourcePath};
+export { scriptPath, resourcePath };
 
 
-export function loadPointCloud(path, name, callback){
-	let loaded = function(pointcloud){
+export function loadPointCloud(path, name, callback) {
+	let loaded = function (pointcloud) {
 		pointcloud.name = name;
-		callback({type: 'pointcloud_loaded', pointcloud: pointcloud});
+		callback({ type: 'pointcloud_loaded', pointcloud: pointcloud });
 	};
 
 	// load pointcloud
-	if (!path){
+	if (!path) {
 		// TODO: callback? comment? Hello? Bueller? Anyone?
-	} else if (path.indexOf('greyhound://') === 0){
+	} else if (path.indexOf('greyhound://') === 0) {
 		// We check if the path string starts with 'greyhound:', if so we assume it's a greyhound server URL.
 		GreyhoundLoader.load(path, function (geometry) {
 			if (!geometry) {
@@ -129,6 +129,12 @@ export function loadPointCloud(path, name, callback){
 				console.error(new Error(`failed to load point cloud from URL: ${path}`));
 			} else {
 				let pointcloud = new PointCloudOctree(geometry);
+				pointcloud.applyMatrix(new THREE.Matrix4().set(
+					1, 0, 0, 0,
+					0, 0, 1, 0,
+					0, 1, 0, 0,
+					0, 0, 0, 1
+				));
 				loaded(pointcloud);
 			}
 		});
@@ -150,9 +156,9 @@ export function loadPointCloud(path, name, callback){
 
 
 // add selectgroup
-(function($){
+(function ($) {
 	$.fn.extend({
-		selectgroup: function(args = {}){
+		selectgroup: function (args = {}) {
 
 			let elGroup = $(this);
 			let rootID = elGroup.prop("id");
@@ -174,12 +180,12 @@ export function loadPointCloud(path, name, callback){
 				let elLabel = elButton.find("label");
 				let elInput = elButton.find("input");
 
-				elInput.change( () => {
+				elInput.change(() => {
 					elGroup.find("label").removeClass("ui-state-active");
 					elGroup.find("label").addClass("ui-state-default");
-					if(elInput.is(":checked")){
+					if (elInput.is(":checked")) {
 						elLabel.addClass("ui-state-active");
-					}else{
+					} else {
 						//elLabel.addClass("ui-state-default");
 					}
 				});
@@ -197,21 +203,21 @@ export function loadPointCloud(path, name, callback){
 			`);
 
 			let elButtonContainer = elFieldset.find("span");
-			for(let elButton of elButtons){
+			for (let elButton of elButtons) {
 				elButtonContainer.append(elButton);
 			}
 
-			elButtonContainer.find("label").each( (index, value) => {
+			elButtonContainer.find("label").each((index, value) => {
 				$(value).css("margin", "0px");
 				$(value).css("border-radius", "0px");
 				$(value).css("border", "1px solid black");
 				$(value).css("border-left", "none");
 			});
-			elButtonContainer.find("label:first").each( (index, value) => {
+			elButtonContainer.find("label:first").each((index, value) => {
 				$(value).css("border-radius", "4px 0px 0px 4px");
-				
+
 			});
-			elButtonContainer.find("label:last").each( (index, value) => {
+			elButtonContainer.find("label:last").each((index, value) => {
 				$(value).css("border-radius", "0px 4px 4px 0px");
 				$(value).css("border-left", "none");
 			});

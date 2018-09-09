@@ -33,11 +33,12 @@ export class Sidebar{
 
 	}
 
-	createToolIcon(icon, title, callback){
+	createToolIcon(icon, title, callback, id, cls){
 		let element = $(`
 			<img src="${icon}"
+				${id ? `id=${id}` : ''}
 				style="width: 32px; height: 32px"
-				class="button-icon"
+				class="button-icon ${cls || ''}"
 				data-i18n="${title}" />
 		`);
 
@@ -642,12 +643,14 @@ export class Sidebar{
 			"[title]tt.clip_polygon",
 			() => {
 				let item = this.viewer.clippingTool.startInsertion({type: "polygon"});
-
+				// try to understand
 				let measurementsRoot = $("#jstree_scene").jstree().get_json("measurements");
 				let jsonNode = measurementsRoot.children.find(child => child.data.uuid === item.uuid);
 				$.jstree.reference(jsonNode.id).deselect_all();
 				$.jstree.reference(jsonNode.id).select_node(jsonNode.id);
-			}
+			},
+			'clip_polygon',
+			'clip_polygon'
 		));
 
 		{// SCREEN BOX SELECT

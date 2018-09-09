@@ -55,7 +55,7 @@ uniform int clipMethod;
 
 #if defined(num_clippolygons) && num_clippolygons > 0
 	uniform int uClipPolygonVCount[num_clippolygons];
-	uniform vec3 uClipPolygonVertices[num_clippolygons * 8];
+	uniform vec3 uClipPolygonVertices[num_clippolygons * max_clippolygons_markers];
 	uniform mat4 uClipPolygonWVP[num_clippolygons];
 #endif
 
@@ -592,7 +592,7 @@ bool pointInClipPolygon(vec3 point, int polyIdx) {
 
 	int j = uClipPolygonVCount[polyIdx] - 1;
 	bool c = false;
-	for(int i = 0; i < 8; i++) {
+	for(int i = 0; i < max_clippolygons_markers; i++) {
 		if(i == uClipPolygonVCount[polyIdx]) {
 			break;
 		}
@@ -606,8 +606,8 @@ bool pointInClipPolygon(vec3 point, int polyIdx) {
 		//verti.xy = verti.xy / verti.w * 0.5 + 0.5;
 		//vertj.xy = vertj.xy / vertj.w * 0.5 + 0.5;
 
-		vec3 verti = uClipPolygonVertices[polyIdx * 8 + i];
-		vec3 vertj = uClipPolygonVertices[polyIdx * 8 + j];
+		vec3 verti = uClipPolygonVertices[polyIdx * max_clippolygons_markers + i];
+		vec3 vertj = uClipPolygonVertices[polyIdx * max_clippolygons_markers + j];
 
 		if( ((verti.y > pointNDC.y) != (vertj.y > pointNDC.y)) && 
 			(pointNDC.x < (vertj.x-verti.x) * (pointNDC.y-verti.y) / (vertj.y-verti.y) + verti.x) ) {

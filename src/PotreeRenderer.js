@@ -768,13 +768,15 @@ export class Renderer {
 
 					let flattenedMatrices = [].concat(...worldViewProjMatrices.map(m => m.elements));
 
-					let flattenedVertices = new Array(8 * 3 * material.clipPolygons.length);
+					const maxMarkCount = Math.max(...material.clipPolygons.map(d => d.markers.length))
+					const maxVertCount = maxMarkCount * 3
+					let flattenedVertices = new Array(maxVertCount * material.clipPolygons.length);
 					for(let i = 0; i < material.clipPolygons.length; i++){
 						let clipPolygon = material.clipPolygons[i];
 						for(let j = 0; j < clipPolygon.markers.length; j++){
-							flattenedVertices[i * 24 + (j * 3 + 0)] = clipPolygon.markers[j].position.x;
-							flattenedVertices[i * 24 + (j * 3 + 1)] = clipPolygon.markers[j].position.y;
-							flattenedVertices[i * 24 + (j * 3 + 2)] = clipPolygon.markers[j].position.z;
+							flattenedVertices[i * maxVertCount + (j * 3 + 0)] = clipPolygon.markers[j].position.x;
+							flattenedVertices[i * maxVertCount + (j * 3 + 1)] = clipPolygon.markers[j].position.y;
+							flattenedVertices[i * maxVertCount + (j * 3 + 2)] = clipPolygon.markers[j].position.z;
 						}
 					}
 
@@ -943,7 +945,7 @@ export class Renderer {
 				let numClipBoxes = (material.clipBoxes && material.clipBoxes.length) ? material.clipBoxes.length : 0;
 				let numClipSpheres = (params.clipSpheres && params.clipSpheres.length) ? params.clipSpheres.length : 0;
 				let numClipPolygons = (material.clipPolygons && material.clipPolygons.length) ? material.clipPolygons.length : 0;
-
+				const maxClipPolygonMarkers = numClipPolygons > 0 ? Math.max(...material.clipPolygons.map(d => d.markers.length)) : 0
 				//debugger;
 
 
@@ -954,6 +956,7 @@ export class Renderer {
 					`#define num_clipboxes ${numClipBoxes}`,
 					`#define num_clipspheres ${numClipSpheres}`,
 					`#define num_clippolygons ${numClipPolygons}`,
+					`#define max_clippolygons_markers ${maxClipPolygonMarkers}`,
 				];
 
 

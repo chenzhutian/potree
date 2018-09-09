@@ -953,19 +953,18 @@ export class Viewer extends EventDispatcher{
 			sidebarContainer.css('width', '300px');
 			sidebarContainer.css('height', '100%');
 
-			let imgMenuToggle = document.createElement('img');
-			imgMenuToggle.src = new URL(Potree.resourcePath + '/icons/menu_button.svg').href;
-			imgMenuToggle.onclick = this.toggleSidebar;
-			imgMenuToggle.classList.add('potree_menu_toggle');
+			// let imgMenuToggle = document.createElement('img');
+			// imgMenuToggle.src = new URL(Potree.resourcePath + '/icons/menu_button.svg').href;
+			// imgMenuToggle.onclick = this.toggleSidebar;
+			// imgMenuToggle.classList.add('potree_menu_toggle');
+			// viewer.renderArea.insertBefore(imgMenuToggle, viewer.renderArea.children[0]);
 
 			let imgMapToggle = document.createElement('img');
 			imgMapToggle.src = new URL(Potree.resourcePath + '/icons/map_icon.png').href;
 			imgMapToggle.style.display = 'none';
 			imgMapToggle.onclick = e => { this.toggleMap(); };
 			imgMapToggle.id = 'potree_map_toggle';
-
 			viewer.renderArea.insertBefore(imgMapToggle, viewer.renderArea.children[0]);
-			viewer.renderArea.insertBefore(imgMenuToggle, viewer.renderArea.children[0]);
 
 			this.mapView = new MapView(this);
 			this.mapView.init();
