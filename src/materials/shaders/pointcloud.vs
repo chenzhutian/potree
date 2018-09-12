@@ -29,6 +29,7 @@ uniform float near;
 uniform float far;
 
 uniform bool uDebug;
+uniform bool uSaved;
 
 uniform bool uUseOrthographicCamera;
 uniform float uOrthoWidth;
@@ -590,7 +591,7 @@ bool pointInClipPolygon(vec3 point, int polyIdx) {
 	vec4 pointNDC = wvp * vec4(point, 1.0);
 	pointNDC.xy = pointNDC.xy / pointNDC.w;
 
-	int j = uClipPolygonVCount[polyIdx] - 1;
+	int maxCount = uClipPolygonVCount[polyIdx] - 1;
 	bool c = false;
 	for(int i = 0; i < max_clippolygons_markers; i++) {
 		if(i == uClipPolygonVCount[polyIdx]) {
@@ -607,13 +608,13 @@ bool pointInClipPolygon(vec3 point, int polyIdx) {
 		//vertj.xy = vertj.xy / vertj.w * 0.5 + 0.5;
 
 		vec3 verti = uClipPolygonVertices[polyIdx * max_clippolygons_markers + i];
-		vec3 vertj = uClipPolygonVertices[polyIdx * max_clippolygons_markers + j];
+		vec3 vertj = uClipPolygonVertices[polyIdx * max_clippolygons_markers + maxCount];
 
 		if( ((verti.y > pointNDC.y) != (vertj.y > pointNDC.y)) && 
 			(pointNDC.x < (vertj.x-verti.x) * (pointNDC.y-verti.y) / (vertj.y-verti.y) + verti.x) ) {
 			c = !c;
 		}
-		j = i;
+		maxCount = i;
 	}
 
 	return c;
@@ -727,17 +728,27 @@ void doClipping(){
 void main() {
 	vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
 	vViewPosition = mvPosition.xyz;
-	gl_Position = projectionMatrix * mvPosition;
+	float pointSize = 1.0;
+	if(uSaved) {
+		float idx = ((((indices.w * 255.0) + indices.z) * 255.0 + indices.y) * 255.0 + indices.x) * 1.0;
+		float x = -0.8 + mod(idx, 100.0) / 62.5;
+		float y = -0.8 + float(int(idx / (100.0))) * 0.05;
+		gl_Position = vec4(x, y, 0.0, 1.0);
+		pointSize = 10.0;
+	} else {
+		gl_Position =  projectionMatrix * mvPosition;
+		pointSize = getPointSize();
+	}
+
 	vLogDepth = log2(-mvPosition.z);
 
 	// POINT SIZE
-	float pointSize = getPointSize();
+	// float pointSize =  10.0; // getPointSize();
 	gl_PointSize = pointSize;
 	vPointSize = pointSize;
 
 	// COLOR
 	vColor = getColor();
-
 
 	#if defined hq_depth_pass
 		float originalDepth = gl_Position.w;

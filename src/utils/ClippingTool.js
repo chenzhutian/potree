@@ -37,7 +37,7 @@ export class ClippingTool extends EventDispatcher {
 			let polyVolumes = e.selection.filter(e => (e instanceof PolygonClipVolume));
 			polyVolumes.forEach(e => this.viewer.scene.removePolygonClipVolume(e));
 		});
-		this.cancelReset = () => {}
+		this.cancelReset = () => { }
 	}
 
 	setScene(scene) {
@@ -81,8 +81,9 @@ export class ClippingTool extends EventDispatcher {
 		let domElement = this.viewer.renderer.domElement;
 		let canvasSize = this.viewer.renderer.getSize();
 
+		$(domElement.parentElement).find('svg.clippingStroke').remove();
 		let svg = $(`
-		<svg height="${canvasSize.height}" width="${canvasSize.width}" style="position:absolute; pointer-events: none">
+		<svg class="clippingStroke" height="${canvasSize.height}" width="${canvasSize.width}" style="position:absolute; pointer-events: none">
 
 			<defs>
 				 <marker id="diamond" markerWidth="24" markerHeight="24" refX="12" refY="12"
@@ -107,6 +108,7 @@ export class ClippingTool extends EventDispatcher {
 				marker-end="url(#diamond)" 
 				/>
 		</svg>`);
+
 		$(domElement.parentElement).append(svg);
 
 		let polyClipVol = new PolygonClipVolume(this.viewer.scene.getActiveCamera().clone());
@@ -167,7 +169,7 @@ export class ClippingTool extends EventDispatcher {
 			//	newPoint.y = first.y;
 			//	let polyline = target.points.appendItem(newPoint);
 			//});
-			svg.remove();
+			// svg.remove();
 
 			if (polyClipVol.markers.length > 3) {
 				polyClipVol.removeLastMarker();
@@ -184,6 +186,13 @@ export class ClippingTool extends EventDispatcher {
 		this.viewer.renderer.domElement.addEventListener("mouseup", onMouseUp, true);
 		// this.viewer.renderer.domElement.addEventListener("mouseup", insertionCallback, true);
 		this.viewer.inputHandler.enabled = false;
+
+		this.viewer._strokeCamMat = {
+			position: this.viewer.scene.view.position.clone(),
+			yaw: this.viewer.scene.view.yaw, pitch: this.viewer.scene.view.pitch
+		}
+		// console.debug('position', this.viewer.scene.cameraP.position)
+		// console.debug('rotation', this.viewer.scene.cameraP.rotation)
 
 		polyClipVol.addMarker();
 		this.viewer.inputHandler.startDragging(

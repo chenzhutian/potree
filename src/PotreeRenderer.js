@@ -1,8 +1,8 @@
 
-import {PointCloudTree} from "./PointCloudTree.js";
-import {PointCloudOctreeNode} from "./PointCloudOctree.js";
-import {PointCloudArena4DNode} from "./arena4d/PointCloudArena4D.js";
-import {PointSizeType, PointColorType, ClipTask} from "./defines.js";
+import { PointCloudTree } from "./PointCloudTree.js";
+import { PointCloudOctreeNode } from "./PointCloudOctree.js";
+import { PointCloudArena4DNode } from "./arena4d/PointCloudArena4D.js";
+import { PointSizeType, PointColorType, ClipTask } from "./defines.js";
 
 // Copied from three.js: WebGLRenderer.js
 function paramThreeToGL(_gl, p) {
@@ -135,7 +135,7 @@ let attributeLocations = {
 	"position": 0,
 	"color": 1,
 	"intensity": 2,
-	"classification": 3, 
+	"classification": 3,
 	"returnNumber": 4,
 	"numberOfReturns": 5,
 	"pointSourceID": 6,
@@ -175,7 +175,7 @@ class Shader {
 		this.linkProgram();
 	}
 
-	compileShader(shader, source){
+	compileShader(shader, source) {
 		let gl = this.gl;
 
 		gl.shaderSource(shader, source);
@@ -217,7 +217,7 @@ class Shader {
 			this.fs = gl.createShader(gl.FRAGMENT_SHADER);
 			this.program = gl.createProgram();
 
-			for(let name of Object.keys(attributeLocations)){
+			for (let name of Object.keys(attributeLocations)) {
 				let location = attributeLocations[name];
 				gl.bindAttribLocation(this.program, location, name);
 			}
@@ -270,7 +270,7 @@ class Shader {
 			}
 
 			// uniform blocks
-			if(gl instanceof WebGL2RenderingContext){ 
+			if (gl instanceof WebGL2RenderingContext) {
 				let numBlocks = gl.getProgramParameter(program, gl.ACTIVE_UNIFORM_BLOCKS);
 
 				for (let i = 0; i < numBlocks; i++) {
@@ -283,7 +283,7 @@ class Shader {
 					gl.uniformBlockBinding(program, blockIndex, blockIndex);
 					let dataSize = gl.getActiveUniformBlockParameter(program, blockIndex, gl.UNIFORM_BLOCK_DATA_SIZE);
 
-					let uBuffer = gl.createBuffer();	
+					let uBuffer = gl.createBuffer();
 					gl.bindBuffer(gl.UNIFORM_BUFFER, uBuffer);
 					gl.bufferData(gl.UNIFORM_BUFFER, dataSize, gl.DYNAMIC_READ);
 
@@ -313,10 +313,6 @@ class Shader {
 
 			this.cache.set(`${this.vsSource}, ${this.fsSource}`, cached);
 		}
-
-
-
-
 	}
 
 	setUniformMatrix4(name, value) {
@@ -339,7 +335,7 @@ class Shader {
 			return;
 		}
 
-		if(uniform.value === value){
+		if (uniform.value === value) {
 			return;
 		}
 
@@ -364,7 +360,7 @@ class Shader {
 			return;
 		}
 
-		if(uniform.value === value){
+		if (uniform.value === value) {
 			return;
 		}
 
@@ -550,7 +546,7 @@ export class Renderer {
 		this.toggle = 0;
 	}
 
-	createBuffer(geometry){
+	createBuffer(geometry) {
 		let gl = this.gl;
 		let webglBuffer = new WebGLBuffer();
 		webglBuffer.vao = gl.createVertexArray();
@@ -558,7 +554,7 @@ export class Renderer {
 
 		gl.bindVertexArray(webglBuffer.vao);
 
-		for(let attributeName in geometry.attributes){
+		for (let attributeName in geometry.attributes) {
 			let bufferAttribute = geometry.attributes[attributeName];
 
 			let vbo = gl.createBuffer();
@@ -566,9 +562,10 @@ export class Renderer {
 			gl.bufferData(gl.ARRAY_BUFFER, bufferAttribute.array, gl.STATIC_DRAW);
 
 			let attributeLocation = attributeLocations[attributeName];
-			let normalized = bufferAttribute.normalized;
+			let normalized = attributeName === 'indices' ? false : bufferAttribute.normalized;
 			let type = this.glTypeMapping.get(bufferAttribute.array.constructor);
 
+			console.debug('attributeName', attributeName, bufferAttribute.array.constructor, bufferAttribute)
 			gl.vertexAttribPointer(attributeLocation, bufferAttribute.itemSize, type, normalized, 0, 0);
 			gl.enableVertexAttribArray(attributeLocation);
 
@@ -588,14 +585,14 @@ export class Renderer {
 		return webglBuffer;
 	}
 
-	updateBuffer(geometry){
+	updateBuffer(geometry) {
 		let gl = this.gl;
 
 		let webglBuffer = this.buffers.get(geometry);
 
 		gl.bindVertexArray(webglBuffer.vao);
 
-		for(let attributeName in geometry.attributes){
+		for (let attributeName in geometry.attributes) {
 			let bufferAttribute = geometry.attributes[attributeName];
 
 			let attributeLocation = attributeLocations[attributeName];
@@ -603,7 +600,7 @@ export class Renderer {
 			let type = this.glTypeMapping.get(bufferAttribute.array.constructor);
 
 			let vbo = null;
-			if(!webglBuffer.vbos.has(attributeName)){
+			if (!webglBuffer.vbos.has(attributeName)) {
 				vbo = gl.createBuffer();
 
 				webglBuffer.vbos.set(attributeName, {
@@ -614,7 +611,7 @@ export class Renderer {
 					type: geometry.attributes.position.array.constructor,
 					version: bufferAttribute.version
 				});
-			}else{
+			} else {
 				vbo = webglBuffer.vbos.get(attributeName).handle;
 				webglBuffer.vbos.get(attributeName).version = bufferAttribute.version;
 			}
@@ -632,7 +629,6 @@ export class Renderer {
 	traverse(scene) {
 
 		let octrees = [];
-
 		let stack = [scene];
 		while (stack.length > 0) {
 
@@ -655,8 +651,6 @@ export class Renderer {
 		return result;
 	}
 
-
-
 	renderNodes(octree, nodes, visibilityTextureData, camera, target, shader, params) {
 
 		if (exports.measureTimings) performance.mark("renderNodes-start");
@@ -674,11 +668,11 @@ export class Renderer {
 		let gpsMax = -Infinity
 		for (let node of nodes) {
 
-			if(node instanceof PointCloudOctreeNode){
+			if (node instanceof PointCloudOctreeNode) {
 				let geometryNode = node.geometryNode;
 
-				if(geometryNode.gpsTime){
-					let {offset, range} = geometryNode.gpsTime;
+				if (geometryNode.gpsTime) {
+					let { offset, range } = geometryNode.gpsTime;
 					let nodeMin = offset;
 					let nodeMax = offset + range;
 
@@ -694,8 +688,8 @@ export class Renderer {
 		let i = 0;
 		for (let node of nodes) {
 
-			if(exports.debug.allowedNodes !== undefined){
-				if(!exports.debug.allowedNodes.includes(node.name)){
+			if (exports.debug.allowedNodes !== undefined) {
+				if (!exports.debug.allowedNodes.includes(node.name)) {
 					continue;
 				}
 			}
@@ -716,23 +710,27 @@ export class Renderer {
 				shader.setUniform1f("uVNStart", vnStart);
 			}
 
-
 			let level = node.getLevel();
 
-			if(node.debug){
+			if (node.debug) {
 				shader.setUniform("uDebug", true);
-			}else{
+			} else {
 				shader.setUniform("uDebug", false);
 			}
 
+			if (window._uSaved) {
+				shader.setUniform("uSaved", true);
+			} else {
+				shader.setUniform("uSaved", false);
+			}
+
 			let isLeaf;
-			if(node instanceof PointCloudOctreeNode){
+			if (node instanceof PointCloudOctreeNode) {
 				isLeaf = Object.keys(node.children).length === 0;
-			}else if(node instanceof PointCloudArena4DNode){
+			} else if (node instanceof PointCloudArena4DNode) {
 				isLeaf = node.geometryNode.isLeaf;
 			}
 			shader.setUniform("uIsLeafNode", isLeaf);
-
 
 			// TODO consider passing matrices in an array to avoid uniformMatrix4fv overhead
 			const lModel = shader.uniformLocations["modelMatrix"];
@@ -744,18 +742,18 @@ export class Renderer {
 			const lModelView = shader.uniformLocations["modelViewMatrix"];
 			//mat4holder.set(worldView.elements);
 			// faster then set in chrome 63
-			for(let j = 0; j < 16; j++){
+			for (let j = 0; j < 16; j++) {
 				mat4holder[j] = worldView.elements[j];
 			}
 			gl.uniformMatrix4fv(lModelView, false, mat4holder);
 
 			{ // Clip Polygons
-				if(material.clipPolygons && material.clipPolygons.length > 0){
+				if (material.clipPolygons && material.clipPolygons.length > 0) {
 
 					let clipPolygonVCount = [];
 					let worldViewProjMatrices = [];
 
-					for(let clipPolygon of material.clipPolygons){
+					for (let clipPolygon of material.clipPolygons) {
 
 						let view = clipPolygon.viewMatrix;
 						let proj = clipPolygon.projMatrix;
@@ -771,9 +769,9 @@ export class Renderer {
 					const maxMarkCount = Math.max(...material.clipPolygons.map(d => d.markers.length))
 					const maxVertCount = maxMarkCount * 3
 					let flattenedVertices = new Array(maxVertCount * material.clipPolygons.length);
-					for(let i = 0; i < material.clipPolygons.length; i++){
+					for (let i = 0; i < material.clipPolygons.length; i++) {
 						let clipPolygon = material.clipPolygons[i];
-						for(let j = 0; j < clipPolygon.markers.length; j++){
+						for (let j = 0; j < clipPolygon.markers.length; j++) {
 							flattenedVertices[i * maxVertCount + (j * 3 + 0)] = clipPolygon.markers[j].position.x;
 							flattenedVertices[i * maxVertCount + (j * 3 + 1)] = clipPolygon.markers[j].position.y;
 							flattenedVertices[i * maxVertCount + (j * 3 + 2)] = clipPolygon.markers[j].position.z;
@@ -840,7 +838,7 @@ export class Renderer {
 
 			let geometry = node.geometryNode.geometry;
 
-			if(node.geometryNode.gpsTime){
+			if (node.geometryNode.gpsTime) {
 				let nodeMin = node.geometryNode.gpsTime.offset;
 				let nodeMax = nodeMin + node.geometryNode.gpsTime.range;
 
@@ -855,25 +853,25 @@ export class Renderer {
 				let uFilterReturnNumberRange = material.uniforms.uFilterReturnNumberRange.value;
 				let uFilterNumberOfReturnsRange = material.uniforms.uFilterNumberOfReturnsRange.value;
 				let uFilterGPSTimeClipRange = material.uniforms.uFilterGPSTimeClipRange.value;
-				
+
 				let gpsCliPRangeMin = uFilterGPSTimeClipRange[0] - gpsMin;
 				let gpsCliPRangeMax = uFilterGPSTimeClipRange[1] - gpsMin;
-				
+
 				shader.setUniform2f("uFilterReturnNumberRange", uFilterReturnNumberRange);
 				shader.setUniform2f("uFilterNumberOfReturnsRange", uFilterNumberOfReturnsRange);
 				shader.setUniform2f("uFilterGPSTimeClipRange", [gpsCliPRangeMin, gpsCliPRangeMax]);
 			}
 
 			let webglBuffer = null;
-			if(!this.buffers.has(geometry)){
+			if (!this.buffers.has(geometry)) {
 				webglBuffer = this.createBuffer(geometry);
 				this.buffers.set(geometry, webglBuffer);
-			}else{
+			} else {
 				webglBuffer = this.buffers.get(geometry);
-				for(let attributeName in geometry.attributes){
+				for (let attributeName in geometry.attributes) {
 					let attribute = geometry.attributes[attributeName];
 
-					if(attribute.version > webglBuffer.vbos.get(attributeName).version){
+					if (attribute.version > webglBuffer.vbos.get(attributeName).version) {
 						this.updateBuffer(geometry);
 					}
 				}
@@ -881,9 +879,56 @@ export class Renderer {
 
 			gl.bindVertexArray(webglBuffer.vao);
 
+			// const fb = gl.createFramebuffer()
+			// gl.bindFramebuffer(gl.FRAMEBUFFER, fb);
+
 			let numPoints = webglBuffer.numElements;
 			gl.drawArrays(gl.POINTS, 0, numPoints);
 
+
+			if (window._uSaved) {
+
+				const buffer = new Float32Array(gl.drawingBufferWidth * gl.drawingBufferHeight * 4);
+				gl.readPixels(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight, gl.RGBA, gl.FLOAT, buffer);
+				console.debug('drawingBufferWidth', gl.drawingBufferWidth, 'drawingBufferHeight', gl.drawingBufferHeight)
+
+				const pixels = []
+				let canvas = document.getElementById('save')
+				if (!canvas) {
+					canvas = document.createElement('canvas')
+					canvas.width = gl.drawingBufferWidth
+					canvas.height = gl.drawingBufferHeight
+					canvas.id = 'save'
+					canvas.style.zIndex = 8;
+					canvas.style.position = "absolute";
+					canvas.style.pointerEvents = 'none'
+					document.body.getElementBy
+					document.body.appendChild(canvas)
+				}
+
+				const ctx = canvas.getContext('2d')
+				// ctx.fillStyle = "rgba(255, 0, 0, 0.2)";
+				// ctx.fillRect(0, 0, canvas.width, canvas.height);
+				const imageData = ctx.createImageData(canvas.width, canvas.height)
+				for (let i = 0; i < buffer.length; i += 4) {
+					imageData.data[i] = 255.0 * buffer[i]
+					imageData.data[i + 1] = 255.0 * buffer[i + 1]
+					imageData.data[i + 2] = 255.0 * buffer[i + 2]
+					imageData.data[i + 3] = buffer[i] === 0 || 255.0
+					if (buffer[i] != 0) {
+						pixels.push([
+							buffer[i],
+							buffer[i + 1],
+							buffer[i + 2],
+						])
+					}
+
+				}
+				ctx.putImageData(imageData, 0, 0)
+
+				console.debug(pixels); // Uint8Array
+				// gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+			}
 			i++;
 		}
 
@@ -895,7 +940,7 @@ export class Renderer {
 		}
 	}
 
-	renderOctree(octree, nodes, camera, target, params = {}){
+	renderOctree(octree, nodes, camera, target, params = {}) {
 
 		let gl = this.gl;
 
@@ -948,8 +993,6 @@ export class Renderer {
 				const maxClipPolygonMarkers = numClipPolygons > 0 ? Math.max(...material.clipPolygons.map(d => d.markers.length)) : 0
 				//debugger;
 
-
-
 				let defines = [
 					`#define num_shadowmaps ${shadowMaps.length}`,
 					`#define num_snapshots ${numSnapshots}`,
@@ -960,18 +1003,18 @@ export class Renderer {
 				];
 
 
-				if(octree.pcoGeometry.root.isLoaded()){
+				if (octree.pcoGeometry.root.isLoaded()) {
 					let attributes = octree.pcoGeometry.root.geometry.attributes;
 
-					if(attributes.gpsTime){
+					if (attributes.gpsTime) {
 						defines.push("#define clip_gps_enabled");
 					}
 
-					if(attributes.returnNumber){
+					if (attributes.returnNumber) {
 						defines.push("#define clip_return_number_enabled");
 					}
 
-					if(attributes.numberOfReturns){
+					if (attributes.numberOfReturns) {
 						defines.push("#define clip_number_of_returns_enabled");
 					}
 
@@ -985,15 +1028,15 @@ export class Renderer {
 				let vsVersionIndex = vs.indexOf("#version ");
 				let fsVersionIndex = fs.indexOf("#version ");
 
-				if(vsVersionIndex >= 0){
+				if (vsVersionIndex >= 0) {
 					vs = vs.replace(/(#version .*)/, `$1\n${definesString}`)
-				}else{
+				} else {
 					vs = `${definesString}\n${vs}`;
 				}
 
-				if(fsVersionIndex >= 0){
+				if (fsVersionIndex >= 0) {
 					fs = fs.replace(/(#version .*)/, `$1\n${definesString}`)
-				}else{
+				} else {
 					fs = `${definesString}\n${fs}`;
 				}
 
@@ -1031,13 +1074,13 @@ export class Renderer {
 		gl.useProgram(shader.program);
 
 		let transparent = false;
-		if(params.transparent !== undefined){
+		if (params.transparent !== undefined) {
 			transparent = params.transparent && material.opacity < 1;
-		}else{
+		} else {
 			transparent = material.opacity < 1;
 		}
 
-		if (transparent){
+		if (transparent) {
 			gl.enable(gl.BLEND);
 			gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
 			gl.depthMask(false);
@@ -1048,28 +1091,27 @@ export class Renderer {
 			gl.enable(gl.DEPTH_TEST);
 		}
 
-		if(params.blendFunc !== undefined){
+		if (params.blendFunc !== undefined) {
 			gl.enable(gl.BLEND);
 			gl.blendFunc(...params.blendFunc);
 		}
 
-		if(params.depthTest !== undefined){
-			if(params.depthTest === true){
+		if (params.depthTest !== undefined) {
+			if (params.depthTest === true) {
 				gl.enable(gl.DEPTH_TEST);
-			}else{
+			} else {
 				gl.disable(gl.DEPTH_TEST);
 			}
 		}
 
-		if(params.depthWrite !== undefined){
-			 if(params.depthWrite === true){
-				 gl.depthMask(true);
-			 }else{
-				 gl.depthMask(false);
-			 }
-			 
-		}
+		if (params.depthWrite !== undefined) {
+			if (params.depthWrite === true) {
+				gl.depthMask(true);
+			} else {
+				gl.depthMask(false);
+			}
 
+		}
 
 		{ // UPDATE UNIFORMS
 			shader.setUniformMatrix4("projectionMatrix", proj);
@@ -1085,18 +1127,18 @@ export class Renderer {
 			shader.setUniform1f("fov", Math.PI * camera.fov / 180);
 			shader.setUniform1f("near", camera.near);
 			shader.setUniform1f("far", camera.far);
-			
-			if(camera instanceof THREE.OrthographicCamera){
+
+			if (camera instanceof THREE.OrthographicCamera) {
 				shader.setUniform("uUseOrthographicCamera", true);
-				shader.setUniform("uOrthoWidth", camera.right - camera.left); 
+				shader.setUniform("uOrthoWidth", camera.right - camera.left);
 				shader.setUniform("uOrthoHeight", camera.top - camera.bottom);
-			}else{
+			} else {
 				shader.setUniform("uUseOrthographicCamera", false);
 			}
 
-			if(material.clipBoxes.length + material.clipPolygons.length === 0){
+			if (material.clipBoxes.length + material.clipPolygons.length === 0) {
 				shader.setUniform1i("clipTask", ClipTask.NONE);
-			}else{
+			} else {
 				shader.setUniform1i("clipTask", material.clipTask);
 			}
 
@@ -1113,12 +1155,12 @@ export class Renderer {
 			}
 
 			// TODO CLIPSPHERES
-			if(params.clipSpheres && params.clipSpheres.length > 0){
+			if (params.clipSpheres && params.clipSpheres.length > 0) {
 
 				let clipSpheres = params.clipSpheres;
 
 				let matrices = [];
-				for(let clipSphere of clipSpheres){
+				for (let clipSphere of clipSpheres) {
 					//let mScale = new THREE.Matrix4().makeScale(...clipSphere.scale.toArray());
 					//let mTranslate = new THREE.Matrix4().makeTranslation(...clipSphere.position.toArray());
 
@@ -1136,12 +1178,12 @@ export class Renderer {
 
 				const lClipSpheres = shader.uniformLocations["uClipSpheres[0]"];
 				gl.uniformMatrix4fv(lClipSpheres, false, flattenedMatrices);
-				
+
 				//const lClipSpheres = shader.uniformLocations["uClipSpheres[0]"];
 				//gl.uniformMatrix4fv(lClipSpheres, false, material.uniforms.clipSpheres.value);
 			}
 
-			if(Potree.Features.WEBGL2.isSupported()){
+			if (Potree.Features.WEBGL2.isSupported()) {
 				let buffer = new ArrayBuffer(12);
 				let bufferf32 = new Float32Array(buffer);
 				bufferf32[0] = material.size;
@@ -1155,15 +1197,12 @@ export class Renderer {
 				gl.bindBuffer(gl.UNIFORM_BUFFER, block.buffer);
 				gl.bufferSubData(gl.UNIFORM_BUFFER, 0, buffer);
 				gl.bindBuffer(gl.UNIFORM_BUFFER, null);
-				
-			}else{
+
+			} else {
 				shader.setUniform1f("size", material.size);
 				shader.setUniform1f("maxSize", material.uniforms.maxSize.value);
 				shader.setUniform1f("minSize", material.uniforms.minSize.value);
 			}
-
-
-
 
 			// uniform float uPCIndex
 			shader.setUniform1f("uOctreeSpacing", material.spacing);
@@ -1172,6 +1211,7 @@ export class Renderer {
 
 			//uniform vec3 uColor;
 			shader.setUniform3f("uColor", material.color.toArray());
+
 			//uniform float opacity;
 			shader.setUniform1f("uOpacity", material.opacity);
 
@@ -1295,7 +1335,6 @@ export class Renderer {
 		camera.updateProjectionMatrix();
 
 		const traversalResult = this.traverse(scene);
-
 
 		// RENDER
 		for (const octree of traversalResult.octrees) {
