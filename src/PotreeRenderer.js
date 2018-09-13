@@ -892,7 +892,7 @@ export class Renderer {
 				gl.readPixels(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight, gl.RGBA, gl.FLOAT, buffer);
 				console.debug('drawingBufferWidth', gl.drawingBufferWidth, 'drawingBufferHeight', gl.drawingBufferHeight)
 
-				const pixels = []
+
 				let canvas = document.getElementById('save')
 				if (!canvas) {
 					canvas = document.createElement('canvas')
@@ -910,23 +910,32 @@ export class Renderer {
 				// ctx.fillStyle = "rgba(255, 0, 0, 0.2)";
 				// ctx.fillRect(0, 0, canvas.width, canvas.height);
 				const imageData = ctx.createImageData(canvas.width, canvas.height)
+				const points = []
 				for (let i = 0; i < buffer.length; i += 4) {
-					imageData.data[i] = 255.0 * buffer[i]
-					imageData.data[i + 1] = 255.0 * buffer[i + 1]
-					imageData.data[i + 2] = 255.0 * buffer[i + 2]
-					imageData.data[i + 3] = buffer[i] === 0 || 255.0
-					if (buffer[i] != 0) {
-						pixels.push([
-							buffer[i],
-							buffer[i + 1],
-							buffer[i + 2],
-						])
+					const r = buffer[i]
+					const g = buffer[i + 1]
+					const b = buffer[i + 2]
+					imageData.data[i] = 255.0 * r
+					imageData.data[i + 1] = 255.0 * g
+					imageData.data[i + 2] = 255.0 * b
+					imageData.data[i + 3] = buffer[i] === 0 ? 0 : 255.0
+					if (r !== 0 && g !== 0 && b !== 0) {
+						const inside = (Math.abs(r - 0.7797) < 0.0001 &&
+							Math.abs(g - 0.4464) < 0.0001 &&
+							Math.abs(b === 0.1131) < 0.0001)
+							? 1
+							: 0;
+						points.push({
+							in: inside,
+							idx: buffer[i + 3],
+							r, g, b
+						})
 					}
 
 				}
 				ctx.putImageData(imageData, 0, 0)
 
-				console.debug(pixels); // Uint8Array
+				console.debug(points); // Uint8Array
 				// gl.bindFramebuffer(gl.FRAMEBUFFER, null);
 			}
 			i++;

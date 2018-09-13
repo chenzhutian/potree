@@ -24,6 +24,7 @@ uniform float far;
 uniform float uPCIndex;
 uniform float uScreenWidth;
 uniform float uScreenHeight;
+uniform bool uSaved;
 
 varying vec3	vColor;
 varying float	vLogDepth;
@@ -31,7 +32,7 @@ varying vec3	vViewPosition;
 varying float	vRadius;
 varying float 	vPointSize;
 varying vec3 	vPosition;
-
+varying float vIndex;
 
 float specularStrength = 1.0;
 
@@ -80,7 +81,11 @@ void main() {
 		
 	#else
 		#if defined(use_edl)
+		if(uSaved) {
+			gl_FragColor.a = vIndex;
+		} else {
 			gl_FragColor.a = vLogDepth;
+		}
 		#endif
 	#endif
 

@@ -117,6 +117,7 @@ varying float	vLogDepth;
 varying vec3	vViewPosition;
 varying float 	vRadius;
 varying float 	vPointSize;
+varying float vIndex;
 
 
 float round(float number){
@@ -696,7 +697,13 @@ void doClipping(){
 
 	if(clipMethod == CLIPMETHOD_INSIDE_ANY){
 		if(insideAny && clipTask == CLIPTASK_HIGHLIGHT){
-			vColor.r += 0.5;
+			if(uSaved) {
+				vColor.r = 0.7797;
+				vColor.g = 0.4464;
+				vColor.b = 0.1131;
+			} else {
+				vColor.r += 0.5;
+			}
 		}else if(!insideAny && clipTask == CLIPTASK_SHOW_INSIDE){
 			gl_Position = vec4(100.0, 100.0, 100.0, 1.0);
 		}else if(insideAny && clipTask == CLIPTASK_SHOW_OUTSIDE){
@@ -733,8 +740,9 @@ void main() {
 		float idx = ((((indices.w * 255.0) + indices.z) * 255.0 + indices.y) * 255.0 + indices.x) * 1.0;
 		float x = -0.8 + mod(idx, 100.0) / 62.5;
 		float y = -0.8 + float(int(idx / (100.0))) * 0.05;
+		vIndex = idx;
 		gl_Position = vec4(x, y, 0.0, 1.0);
-		pointSize = 10.0;
+		pointSize = 1.0;
 	} else {
 		gl_Position =  projectionMatrix * mvPosition;
 		pointSize = getPointSize();
@@ -762,6 +770,10 @@ void main() {
 
 	// CLIPPING
 	doClipping();
+
+	if(uSaved) {
+		return;
+	}
 
 	#if defined(num_clipspheres) && num_clipspheres > 0
 		for(int i = 0; i < num_clipspheres; i++){

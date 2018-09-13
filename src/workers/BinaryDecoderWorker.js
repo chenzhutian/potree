@@ -435,6 +435,7 @@ onmessage = function (event) {
 
 
 	{ // add indices
+	  // TODO keypoint
 		let buff = new ArrayBuffer(numPoints * 4);
 		let indices = new Uint32Array(buff);
 
