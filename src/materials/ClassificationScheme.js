@@ -5,11 +5,11 @@ export const ClassificationScheme = {
 		// never classified
 		0: new THREE.Vector4(0.5, 0.5, 0.5, 1.0),
 
-		// unclassified
-		1: new THREE.Vector4(0.5, 0.5, 0.5, 1.0),
+		// target
+		1: new THREE.Vector4(126 / 256, 214 / 256, 223 / 256, 1.0),
 
-		// ground
-		2: new THREE.Vector4(0.63, 0.32, 0.18, 1.0),
+		// deselected
+		2: new THREE.Vector4(1, 1, 1, 1.0), // new THREE.Vector4(0.63, 0.32, 0.18, 1.0),
 
 		// low vegetation
 		3: new THREE.Vector4(0.0, 1.0, 0.0, 1.0),

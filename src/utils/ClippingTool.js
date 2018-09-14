@@ -188,7 +188,7 @@ export class ClippingTool extends EventDispatcher {
 		// this.viewer.renderer.domElement.addEventListener("mouseup", insertionCallback, true);
 		this.viewer.inputHandler.enabled = false;
 
-		this.viewer._strokeCamMat = {
+		window._strokeCamMat = {
 			position: this.viewer.scene.view.position.clone(),
 			yaw: this.viewer.scene.view.yaw, pitch: this.viewer.scene.view.pitch
 		}

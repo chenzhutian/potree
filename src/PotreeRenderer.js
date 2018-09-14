@@ -3,6 +3,7 @@ import { PointCloudTree } from "./PointCloudTree.js";
 import { PointCloudOctreeNode } from "./PointCloudOctree.js";
 import { PointCloudArena4DNode } from "./arena4d/PointCloudArena4D.js";
 import { PointSizeType, PointColorType, ClipTask } from "./defines.js";
+import { PointAttribute } from "./loader/PointAttributes.js";
 
 // Copied from three.js: WebGLRenderer.js
 function paramThreeToGL(_gl, p) {
@@ -535,6 +536,7 @@ export class Renderer {
 		gl.bindVertexArray(webglBuffer.vao);
 
 		for (let attributeName in geometry.attributes) {
+
 			let bufferAttribute = geometry.attributes[attributeName];
 
 			let vbo = gl.createBuffer();
@@ -556,6 +558,7 @@ export class Renderer {
 				type: geometry.attributes.position.array.constructor,
 				version: 0
 			});
+			console.debug(attributeName, bufferAttribute)
 		}
 
 		gl.bindBuffer(gl.ARRAY_BUFFER, null);
@@ -659,9 +662,7 @@ export class Renderer {
 					gpsMax = Math.max(gpsMax, nodeMax);
 				}
 			}
-
 			break;
-
 		}
 
 		let i = 0;
@@ -887,7 +888,8 @@ export class Renderer {
 				// ctx.fillRect(0, 0, canvas.width, canvas.height);
 				// const imageData = ctx.createImageData(canvas.width, canvas.height)
 				const points = []
-				const classification = geometry.attributes.classification.array
+				let targetNum = 0
+				let targetSelected = 0
 				for (let i = 0; i < buffer.length; i += 4) {
 					const r = buffer[i]
 					const g = buffer[i + 1]
@@ -906,18 +908,27 @@ export class Renderer {
 						points.push({
 							in: inside,
 							idx: buffer[i + 3],
-							class: classification[buffer[i + 3]],
-							truthClass: b,
-							r, g
+							// class: classification[buffer[i + 3]],
+							highlight: b === 1 ? 1 : 0, // 1 target, 2 not
+							label: window._label[buffer[i + 3]]
+							// r, g
 						})
+						if (b === 1) targetNum++
+						if (b === 1 && inside === 1) targetSelected++
 					}
-
 				}
 				// ctx.putImageData(imageData, 0, 0)
 				console.debug('numPoints', numPoints)
 				// console.debug(points); // Uint8Array
-				console.debug(points.filter(d => d.in))
-
+				console.debug(points)
+				window._saveRecord = {
+					points,
+					coverage: targetSelected / targetNum,
+					ts: Date.now(),
+					canvasWidth: gl.drawingBufferWidth,
+					canvasHeight: gl.drawingBufferHeight,
+					cameraParams: window._strokeCamMat,
+				}
 				// gl.bindFramebuffer(gl.FRAMEBUFFER, null);
 			}
 			i++;

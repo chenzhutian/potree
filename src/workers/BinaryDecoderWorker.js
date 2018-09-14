@@ -454,6 +454,38 @@ onmessage = function (event) {
 		attributeBuffers[PointAttribute.INDICES.name] = { buffer: buff, attribute: PointAttribute.INDICES };
 	}
 
+	{ // add label & swap with classification 
+
+		// swap classification to label
+		const attrs = attributeBuffers[PointAttribute.CLASSIFICATION.name]
+		const classes = new Uint8Array(attrs.buffer)
+		this.console.debug('classes', classes)
+		const classesSet = new Set()
+
+		if (attrs) {
+			attributeBuffers[PointAttribute.LABEL.name] = {
+				buffer: attrs.buffer, attribute: PointAttribute.LABEL
+			}
+			for (const l of classes) {
+				classesSet.add(l)
+			}
+			const targetClass = Array.from(classesSet)[Math.floor(classesSet.size * Math.random())]
+
+			// add selected or not to classification
+			let buff = new ArrayBuffer(numPoints);
+			let labels = new Uint8Array(buff);
+
+			for (let j = 0; j < numPoints; j++) {
+				labels[j] = classes[j] === targetClass ? 1 : 2;
+			}
+			attributeBuffers[PointAttribute.CLASSIFICATION.name] = {
+				buffer: buff, attribute: PointAttribute.CLASSIFICATION
+			};
+		}
+
+
+	}
+
 	performance.mark("binary-decoder-end");
 
 	//{ // print timings

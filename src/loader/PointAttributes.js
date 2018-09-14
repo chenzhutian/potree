@@ -19,6 +19,7 @@ export const PointAttributeNames = {
 	SPACING: 15,
 	GPS_TIME: 16,
 	POINT_INDEX: 17,
+	LABEL: 18,
 };
 
 
@@ -59,6 +60,10 @@ class PointAttribute{
 	}
 
 };
+
+PointAttribute.LABEL = new PointAttribute(
+	PointAttributeNames.LABEL,
+	PointAttributeTypes.DATA_TYPE_UINT8, 1);
 
 PointAttribute.POINT_INDEX = new PointAttribute(
 	PointAttributeNames.POINT_INDEX,
