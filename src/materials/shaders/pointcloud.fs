@@ -33,12 +33,17 @@ varying float	vRadius;
 varying float 	vPointSize;
 varying vec3 	vPosition;
 varying float vIndex;
+varying float vClassification;
 
 float specularStrength = 1.0;
 
 void main() {
 
 	vec3 color = vColor;
+	if(uSaved) {
+		gl_FragColor = vec4(color.r, color.g, vClassification, vIndex);
+		return;
+	}
 	float depth = gl_FragCoord.z;
 
 	#if defined(circle_point_shape) || defined(paraboloid_point_shape) 
@@ -81,11 +86,7 @@ void main() {
 		
 	#else
 		#if defined(use_edl)
-		if(uSaved) {
-			gl_FragColor.a = vIndex;
-		} else {
 			gl_FragColor.a = vLogDepth;
-		}
 		#endif
 	#endif
 

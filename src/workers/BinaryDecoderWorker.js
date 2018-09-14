@@ -1,16 +1,16 @@
 
 
-import {Version} from "../Version.js";
-import {PointAttributes, PointAttribute} from "../loader/PointAttributes.js";
-import {InterleavedBuffer} from "../InterleavedBuffer.js";
-import {toInterleavedBufferAttribute} from "../utils/toInterleavedBufferAttribute.js";
+import { Version } from "../Version.js";
+import { PointAttributes, PointAttribute } from "../loader/PointAttributes.js";
+import { InterleavedBuffer } from "../InterleavedBuffer.js";
+import { toInterleavedBufferAttribute } from "../utils/toInterleavedBufferAttribute.js";
 
 
 
 /* global onmessage:true postMessage:false */
 /* exported onmessage */
 // http://jsperf.com/uint8array-vs-dataview3/3
-function CustomView (buffer) {
+function CustomView(buffer) {
 	this.buffer = buffer;
 	this.u8 = new Uint8Array(buffer);
 
@@ -59,7 +59,7 @@ Potree = {};
 onmessage = function (event) {
 
 	performance.mark("binary-decoder-start");
-	
+
 	let buffer = event.data.buffer;
 	let pointAttributes = event.data.pointAttributes;
 	let numPoints = buffer.byteLength / pointAttributes.byteSize;
@@ -70,20 +70,31 @@ onmessage = function (event) {
 	let spacing = event.data.spacing;
 	let hasChildren = event.data.hasChildren;
 	let name = event.data.name;
-	
-	let tightBoxMin = [ Number.POSITIVE_INFINITY, Number.POSITIVE_INFINITY, Number.POSITIVE_INFINITY ];
-	let tightBoxMax = [ Number.NEGATIVE_INFINITY, Number.NEGATIVE_INFINITY, Number.NEGATIVE_INFINITY ];
+
+	let tightBoxMin = [Number.POSITIVE_INFINITY, Number.POSITIVE_INFINITY, Number.POSITIVE_INFINITY];
+	let tightBoxMax = [Number.NEGATIVE_INFINITY, Number.NEGATIVE_INFINITY, Number.NEGATIVE_INFINITY];
 	let mean = [0, 0, 0];
-	
+
 
 	let attributeBuffers = {};
 	let inOffset = 0;
+	console.debug('pointAttributes.attributes', pointAttributes.attributes)
 	for (let pointAttribute of pointAttributes.attributes) {
-		
-		if (pointAttribute.name === PointAttribute.POSITION_CARTESIAN.name) {
+		if (pointAttribute.name === PointAttribute.POINT_INDEX.name) {
+			console.debug('pointAttribute.name === PointAttribute.POINT_INDEX.name')
+			let buff = new ArrayBuffer(numPoints * 4);
+			let pintIndices = new Float32Array(buff);
+
+			for (let j = 0; j < numPoints; j++) {
+				let index = cv.getUint32(inOffset + j * pointAttributes.byteSize);
+				pintIndices[j] = index;
+			}
+
+			attributeBuffers[pointAttribute.name] = { buffer: buff, attribute: pointAttribute };
+		} else if (pointAttribute.name === PointAttribute.POSITION_CARTESIAN.name) {
 			let buff = new ArrayBuffer(numPoints * 4 * 3);
 			let positions = new Float32Array(buff);
-		
+
 			for (let j = 0; j < numPoints; j++) {
 				let x, y, z;
 
@@ -234,7 +245,7 @@ onmessage = function (event) {
 				x = x / length;
 				y = y / length;
 				z = z / length;
-				
+
 				normals[3 * j + 0] = x;
 				normals[3 * j + 1] = y;
 				normals[3 * j + 2] = z;
@@ -249,7 +260,7 @@ onmessage = function (event) {
 				let x = cv.getFloat32(inOffset + j * pointAttributes.byteSize + 0, true);
 				let y = cv.getFloat32(inOffset + j * pointAttributes.byteSize + 4, true);
 				let z = cv.getFloat32(inOffset + j * pointAttributes.byteSize + 8, true);
-				
+
 				normals[3 * j + 0] = x;
 				normals[3 * j + 1] = y;
 				normals[3 * j + 2] = z;
@@ -260,7 +271,7 @@ onmessage = function (event) {
 			let buff = new ArrayBuffer(numPoints * 8);
 			let gpstimes = new Float64Array(buff);
 
-			for(let j = 0; j < numPoints; j++){
+			for (let j = 0; j < numPoints; j++) {
 				let gpstime = cv.getFloat64(inOffset + j * pointAttributes.byteSize, true);
 				gpstimes[j] = gpstime;
 			}
@@ -271,7 +282,7 @@ onmessage = function (event) {
 	}
 
 	// Convert GPS time from double (unsupported by WebGL) to origin-aligned floats
-	if(attributeBuffers[PointAttribute.GPS_TIME.name]){ 
+	if (attributeBuffers[PointAttribute.GPS_TIME.name]) {
 		let attribute = attributeBuffers[PointAttribute.GPS_TIME.name];
 		let sourceF64 = new Float64Array(attribute.buffer);
 		let target = new ArrayBuffer(numPoints * 4);
@@ -279,35 +290,36 @@ onmessage = function (event) {
 
 		let min = Infinity;
 		let max = -Infinity;
-		for(let i = 0; i < numPoints; i++){
+		for (let i = 0; i < numPoints; i++) {
 			let gpstime = sourceF64[i];
 
 			min = Math.min(min, gpstime);
 			max = Math.max(max, gpstime);
 		}
 
-		for(let i = 0; i < numPoints; i++){
+		for (let i = 0; i < numPoints; i++) {
 			let gpstime = sourceF64[i];
 			targetF32[i] = gpstime - min;
 		}
 
-		attributeBuffers[PointAttribute.GPS_TIME.name] = { 
-			buffer: target, 
+		attributeBuffers[PointAttribute.GPS_TIME.name] = {
+			buffer: target,
 			attribute: PointAttribute.GPS_TIME,
 			offset: min,
-			range: max - min};
+			range: max - min
+		};
 	}
 
 	//let debugNodes = ["r026", "r0226","r02274"];
 	//if(debugNodes.includes(name)){
-	if(false){
+	if (false) {
 		console.log("estimate spacing!");
 
 
 		let sparseGrid = new Map();
 		let gridSize = 16;
 
-		let tightBoxSize = tightBoxMax.map( (a, i) => a - tightBoxMin[i]);
+		let tightBoxSize = tightBoxMax.map((a, i) => a - tightBoxMin[i]);
 		let cubeLength = Math.max(...tightBoxSize);
 		let cube = {
 			min: tightBoxMin,
@@ -315,7 +327,7 @@ onmessage = function (event) {
 		};
 
 		let positions = new Float32Array(attributeBuffers[PointAttribute.POSITION_CARTESIAN.name].buffer);
-		for(let i = 0; i < numPoints; i++){
+		for (let i = 0; i < numPoints; i++) {
 			let x = positions[3 * i + 0];
 			let y = positions[3 * i + 1];
 			let z = positions[3 * i + 2];
@@ -329,8 +341,8 @@ onmessage = function (event) {
 			iz = Math.floor(iz);
 
 			let cellIndex = ix | (iy << 8) | (iz << 16);
-			
-			if(!sparseGrid.has(cellIndex)){
+
+			if (!sparseGrid.has(cellIndex)) {
 				sparseGrid.set(cellIndex, []);
 			}
 
@@ -338,15 +350,15 @@ onmessage = function (event) {
 		}
 
 		let kNearest = (pointIndex, candidates, numNearest) => {
-			
+
 			let x = positions[3 * pointIndex + 0];
 			let y = positions[3 * pointIndex + 1];
 			let z = positions[3 * pointIndex + 2];
 
 			let candidateDistances = [];
 
-			for(let candidateIndex of candidates){
-				if(candidateIndex === pointIndex){
+			for (let candidateIndex of candidates) {
+				if (candidateIndex === pointIndex) {
 					continue;
 				}
 
@@ -356,10 +368,10 @@ onmessage = function (event) {
 
 				let squaredDistance = (cx - x) ** 2 + (cy - y) ** 2 + (cz - z) ** 2;
 
-				candidateDistances.push({candidateInde: candidateIndex, squaredDistance: squaredDistance});
+				candidateDistances.push({ candidateInde: candidateIndex, squaredDistance: squaredDistance });
 			}
 
-			candidateDistances.sort( (a, b) => a.squaredDistance - b.squaredDistance);
+			candidateDistances.sort((a, b) => a.squaredDistance - b.squaredDistance);
 			let nearest = candidateDistances.slice(0, numNearest);
 
 			return nearest;
@@ -368,25 +380,25 @@ onmessage = function (event) {
 		let meansBuffer = new ArrayBuffer(numPoints * 4);
 		let means = new Float32Array(meansBuffer);
 
-		for(let [key, value] of sparseGrid){
-			
-			for(let pointIndex of value){
+		for (let [key, value] of sparseGrid) {
 
-				if(value.length === 1){
+			for (let pointIndex of value) {
+
+				if (value.length === 1) {
 					means[pointIndex] = 0;
 					continue;
 				}
 
 				let [ix, iy, iz] = [(key & 255), ((key >> 8) & 255), ((key >> 16) & 255)];
-				
+
 				//let candidates = value;
 				let candidates = [];
-				for(let i of [-1, 0, 1]){
-					for(let j of [-1, 0, 1]){
-						for(let k of [-1, 0, 1]){
+				for (let i of [-1, 0, 1]) {
+					for (let j of [-1, 0, 1]) {
+						for (let k of [-1, 0, 1]) {
 							let cellIndex = (ix + i) | ((iy + j) << 8) | ((iz + k) << 16);
 
-							if(sparseGrid.has(cellIndex)){
+							if (sparseGrid.has(cellIndex)) {
 								candidates.push(...sparseGrid.get(cellIndex));
 							}
 						}
@@ -397,14 +409,14 @@ onmessage = function (event) {
 				let nearestNeighbors = kNearest(pointIndex, candidates, 10);
 
 				let sum = 0;
-				for(let neighbor of nearestNeighbors){
+				for (let neighbor of nearestNeighbors) {
 					sum += Math.sqrt(neighbor.squaredDistance);
 				}
 
 				//let mean = sum / nearestNeighbors.length;
 				let mean = Math.sqrt(Math.max(...nearestNeighbors.map(n => n.squaredDistance)));
 
-				if(Number.isNaN(mean)){
+				if (Number.isNaN(mean)) {
 					debugger;
 				}
 
@@ -430,19 +442,17 @@ onmessage = function (event) {
 
 		attributeBuffers[PointAttribute.SPACING.name] = { buffer: meansBuffer, attribute: PointAttribute.SPACING };
 
-
 	}
 
-
 	{ // add indices
-	  // TODO keypoint
+		// TODO keypoint
 		let buff = new ArrayBuffer(numPoints * 4);
 		let indices = new Uint32Array(buff);
 
 		for (let i = 0; i < numPoints; i++) {
 			indices[i] = i;
 		}
-		
+
 		attributeBuffers[PointAttribute.INDICES.name] = { buffer: buff, attribute: PointAttribute.INDICES };
 	}
 

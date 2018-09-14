@@ -5,16 +5,17 @@ precision highp int;
 #define max_clip_polygons 8
 #define PI 3.141592653589793
 
-attribute vec3 position;
-attribute vec3 color;
-attribute float intensity;
-attribute float classification;
-attribute float returnNumber;
-attribute float numberOfReturns;
-attribute float pointSourceID;
-attribute vec4 indices;
-attribute float spacing;
-attribute float gpsTime;
+attribute vec3 position; // 0
+attribute vec3 color;  // 1
+attribute float intensity;  // 2
+attribute float classification; // 3
+attribute float returnNumber; // 4
+attribute float numberOfReturns; // 5
+attribute float pointSourceID; // 6
+attribute vec4 indices; // 7
+attribute float spacing; // 9
+attribute float gpsTime; // 10
+attribute float pointIndex;
 
 uniform mat4 modelMatrix;
 uniform mat4 modelViewMatrix;
@@ -30,6 +31,7 @@ uniform float far;
 
 uniform bool uDebug;
 uniform bool uSaved;
+uniform int uMaxVcount;
 
 uniform bool uUseOrthographicCamera;
 uniform float uOrthoWidth;
@@ -118,6 +120,7 @@ varying vec3	vViewPosition;
 varying float 	vRadius;
 varying float 	vPointSize;
 varying float vIndex;
+varying float vClassification;
 
 
 float round(float number){
@@ -539,6 +542,10 @@ vec3 getColor(){
 		color = getCompositeColor();
 	#endif
 	
+	if(uSaved) {
+		color = vec3(0.1, 0.1, 0.1);
+	}
+
 	return color;
 }
 
@@ -737,9 +744,12 @@ void main() {
 	vViewPosition = mvPosition.xyz;
 	float pointSize = 1.0;
 	if(uSaved) {
-		float idx = ((((indices.w * 255.0) + indices.z) * 255.0 + indices.y) * 255.0 + indices.x) * 1.0;
-		float x = -0.8 + mod(idx, 100.0) / 62.5;
-		float y = -0.8 + float(int(idx / (100.0))) * 0.05;
+		float idx = pointIndex;  // ((((indices.w * 256.0) + indices.z) * 256.0 + indices.y) * 256.0 + indices.x);
+		// maxmum = maxColumn * maxRow (600 * 500 = 30w)
+		float maxColumn = 500.0;
+		float x = -0.8 + mod(idx, maxColumn) / (0.625 * maxColumn);
+		float maxRow = 500.0; 
+		float y = -0.9 + float(int(idx / (maxColumn))) * (1.8 / maxRow);
 		vIndex = idx;
 		gl_Position = vec4(x, y, 0.0, 1.0);
 		pointSize = 1.0;
@@ -772,6 +782,7 @@ void main() {
 	doClipping();
 
 	if(uSaved) {
+		vClassification = classification;
 		return;
 	}
 

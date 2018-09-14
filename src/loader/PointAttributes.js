@@ -18,6 +18,7 @@ export const PointAttributeNames = {
 	INDICES: 14,
 	SPACING: 15,
 	GPS_TIME: 16,
+	POINT_INDEX: 17,
 };
 
 
@@ -58,6 +59,10 @@ class PointAttribute{
 	}
 
 };
+
+PointAttribute.POINT_INDEX = new PointAttribute(
+	PointAttributeNames.POINT_INDEX,
+	PointAttributeTypes.DATA_TYPE_FLOAT, 1);
 
 PointAttribute.POSITION_CARTESIAN = new PointAttribute(
 	PointAttributeNames.POSITION_CARTESIAN,
@@ -136,7 +141,7 @@ export class PointAttributes{
 
 		if (pointAttributes != null) {
 			for (let i = 0; i < pointAttributes.length; i++) {
-				let pointAttributeName = pointAttributes[i];
+				let pointAttributeName = pointAttributes[i] === "INDEX" ? "POINT_INDEX" : pointAttributes[i];
 				let pointAttribute = PointAttribute[pointAttributeName];
 				this.attributes.push(pointAttribute);
 				this.byteSize += pointAttribute.byteSize;
