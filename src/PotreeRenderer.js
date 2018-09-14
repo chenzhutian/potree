@@ -867,7 +867,7 @@ export class Renderer {
 			if (window._uSaved) {
 				const buffer = new Float32Array(gl.drawingBufferWidth * gl.drawingBufferHeight * 4);
 				gl.readPixels(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight, gl.RGBA, gl.FLOAT, buffer);
-				console.debug('drawingBufferWidth', gl.drawingBufferWidth, 'drawingBufferHeight', gl.drawingBufferHeight)
+				// console.debug('drawingBufferWidth', gl.drawingBufferWidth, 'drawingBufferHeight', gl.drawingBufferHeight)
 
 				// let canvas = document.getElementById('save')
 				// if (!canvas) {
@@ -915,7 +915,7 @@ export class Renderer {
 				}
 				// ctx.putImageData(imageData, 0, 0)
 				console.debug('numPoints', numPoints)
-				console.debug(points); // Uint8Array
+				// console.debug(points); // Uint8Array
 				console.debug(points.filter(d => d.in))
 
 				// gl.bindFramebuffer(gl.FRAMEBUFFER, null);

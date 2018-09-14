@@ -60,7 +60,7 @@ export class ClippingTool extends EventDispatcher {
 		this.scene.addEventListener("polygon_clip_volume_removed", this.onRemove);
 	}
 
-	cancelResetFactory(onMouseDown, insertionCallback, onMouseUp, cancel) {
+	cancelResetFactory(onMouseUp, insertionCallback, onMouseDown, cancel) {
 		return () => {
 			this.viewer.renderer.domElement.removeEventListener("mousedown", onMouseDown, true);
 			this.viewer.renderer.domElement.removeEventListener("mousemove", insertionCallback, true);
@@ -156,6 +156,7 @@ export class ClippingTool extends EventDispatcher {
 
 		}
 		const onMouseUp = e => {
+			console.debug('onMouseUp')
 			click = false
 			cancel.callback(e)
 		}

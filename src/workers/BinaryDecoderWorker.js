@@ -78,10 +78,8 @@ onmessage = function (event) {
 
 	let attributeBuffers = {};
 	let inOffset = 0;
-	console.debug('pointAttributes.attributes', pointAttributes.attributes)
 	for (let pointAttribute of pointAttributes.attributes) {
 		if (pointAttribute.name === PointAttribute.POINT_INDEX.name) {
-			console.debug('pointAttribute.name === PointAttribute.POINT_INDEX.name')
 			let buff = new ArrayBuffer(numPoints * 4);
 			let pintIndices = new Float32Array(buff);
 
