@@ -475,8 +475,6 @@ export class InputHandler extends EventDispatcher {
 
 		}
 		
-		
-
 		this.hoveredElements = hoveredElements;
 	}
 	

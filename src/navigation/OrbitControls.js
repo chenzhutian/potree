@@ -14,16 +14,16 @@
  */
 
 
-import {MOUSE} from "../defines.js";
-import {Utils} from "../utils.js";
-import {EventDispatcher} from "../EventDispatcher.js";
+import { MOUSE } from "../defines.js";
+import { Utils } from "../utils.js";
+import { EventDispatcher } from "../EventDispatcher.js";
 
- 
-export class OrbitControls extends EventDispatcher{
-	
-	constructor(viewer){
+
+export class OrbitControls extends EventDispatcher {
+
+	constructor(viewer) {
 		super();
-		
+
 		this.viewer = viewer;
 		this.renderer = viewer.renderer;
 
@@ -44,11 +44,10 @@ export class OrbitControls extends EventDispatcher{
 			if (e.drag.object !== null) {
 				return;
 			}
-
 			if (e.drag.startHandled === undefined) {
 				e.drag.startHandled = true;
 
-				this.dispatchEvent({type: 'start'});
+				this.dispatchEvent({ type: 'start' });
 			}
 
 			let ndrag = {
@@ -70,7 +69,7 @@ export class OrbitControls extends EventDispatcher{
 		};
 
 		let drop = e => {
-			this.dispatchEvent({type: 'end'});
+			this.dispatchEvent({ type: 'end' });
 		};
 
 		let scroll = (e) => {
@@ -95,7 +94,7 @@ export class OrbitControls extends EventDispatcher{
 		};
 
 		let touchMove = e => {
-			if (e.touches.length === 2 && previousTouch.touches.length === 2){
+			if (e.touches.length === 2 && previousTouch.touches.length === 2) {
 				let prev = previousTouch;
 				let curr = e;
 
@@ -113,7 +112,7 @@ export class OrbitControls extends EventDispatcher{
 				this.radiusDelta = newRadius - resolvedRadius;
 
 				this.stopTweens();
-			}else if(e.touches.length === 3 && previousTouch.touches.length === 3){
+			} else if (e.touches.length === 3 && previousTouch.touches.length === 3) {
 				let prev = previousTouch;
 				let curr = e;
 
@@ -146,26 +145,26 @@ export class OrbitControls extends EventDispatcher{
 		this.addEventListener('dblclick', dblclick);
 	}
 
-	setScene (scene) {
+	setScene(scene) {
 		this.scene = scene;
 	}
 
-	stop(){
+	stop() {
 		this.yawDelta = 0;
 		this.pitchDelta = 0;
 		this.radiusDelta = 0;
 		this.panDelta.set(0, 0);
 	}
-	
-	zoomToLocation(mouse){
+
+	zoomToLocation(mouse) {
 		let camera = this.scene.getActiveCamera();
-		
+
 		let I = Utils.getMousePointCloudIntersection(
 			mouse,
 			camera,
 			this.viewer,
 			this.scene.pointclouds,
-			{pickClipped: true});
+			{ pickClipped: true });
 
 		if (I === null) {
 			return;
@@ -193,8 +192,8 @@ export class OrbitControls extends EventDispatcher{
 		let easing = TWEEN.Easing.Quartic.Out;
 
 		{ // animate
-			let value = {x: 0};
-			let tween = new TWEEN.Tween(value).to({x: 1}, animationDuration);
+			let value = { x: 0 };
+			let tween = new TWEEN.Tween(value).to({ x: 1 }, animationDuration);
 			tween.easing(easing);
 			this.tweens.push(tween);
 
@@ -221,12 +220,12 @@ export class OrbitControls extends EventDispatcher{
 		}
 	}
 
-	stopTweens () {
+	stopTweens() {
 		this.tweens.forEach(e => e.stop());
 		this.tweens = [];
 	}
 
-	update (delta) {
+	update(delta) {
 		let view = this.scene.view;
 
 		{ // apply rotation

@@ -459,7 +459,6 @@ onmessage = function (event) {
 		// swap classification to label
 		const attrs = attributeBuffers[PointAttribute.CLASSIFICATION.name]
 		const classes = new Uint8Array(attrs.buffer)
-		this.console.debug('classes', classes)
 		const classesSet = new Set()
 
 		if (attrs) {

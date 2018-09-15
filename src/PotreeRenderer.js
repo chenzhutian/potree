@@ -564,6 +564,9 @@ export class Renderer {
 		gl.bindBuffer(gl.ARRAY_BUFFER, null);
 		gl.bindVertexArray(null);
 
+		if (randomCameraAngle) {
+			randomCameraAngle()
+		}
 		return webglBuffer;
 	}
 
@@ -760,10 +763,8 @@ export class Renderer {
 
 					const lClipPolygons = shader.uniformLocations["uClipPolygonVertices[0]"];
 					gl.uniform3fv(lClipPolygons, flattenedVertices);
-
 				}
 			}
-
 
 			//shader.setUniformMatrix4("modelMatrix", world);
 			//shader.setUniformMatrix4("modelViewMatrix", worldView);
@@ -793,7 +794,6 @@ export class Renderer {
 				}
 
 				{
-
 					let worldViewMatrices = shadowMaps
 						.map(sm => sm.camera.matrixWorldInverse)
 						.map(view => new THREE.Matrix4().multiplyMatrices(view, world))
@@ -918,9 +918,9 @@ export class Renderer {
 					}
 				}
 				// ctx.putImageData(imageData, 0, 0)
-				console.debug('numPoints', numPoints)
+				// console.debug('numPoints', numPoints)
 				// console.debug(points); // Uint8Array
-				console.debug(points)
+
 				window._saveRecord = {
 					points,
 					coverage: targetSelected / targetNum,
@@ -928,6 +928,7 @@ export class Renderer {
 					canvasWidth: gl.drawingBufferWidth,
 					canvasHeight: gl.drawingBufferHeight,
 					cameraParams: window._strokeCamMat,
+					markers: material.clipPolygons[0].markers.map(d => ({ x: d.position.x, y: d.position.y }))
 				}
 				// gl.bindFramebuffer(gl.FRAMEBUFFER, null);
 			}
@@ -1342,11 +1343,9 @@ export class Renderer {
 			this.renderOctree(octree, nodes, camera, target, params);
 		}
 
-
 		// CLEANUP
 		gl.activeTexture(gl.TEXTURE1);
 		gl.bindTexture(gl.TEXTURE_2D, null)
-
 		this.threeRenderer.state.reset();
 	}
 

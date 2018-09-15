@@ -78,7 +78,6 @@ export class BinaryLoader {
 				let buffer = buffers[property].buffer;
 				if (parseInt(property) === PointAttributeNames.LABEL) {
 					window._label = new Uint8Array(buffer)
-					console.debug(window._label)
 				} else if (parseInt(property) === PointAttributeNames.POINT_INDEX) {
 					geometry.addAttribute('pointIndex', new THREE.BufferAttribute(new Float32Array(buffer), 1))
 				} else if (parseInt(property) === PointAttributeNames.POSITION_CARTESIAN) {
