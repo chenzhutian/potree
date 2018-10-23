@@ -1,9 +1,11 @@
+const buildFolder = require('./gulpfile').buildFolder
+import {join} from 'path'
 export default [
 	{
 		input: 'src/Potree.js',
 		treeshake: false,
 		output: {
-			file: 'build/potree/potree.js',
+			file: join(buildFolder, 'potree.js'),
 			format: 'umd',
 			name: 'Potree',
 			sourcemap: true,
@@ -11,7 +13,7 @@ export default [
 	},{
 		input: 'src/workers/BinaryDecoderWorker.js',
 		output: {
-			file: 'build/potree/workers/BinaryDecoderWorker.js',
+			file: join(buildFolder, 'workers/BinaryDecoderWorker.js'),
 			format: 'es',
 			name: 'Potree',
 			sourcemap: false

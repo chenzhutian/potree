@@ -12,11 +12,15 @@ const File = gutil.File;
 const connect = require('gulp-connect');
 const watch = require('glob-watcher');
 
+const buildFolder = '../2019-scivis-3dselection-label-tool/public/libs/potree'
+module.exports = {
+	buildFolder
+}
 
 let paths = {
 	laslaz: [
-		"build/workers/laslaz-worker.js",
-		"build/workers/lasdecoder-worker.js",
+		path.join(buildFolder, "workers/laslaz-worker.js"),
+		path.join(buildFolder, "workers/lasdecoder-worker.js"),
 	],
 	html: [
 		"src/viewer/potree.css",
@@ -70,7 +74,7 @@ gulp.task("workers", function(){
 		
 		gulp.src(workers[workerName])
 			.pipe(concat(`${workerName}.js`))
-			.pipe(gulp.dest('build/potree/workers'));
+			.pipe(gulp.dest(path.join(buildFolder, 'workers')));
 		
 	}
 
@@ -79,19 +83,19 @@ gulp.task("workers", function(){
 gulp.task("shaders", function(){
 	return gulp.src(shaders)
 		.pipe(encodeShader('shaders.js', "Potree.Shader"))
-		.pipe(gulp.dest('build/shaders'));
+		.pipe(gulp.dest(path.join(buildFolder, 'shaders')));
 });
 
-gulp.task("build", ['workers','shaders', "icons_viewer", "examples_page"], function(){
+gulp.task("build", ['workers','shaders', "icons_viewer"], function(){
 
 	gulp.src(paths.html)
-		.pipe(gulp.dest('build/potree'));
+		.pipe(gulp.dest(path.join(buildFolder, path.join(buildFolder, 'potree'))));
 
 	gulp.src(paths.resources)
-		.pipe(gulp.dest('build/potree/resources'));
+		.pipe(gulp.dest(path.join(buildFolder, path.join(buildFolder, 'potree/resources'))));
 
 	gulp.src(["LICENSE"])
-		.pipe(gulp.dest('build/potree'));
+		.pipe(gulp.dest(path.join(buildFolder, path.join(buildFolder, 'potree'))));
 
 	return;
 });
@@ -383,7 +387,7 @@ gulp.task('icons_viewer', function() {
 
 });
 
-gulp.task('watch', ["build", "webserver"], function() {
+gulp.task('watch', ["build"], function() {
 	//gulp.run("build");
 
 	exec('rollup -c', function (err, stdout, stderr) {

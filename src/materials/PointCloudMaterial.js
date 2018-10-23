@@ -2,7 +2,9 @@
 
 import {Utils} from "../utils.js";
 import {Gradients} from "./Gradients.js";
-import {Shaders} from "../../build/shaders/shaders.js";
+const buildFolder = require('../../gulpfile').buildFolder
+// import {Shaders} from "../../build/shaders/shaders.js";
+const Shaders = require(buildFolder + '/shaders/shaders.js')
 import {ClassificationScheme} from "./ClassificationScheme.js";
 import {PointSizeType, PointColorType, PointShape, TreeType} from "../defines.js";
 
