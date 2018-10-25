@@ -1,11 +1,4 @@
-
-
-// import {Shaders} from "../../build/shaders/shaders.js";
-// import {buildFolder} from '../../gulpfile'
-const buildFolder = require('../../gulpfile').buildFolder
-// import {Shaders} from "../../build/shaders/shaders.js";
-const Shaders = require(buildFolder + '/shaders/shaders.js')
-
+import {Shaders} from '__buildFolder__/shaders/shaders.js'
 
 export class NormalizationEDLMaterial extends THREE.RawShaderMaterial{
 

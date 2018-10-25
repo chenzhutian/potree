@@ -11,11 +11,7 @@ const through = require('through');
 const File = gutil.File;
 const connect = require('gulp-connect');
 const watch = require('glob-watcher');
-
-const buildFolder = '../2019-scivis-3dselection-label-tool/public/libs/potree'
-module.exports = {
-	buildFolder
-}
+const buildFolder = require('./buildConfig').buildFolder
 
 let paths = {
 	laslaz: [
@@ -89,13 +85,13 @@ gulp.task("shaders", function(){
 gulp.task("build", ['workers','shaders', "icons_viewer"], function(){
 
 	gulp.src(paths.html)
-		.pipe(gulp.dest(path.join(buildFolder, path.join(buildFolder, 'potree'))));
+		.pipe(gulp.dest(buildFolder));
 
 	gulp.src(paths.resources)
-		.pipe(gulp.dest(path.join(buildFolder, path.join(buildFolder, 'potree/resources'))));
+		.pipe(gulp.dest(path.join(buildFolder, 'resources')));
 
 	gulp.src(["LICENSE"])
-		.pipe(gulp.dest(path.join(buildFolder, path.join(buildFolder, 'potree'))));
+		.pipe(gulp.dest(buildFolder));
 
 	return;
 });
