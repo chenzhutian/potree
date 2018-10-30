@@ -7,13 +7,10 @@ import {ClassificationScheme} from "./ClassificationScheme.js";
 import {PointSizeType, PointColorType, PointShape, TreeType} from "../defines.js";
 
 //
-//
-//
 // how to calculate the radius of a projected sphere in screen space
 // http://stackoverflow.com/questions/21648630/radius-of-projected-sphere-in-screen-space
 // http://stackoverflow.com/questions/3717226/radius-of-projected-sphere
 //
-
 
 export class PointCloudMaterial extends THREE.RawShaderMaterial {
 	constructor (parameters = {}) {
@@ -23,18 +20,10 @@ export class PointCloudMaterial extends THREE.RawShaderMaterial {
 		this.visibleNodesTexture.minFilter = THREE.NearestFilter;
 		this.visibleNodesTexture.magFilter = THREE.NearestFilter;
 
-		let getValid = (a, b) => {
-			if(a !== undefined){
-				return a;
-			}else{
-				return b;
-			}
-		}
-
-		let pointSize = getValid(parameters.size, 1.0);
-		let minSize = getValid(parameters.minSize, 2.0);
-		let maxSize = getValid(parameters.maxSize, 50.0);
-		let treeType = getValid(parameters.treeType, TreeType.OCTREE);
+		let pointSize = Utils.getValid(parameters.size, 1.0);
+		let minSize = Utils.getValid(parameters.minSize, 2.0);
+		let maxSize = Utils.getValid(parameters.maxSize, 50.0);
+		let treeType = Utils.getValid(parameters.treeType, TreeType.OCTREE);
 
 		this._pointSizeType = PointSizeType.FIXED;
 		this._shape = PointShape.SQUARE;
@@ -135,7 +124,7 @@ export class PointCloudMaterial extends THREE.RawShaderMaterial {
 			uFilterGPSTimeClipRange:		{ type: "fv", value: [0, 7]},
 		};
 
-		this.classification = ClassificationScheme.DEFAULT;
+		this.classification = ClassificationScheme.PART;
 
 		this.defaultAttributeValues.normal = [0, 0, 0];
 		this.defaultAttributeValues.classification = [0, 0, 0];
