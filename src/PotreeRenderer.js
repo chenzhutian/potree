@@ -544,7 +544,10 @@ export class Renderer {
 			gl.bufferData(gl.ARRAY_BUFFER, bufferAttribute.array, gl.STATIC_DRAW);
 
 			let attributeLocation = attributeLocations[attributeName];
-			let normalized = attributeName === 'indices' ? false : bufferAttribute.normalized;
+			// let normalized = attributeName === 'indices' ? false : bufferAttribute.normalized;
+			// whether should normalized is control in the BinaryLoader
+			let normalized = bufferAttribute.normalized
+			
 			let type = this.glTypeMapping.get(bufferAttribute.array.constructor);
 
 			gl.vertexAttribPointer(attributeLocation, bufferAttribute.itemSize, type, normalized, 0, 0);
@@ -558,7 +561,7 @@ export class Renderer {
 				type: geometry.attributes.position.array.constructor,
 				version: 0
 			});
-			console.debug(attributeName, bufferAttribute)
+			console.debug(attributeName, `normalized:${normalized}`, bufferAttribute)
 		}
 
 		gl.bindBuffer(gl.ARRAY_BUFFER, null);
@@ -870,6 +873,8 @@ export class Renderer {
 				gl.readPixels(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight, gl.RGBA, gl.FLOAT, buffer);
 				// console.debug('drawingBufferWidth', gl.drawingBufferWidth, 'drawingBufferHeight', gl.drawingBufferHeight)
 
+				/* Debug view */
+				// {
 				// let canvas = document.getElementById('save')
 				// if (!canvas) {
 				// 	canvas = document.createElement('canvas')
@@ -882,11 +887,12 @@ export class Renderer {
 				// 	document.body.getElementBy
 				// 	document.body.appendChild(canvas)
 				// }
-
 				// const ctx = canvas.getContext('2d')
 				// ctx.fillStyle = "rgba(255, 0, 0, 0.2)";
 				// ctx.fillRect(0, 0, canvas.width, canvas.height);
 				// const imageData = ctx.createImageData(canvas.width, canvas.height)
+				// }
+
 				const points = []
 				let targetNum = 0
 				let targetSelected = 0
@@ -894,6 +900,7 @@ export class Renderer {
 					const r = buffer[i]
 					const g = buffer[i + 1]
 					const b = buffer[i + 2]
+					// Debug view
 					// imageData.data[i] = 255.0 * r
 					// imageData.data[i + 1] = 255.0 * g
 					// imageData.data[i + 2] = 255.0 * b
@@ -917,6 +924,7 @@ export class Renderer {
 						if (b === 1 && inside === 1) targetSelected++
 					}
 				}
+				// Debug view
 				// ctx.putImageData(imageData, 0, 0)
 				// console.debug('numPoints', numPoints)
 				// console.debug(points); // Uint8Array
@@ -1005,7 +1013,6 @@ export class Renderer {
 					`#define max_clippolygons_markers ${maxClipPolygonMarkers}`,
 				];
 
-
 				if (octree.pcoGeometry.root.isLoaded()) {
 					let attributes = octree.pcoGeometry.root.geometry.attributes;
 
@@ -1020,7 +1027,6 @@ export class Renderer {
 					if (attributes.numberOfReturns) {
 						defines.push("#define clip_number_of_returns_enabled");
 					}
-
 				}
 
 				//vs = `#define num_shadowmaps ${shadowMaps.length}\n` + vs;
@@ -1042,7 +1048,6 @@ export class Renderer {
 				} else {
 					fs = `${definesString}\n${fs}`;
 				}
-
 
 				shader.update(vs, fs);
 
@@ -1253,7 +1258,6 @@ export class Renderer {
 			gl.activeTexture(gl.TEXTURE0 + currentTextureBindingPoint);
 			gl.bindTexture(classificationTexture.target, classificationTexture.id);
 			currentTextureBindingPoint++;
-
 
 			if (material.snapEnabled === true) {
 
