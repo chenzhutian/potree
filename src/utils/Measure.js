@@ -154,7 +154,7 @@ export class Measure extends THREE.Object3D {
 					e.viewer, 
 					e.viewer.scene.pointclouds,
 					{pickClipped: true});
-
+					
 				if (I) {
 					let i = this.spheres.indexOf(e.drag.object);
 					if (i !== -1) {

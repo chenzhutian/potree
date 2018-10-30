@@ -392,7 +392,7 @@ vec3 getRGB(){
 	//rgb = (rgb - 0.5) * getContrastFactor(rgbContrast) + 0.5;
 	rgb = clamp(rgb, 0.0, 1.0);
 
-		//rgb = indices.rgb;
+	//rgb = indices.rgb;
 	//rgb.b = pcIndex / 255.0;
 	
 	
