@@ -3,6 +3,7 @@ import {PointCloudTree, PointCloudTreeNode} from "./PointCloudTree.js";
 import {PointCloudOctreeGeometryNode} from "./PointCloudOctreeGeometry.js";
 import {Utils} from "./utils.js";
 import {PointCloudMaterial} from "./materials/PointCloudMaterial.js";
+import {PointColorType} from './defines'
 
 
 export class PointCloudOctreeNode extends PointCloudTreeNode {
@@ -608,21 +609,19 @@ export class PointCloudOctree extends PointCloudTree {
 		let pRenderer = viewer.pRenderer;
 		
 		performance.mark("pick-start");
-		
-		let getVal = (a, b) => a !== undefined ? a : b;
 
-		let pickWindowSize = getVal(params.pickWindowSize, 17);
-		let pickOutsideClipRegion = getVal(params.pickOutsideClipRegion, false);
+		let pickWindowSize = Utils.getValid(params.pickWindowSize, 17);
+		let pickOutsideClipRegion = Utils.getValid(params.pickOutsideClipRegion, false);
 
 		pickWindowSize = 65;
 
 		let size = renderer.getSize();
 
-		let width = Math.ceil(getVal(params.width, size.width));
-		let height = Math.ceil(getVal(params.height, size.height));
+		let width = Math.ceil(Utils.getValid(params.width, size.width));
+		let height = Math.ceil(Utils.getValid(params.height, size.height));
 
-		let pointSizeType = getVal(params.pointSizeType, this.material.pointSizeType);
-		let pointSize = getVal(params.pointSize, this.material.size);
+		let pointSizeType = Utils.getValid(params.pointSizeType, this.material.pointSizeType);
+		let pointSize = Utils.getValid(params.pointSize, this.material.size);
 
 		let nodes = this.nodesOnRay(this.visibleNodes, ray);
 
@@ -633,8 +632,8 @@ export class PointCloudOctree extends PointCloudTree {
 		if (!this.pickState) {
 			let scene = new THREE.Scene();
 
-			let material = new Potree.PointCloudMaterial();
-			material.pointColorType = Potree.PointColorType.POINT_INDEX;
+			let material = new PointCloudMaterial();
+			material.pointColorType = PointColorType.POINT_INDEX
 
 			let renderTarget = new THREE.WebGLRenderTarget(
 				1, 1,
@@ -648,7 +647,7 @@ export class PointCloudOctree extends PointCloudTree {
 				material: material,
 				scene: scene
 			};
-		};
+		}
 		
 		let pickState = this.pickState;
 		let pickMaterial = pickState.material;
@@ -665,6 +664,7 @@ export class PointCloudOctree extends PointCloudTree {
 			pickMaterial.uniforms.minSize.value = this.material.uniforms.minSize.value;
 			pickMaterial.uniforms.maxSize.value = this.material.uniforms.maxSize.value;
 			pickMaterial.classification = this.material.classification;
+
 			if(params.pickClipped){
 				pickMaterial.clipBoxes = this.material.clipBoxes;
 				pickMaterial.uniforms.clipBoxes = this.material.uniforms.clipBoxes;
@@ -694,7 +694,6 @@ export class PointCloudOctree extends PointCloudTree {
 			parseInt(pixelPos.y - (pickWindowSize - 1) / 2),
 			parseInt(pickWindowSize), parseInt(pickWindowSize));
 
-		
 		renderer.state.buffers.depth.setTest(pickMaterial.depthTest);
 		renderer.state.buffers.depth.setMask(pickMaterial.depthWrite);
 		renderer.state.setBlending(THREE.NoBlending);
@@ -723,7 +722,7 @@ export class PointCloudOctree extends PointCloudTree {
 		let buffer = new Uint8Array(4 * pixelCount);
 		
 		gl.readPixels(x, y, pickWindowSize, pickWindowSize, gl.RGBA, gl.UNSIGNED_BYTE, buffer); 
-		
+
 		renderer.setRenderTarget(null);
 		renderer.state.reset();
 		renderer.setScissorTest(false);
@@ -762,34 +761,32 @@ export class PointCloudOctree extends PointCloudTree {
 							hits.push(hit);
 						}
 					}
-
-					
 				}
 			}
 		}
 		
 		// DEBUG: show panel with pick image
-		//{ 
-		//	let img = Utils.pixelsArrayToImage(buffer, w, h);
-		//	let screenshot = img.src;
-		//
-		//	if(!this.debugDIV){
-		//		this.debugDIV = $(`
-		//			<div id="pickDebug"
-		//			style="position: absolute;
-		//			right: 400px; width: 300px;
-		//			bottom: 44px; width: 300px;
-		//			z-index: 1000;
-		//			"></div>`);
-		//		$(document.body).append(this.debugDIV);
-		//	}
-		//
-		//	this.debugDIV.empty();
-		//	this.debugDIV.append($(`<img src="${screenshot}"
-		//		style="transform: scaleY(-1); width: 300px"/>`));
-		//	//$(this.debugWindow.document).append($(`<img src="${screenshot}"/>`));
-		//	//this.debugWindow.document.write('<img src="'+screenshot+'"/>');
-		//}
+		{ 
+			let img = Utils.pixelsArrayToImage(buffer, w, h);
+			let screenshot = img.src;
+		
+			if(!this.debugDIV){
+				this.debugDIV = $(`
+					<div id="pickDebug"
+					style="position: absolute;
+					right: 400px; width: 300px;
+					bottom: 44px; width: 300px;
+					z-index: 1000;
+					"></div>`);
+				$(document.body).append(this.debugDIV);
+			}
+		
+			this.debugDIV.empty();
+			this.debugDIV.append($(`<img src="${screenshot}"
+				style="transform: scaleY(-1); width: 300px"/>`));
+			// $(this.debugWindow.document).append($(`<img src="${screenshot}"/>`));
+			// this.debugWindow.document.write('<img src="'+screenshot+'"/>');
+		}
 		
 
 		for(let hit of hits){
@@ -810,7 +807,7 @@ export class PointCloudOctree extends PointCloudTree {
 					let x = attribute.array[3 * hit.pIndex + 0];
 					let y = attribute.array[3 * hit.pIndex + 1];
 					let z = attribute.array[3 * hit.pIndex + 2];
-					
+
 					let position = new THREE.Vector3(x, y, z);
 					position.applyMatrix4(pc.matrixWorld);
 		

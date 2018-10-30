@@ -8,6 +8,7 @@ import {PointColorType} from "./defines.js";
 
 
 export class Utils {
+
 	static async loadShapefileFeatures (file, callback) {
 		let features = [];
 
@@ -38,6 +39,10 @@ export class Utils {
 		} else {
 			return '' + value + '';
 		}
+	}
+
+	static getValid(val, defaultVal) {
+		return val !== undefined ? val : defaultVal;
 	}
 
 	static normalizeURL (url) {
@@ -366,7 +371,7 @@ export class Utils {
 		
 		for(let pointcloud of pointclouds){
 			let point = pointcloud.pick(viewer, camera, ray, pickParams);
-			
+	
 			if(!point){
 				continue;
 			}
