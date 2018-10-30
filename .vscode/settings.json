@@ -1,11 +1,11 @@
 {
-	"workbench.editor.enablePreview": false,
+	"workbench.editor.enablePreview": true,
 	"files.associations": {
 		"*.vs": "cpp",
 		"*.fs": "cpp"
 	},
 	"files.trimTrailingWhitespace": false,
-	"editor.fontSize": 15,
+	"editor.fontSize": 14,
 	"editor.autoIndent": false,
 	"editor.detectIndentation": false,
 	"editor.renderWhitespace": "all",
