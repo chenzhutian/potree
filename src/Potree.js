@@ -31,8 +31,8 @@ export * from "./materials/NormalizationMaterial.js";
 export * from "./materials/PointCloudMaterial.js";
 
 export * from "./loader/POCLoader.js";
-export * from "./loader/GreyhoundBinaryLoader.js";
-export * from "./loader/GreyhoundLoader.js";
+// export * from "./loader/GreyhoundBinaryLoader.js";
+// export * from "./loader/GreyhoundLoader.js";
 export * from "./loader/PointAttributes.js";
 
 export * from "./utils/Box3Helper.js";
@@ -45,13 +45,13 @@ export * from "./utils/Message.js";
 export * from "./utils/PointCloudSM.js";
 export * from "./utils/PolygonClipVolume.js";
 export * from "./utils/Profile.js";
-export * from "./utils/ProfileTool.js";
+// export * from "./utils/ProfileTool.js";
 export * from "./utils/ScreenBoxSelectTool.js";
 export * from "./utils/SpotLightHelper.js";
 export * from "./utils/toInterleavedBufferAttribute.js";
 export * from "./utils/TransformationTool.js";
 export * from "./utils/Volume.js";
-export * from "./utils/VolumeTool.js";
+// export * from "./utils/VolumeTool.js";
 
 export * from "./viewer/viewer.js";
 export * from "./viewer/Scene.js";
@@ -111,18 +111,20 @@ export function loadPointCloud(path, name, callback) {
 	// load pointcloud
 	if (!path) {
 		// TODO: callback? comment? Hello? Bueller? Anyone?
-	} else if (path.indexOf('greyhound://') === 0) {
-		// We check if the path string starts with 'greyhound:', if so we assume it's a greyhound server URL.
-		GreyhoundLoader.load(path, function (geometry) {
-			if (!geometry) {
-				//callback({type: 'loading_failed'});
-				console.error(new Error(`failed to load point cloud from URL: ${path}`));
-			} else {
-				let pointcloud = new PointCloudOctree(geometry);
-				loaded(pointcloud);
-			}
-		});
-	} else if (path.indexOf('cloud.js') > 0) {
+	} 
+	// else if (path.indexOf('greyhound://') === 0) {
+	// 	// We check if the path string starts with 'greyhound:', if so we assume it's a greyhound server URL.
+	// 	GreyhoundLoader.load(path, function (geometry) {
+	// 		if (!geometry) {
+	// 			//callback({type: 'loading_failed'});
+	// 			console.error(new Error(`failed to load point cloud from URL: ${path}`));
+	// 		} else {
+	// 			let pointcloud = new PointCloudOctree(geometry);
+	// 			loaded(pointcloud);
+	// 		}
+	// 	});
+	// } 
+	else if (path.indexOf('cloud.js') > 0) {
 		POCLoader.load(path, function (geometry) {
 			if (!geometry) {
 				//callback({type: 'loading_failed'});
@@ -138,17 +140,19 @@ export function loadPointCloud(path, name, callback) {
 				loaded(pointcloud);
 			}
 		});
-	} else if (path.indexOf('.vpc') > 0) {
-		PointCloudArena4DGeometry.load(path, function (geometry) {
-			if (!geometry) {
-				//callback({type: 'loading_failed'});
-				console.error(new Error(`failed to load point cloud from URL: ${path}`));
-			} else {
-				let pointcloud = new PointCloudArena4D(geometry);
-				loaded(pointcloud);
-			}
-		});
-	} else {
+	} 
+	// else if (path.indexOf('.vpc') > 0) {
+	// 	PointCloudArena4DGeometry.load(path, function (geometry) {
+	// 		if (!geometry) {
+	// 			//callback({type: 'loading_failed'});
+	// 			console.error(new Error(`failed to load point cloud from URL: ${path}`));
+	// 		} else {
+	// 			let pointcloud = new PointCloudArena4D(geometry);
+	// 			loaded(pointcloud);
+	// 		}
+	// 	});
+	// } 
+	else {
 		//callback({'type': 'loading_failed'});
 		console.error(new Error(`failed to load point cloud from URL: ${path}`));
 	}

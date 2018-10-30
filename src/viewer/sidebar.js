@@ -1,13 +1,13 @@
 
 import {MeasuringTool} from "../utils/MeasuringTool.js";
-import {ProfileTool} from "../utils/ProfileTool.js";
-import {VolumeTool} from "../utils/VolumeTool.js";
+// import {ProfileTool} from "../utils/ProfileTool.js";
+// import {VolumeTool} from "../utils/VolumeTool.js";
 
-import {GeoJSONExporter} from "../exporter/GeoJSONExporter.js"
-import {DXFExporter} from "../exporter/DXFExporter.js"
+// import {GeoJSONExporter} from "../exporter/GeoJSONExporter.js"
+// import {DXFExporter} from "../exporter/DXFExporter.js"
 import {Volume, SphereVolume} from "../utils/Volume.js"
 import {PolygonClipVolume} from "../utils/PolygonClipVolume.js"
-import {PropertiesPanel} from "./PropertyPanels/PropertiesPanel.js"
+// import {PropertiesPanel} from "./PropertyPanels/PropertiesPanel.js"
 import {PointCloudTree} from "../PointCloudTree.js"
 import {Profile} from "../utils/Profile.js"
 import {Measure} from "../utils/Measure.js"
@@ -28,8 +28,8 @@ export class Sidebar{
 		this.viewer = viewer;
 
 		this.measuringTool = new MeasuringTool(this.viewer);
-		this.profileTool = new ProfileTool(this.viewer);
-		this.volumeTool = new VolumeTool(this.viewer);
+		// this.profileTool = new ProfileTool(this.viewer);
+		// this.volumeTool = new VolumeTool(this.viewer);
 
 	}
 
@@ -52,7 +52,7 @@ export class Sidebar{
 		this.initAccordion();
 		this.initAppearance();
 		this.initToolbar();
-		this.initScene();
+		// this.initScene();
 		this.initNavigation();
 		this.initFilters();
 		this.initClippingTool();
@@ -169,48 +169,48 @@ export class Sidebar{
 			}
 		));
 
-		// VOLUME
-		elToolbar.append(this.createToolIcon(
-			Potree.resourcePath + '/icons/volume.svg',
-			'[title]tt.volume_measurement',
-			() => {
-				let volume = this.volumeTool.startInsertion(); 
+		// // VOLUME
+		// elToolbar.append(this.createToolIcon(
+		// 	Potree.resourcePath + '/icons/volume.svg',
+		// 	'[title]tt.volume_measurement',
+		// 	() => {
+		// 		let volume = this.volumeTool.startInsertion(); 
 
-				let measurementsRoot = $("#jstree_scene").jstree().get_json("measurements");
-				let jsonNode = measurementsRoot.children.find(child => child.data.uuid === volume.uuid);
-				$.jstree.reference(jsonNode.id).deselect_all();
-				$.jstree.reference(jsonNode.id).select_node(jsonNode.id);
-			}
-		));
+		// 		let measurementsRoot = $("#jstree_scene").jstree().get_json("measurements");
+		// 		let jsonNode = measurementsRoot.children.find(child => child.data.uuid === volume.uuid);
+		// 		$.jstree.reference(jsonNode.id).deselect_all();
+		// 		$.jstree.reference(jsonNode.id).select_node(jsonNode.id);
+		// 	}
+		// ));
 
-		// SPHERE VOLUME
-		elToolbar.append(this.createToolIcon(
-			Potree.resourcePath + '/icons/sphere_distances.svg',
-			'[title]tt.volume_measurement',
-			() => { 
-				let volume = this.volumeTool.startInsertion({type: SphereVolume}); 
+		// // SPHERE VOLUME
+		// elToolbar.append(this.createToolIcon(
+		// 	Potree.resourcePath + '/icons/sphere_distances.svg',
+		// 	'[title]tt.volume_measurement',
+		// 	() => { 
+		// 		let volume = this.volumeTool.startInsertion({type: SphereVolume}); 
 
-				let measurementsRoot = $("#jstree_scene").jstree().get_json("measurements");
-				let jsonNode = measurementsRoot.children.find(child => child.data.uuid === volume.uuid);
-				$.jstree.reference(jsonNode.id).deselect_all();
-				$.jstree.reference(jsonNode.id).select_node(jsonNode.id);
-			}
-		));
+		// 		let measurementsRoot = $("#jstree_scene").jstree().get_json("measurements");
+		// 		let jsonNode = measurementsRoot.children.find(child => child.data.uuid === volume.uuid);
+		// 		$.jstree.reference(jsonNode.id).deselect_all();
+		// 		$.jstree.reference(jsonNode.id).select_node(jsonNode.id);
+		// 	}
+		// ));
 
-		// PROFILE
-		elToolbar.append(this.createToolIcon(
-			Potree.resourcePath + '/icons/profile.svg',
-			'[title]tt.height_profile',
-			() => {
-				$('#menu_measurements').next().slideDown(); ;
-				let profile = this.profileTool.startInsertion();
+		// // PROFILE
+		// elToolbar.append(this.createToolIcon(
+		// 	Potree.resourcePath + '/icons/profile.svg',
+		// 	'[title]tt.height_profile',
+		// 	() => {
+		// 		$('#menu_measurements').next().slideDown(); ;
+		// 		let profile = this.profileTool.startInsertion();
 
-				let measurementsRoot = $("#jstree_scene").jstree().get_json("measurements");
-				let jsonNode = measurementsRoot.children.find(child => child.data.uuid === profile.uuid);
-				$.jstree.reference(jsonNode.id).deselect_all();
-				$.jstree.reference(jsonNode.id).select_node(jsonNode.id);
-			}
-		));
+		// 		let measurementsRoot = $("#jstree_scene").jstree().get_json("measurements");
+		// 		let jsonNode = measurementsRoot.children.find(child => child.data.uuid === profile.uuid);
+		// 		$.jstree.reference(jsonNode.id).deselect_all();
+		// 		$.jstree.reference(jsonNode.id).select_node(jsonNode.id);
+		// 	}
+		// ));
 
 		// REMOVE ALL
 		elToolbar.append(this.createToolIcon(
@@ -274,8 +274,8 @@ export class Sidebar{
 			});
 		}
 
-		let propertiesPanel = new PropertiesPanel(elProperties, this.viewer);
-		propertiesPanel.setScene(this.viewer.scene);
+		// let propertiesPanel = new PropertiesPanel(elProperties, this.viewer);
+		// propertiesPanel.setScene(this.viewer.scene);
 		
 		localStorage.removeItem('jstree');
 
@@ -333,7 +333,7 @@ export class Sidebar{
 
 		tree.on("select_node.jstree", (e, data) => {
 			let object = data.node.data;
-			propertiesPanel.set(object);
+			// propertiesPanel.set(object);
 
 			this.viewer.inputHandler.deselectAll();
 
@@ -345,11 +345,11 @@ export class Sidebar{
 		});
 
 		tree.on("deselect_node.jstree", (e, data) => {
-			propertiesPanel.set(null);
+			// propertiesPanel.set(null);
 		});
 
 		tree.on("delete_node.jstree", (e, data) => {
-			propertiesPanel.set(null);
+			// propertiesPanel.set(null);
 		});
 
 		tree.on('dblclick','.jstree-anchor', (e) => {
@@ -446,7 +446,6 @@ export class Sidebar{
 				object.visible = true;
 			}
 		});
-
 
 		let onPointCloudAdded = (e) => {
 			let pointcloud = e.pointcloud;
@@ -565,7 +564,7 @@ export class Sidebar{
 		}
 
 		this.viewer.addEventListener("scene_changed", (e) => {
-			propertiesPanel.setScene(e.scene);
+			// propertiesPanel.setScene(e.scene);
 
 			e.oldScene.removeEventListener("pointcloud_added", onPointCloudAdded);
 			e.oldScene.removeEventListener("measurement_added", onMeasurementAdded);
@@ -623,21 +622,21 @@ export class Sidebar{
 
 		let clippingToolBar = $("#clipping_tools");
 
-		// CLIP VOLUME
-		clippingToolBar.append(this.createToolIcon(
-			Potree.resourcePath + '/icons/clip_volume.svg',
-			'[title]tt.clip_volume',
-			() => {
-				let item = this.volumeTool.startInsertion({clip: true}); 
+		// // CLIP VOLUME
+		// clippingToolBar.append(this.createToolIcon(
+		// 	Potree.resourcePath + '/icons/clip_volume.svg',
+		// 	'[title]tt.clip_volume',
+		// 	() => {
+		// 		let item = this.volumeTool.startInsertion({clip: true}); 
 
-				let measurementsRoot = $("#jstree_scene").jstree().get_json("measurements");
-				let jsonNode = measurementsRoot.children.find(child => child.data.uuid === item.uuid);
-				$.jstree.reference(jsonNode.id).deselect_all();
-				$.jstree.reference(jsonNode.id).select_node(jsonNode.id);
-			},
-			'clip_volume',
-			'clip_volume'
-		));
+		// 		let measurementsRoot = $("#jstree_scene").jstree().get_json("measurements");
+		// 		let jsonNode = measurementsRoot.children.find(child => child.data.uuid === item.uuid);
+		// 		$.jstree.reference(jsonNode.id).deselect_all();
+		// 		$.jstree.reference(jsonNode.id).select_node(jsonNode.id);
+		// 	},
+		// 	'clip_volume',
+		// 	'clip_volume'
+		// ));
 
 		// CLIP POLYGON
 		clippingToolBar.append(this.createToolIcon(

@@ -157,6 +157,7 @@ export class Measure extends THREE.Object3D {
 					
 				if (I) {
 					let i = this.spheres.indexOf(e.drag.object);
+					console.debug('Hit Point', I)
 					if (i !== -1) {
 						let point = this.points[i];
 						for (let key of Object.keys(I.point).filter(e => e !== 'position')) {

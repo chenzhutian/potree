@@ -529,21 +529,21 @@ export class MapView{
 	updateToolDrawings () {
 		this.toolLayer.getSource().clear();
 
-		let profiles = this.viewer.profileTool.profiles;
-		for (let i = 0; i < profiles.length; i++) {
-			let profile = profiles[i];
-			let coordinates = [];
+		// let profiles = this.viewer.profileTool.profiles;
+		// for (let i = 0; i < profiles.length; i++) {
+		// 	let profile = profiles[i];
+		// 	let coordinates = [];
 
-			for (let j = 0; j < profile.points.length; j++) {
-				let point = profile.points[j];
-				let pointMap = this.toMap.forward([point.x, point.y]);
-				coordinates.push(pointMap);
-			}
+		// 	for (let j = 0; j < profile.points.length; j++) {
+		// 		let point = profile.points[j];
+		// 		let pointMap = this.toMap.forward([point.x, point.y]);
+		// 		coordinates.push(pointMap);
+		// 	}
 
-			let line = new ol.geom.LineString(coordinates);
-			let feature = new ol.Feature(line);
-			this.toolLayer.getSource().addFeature(feature);
-		}
+		// 	let line = new ol.geom.LineString(coordinates);
+		// 	let feature = new ol.Feature(line);
+		// 	this.toolLayer.getSource().addFeature(feature);
+		// }
 
 		let measurements = this.viewer.measuringTool.measurements;
 		for (let i = 0; i < measurements.length; i++) {
