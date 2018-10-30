@@ -2,7 +2,7 @@
 
 import {PointCloudTreeNode} from "./PointCloudTree.js";
 import {XHRFactory} from "./XHRFactory.js";
-import {Utils} from "./utils.js";
+import {createChildAABB} from "./utils.js";
 
 export class PointCloudOctreeGeometry{
 
@@ -194,7 +194,7 @@ export class PointCloudOctreeGeometryNode extends PointCloudTreeNode{
 				let parentName = name.substring(0, name.length - 1);
 				let parentNode = nodes[parentName];
 				let level = name.length - 1;
-				let boundingBox = Utils.createChildAABB(parentNode.boundingBox, index);
+				let boundingBox = createChildAABB(parentNode.boundingBox, index);
 
 				let currentNode = new PointCloudOctreeGeometryNode(name, pco, boundingBox);
 				currentNode.level = level;

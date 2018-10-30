@@ -3,7 +3,7 @@ import {PointCloudSM} from "../utils/PointCloudSM.js";
 import {EyeDomeLightingMaterial} from "../materials/EyeDomeLightingMaterial.js";
 import {PointColorType} from "../defines.js";
 import {SphereVolume} from "../utils/Volume.js";
-import {Utils} from "../utils.js";
+import {screenPass} from "../utils.js";
 
 export class EDLRenderer{
 	constructor(viewer){
@@ -260,10 +260,10 @@ export class EDLRenderer{
 			this.edlMaterial.uniforms.radius.value = viewer.edlRadius;
 			this.edlMaterial.uniforms.opacity.value = 1;
 			
-			Utils.screenPass.render(viewer.renderer, this.edlMaterial);
+			screenPass.render(viewer.renderer, this.edlMaterial);
 
 			if(this.screenshot){
-				Utils.screenPass.render(viewer.renderer, this.edlMaterial, this.screenshot.target);
+				screenPass.render(viewer.renderer, this.edlMaterial, this.screenshot.target);
 			}
 
 		}

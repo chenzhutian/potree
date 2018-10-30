@@ -3,7 +3,7 @@
 import {Annotation} from "../Annotation.js";
 import {CameraMode} from "../defines.js";
 import {View} from "./View.js";
-import {Utils} from "../utils.js";
+import {computeTransformedBoundingBox, createBackgroundTexture} from "../utils.js";
 import {EventDispatcher} from "../EventDispatcher.js";
 
 
@@ -107,7 +107,7 @@ export class Scene extends EventDispatcher{
 			pointcloud.updateMatrixWorld(true);
 
 			let pointcloudBox = pointcloud.pcoGeometry.tightBoundingBox ? pointcloud.pcoGeometry.tightBoundingBox : pointcloud.boundingBox;
-			let boxWorld = Utils.computeTransformedBoundingBox(pointcloudBox, pointcloud.matrixWorld);
+			let boxWorld = computeTransformedBoundingBox(pointcloudBox, pointcloud.matrixWorld);
 			box.union(boxWorld);
 		}
 
@@ -262,7 +262,7 @@ export class Scene extends EventDispatcher{
 		this.scenePointCloud.add( light );
 
 		{ // background
-			let texture = Utils.createBackgroundTexture(512, 512);
+			let texture = createBackgroundTexture(512, 512);
 
 			texture.minFilter = texture.magFilter = THREE.NearestFilter;
 			texture.minFilter = texture.magFilter = THREE.LinearFilter;

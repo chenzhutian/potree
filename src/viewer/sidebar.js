@@ -5,16 +5,16 @@ import {MeasuringTool} from "../utils/MeasuringTool.js";
 
 // import {GeoJSONExporter} from "../exporter/GeoJSONExporter.js"
 // import {DXFExporter} from "../exporter/DXFExporter.js"
-import {Volume, SphereVolume} from "../utils/Volume.js"
+import {Volume} from "../utils/Volume.js"
 import {PolygonClipVolume} from "../utils/PolygonClipVolume.js"
 // import {PropertiesPanel} from "./PropertyPanels/PropertiesPanel.js"
 import {PointCloudTree} from "../PointCloudTree.js"
-import {Profile} from "../utils/Profile.js"
+// import {Profile} from "../utils/Profile.js"
 import {Measure} from "../utils/Measure.js"
 import {Annotation} from "../Annotation.js"
 import {CameraMode, ClipTask, ClipMethod} from "../defines.js"
 import {ScreenBoxSelectTool} from "../utils/ScreenBoxSelectTool.js"
-import {Utils} from "../utils.js"
+import {getMeasurementIcon, addCommas} from "../utils.js"
 
 import {EarthControls} from "../navigation/EarthControls.js"
 import {FirstPersonControls} from "../navigation/FirstPersonControls.js"
@@ -376,15 +376,17 @@ export class Sidebar{
 					node.boundingBox = box;
 					this.viewer.zoomTo(node, 2, 500);
 				}
-			}else if(object instanceof Profile){
-				let points = object.points;
-				let box = new THREE.Box3().setFromPoints(points);
-				if(box.getSize(new THREE.Vector3()).length() > 0){
-					let node = new THREE.Object3D();
-					node.boundingBox = box;
-					this.viewer.zoomTo(node, 1, 500);
-				}
-			}else if(object instanceof Volume){
+			}
+			// else if(object instanceof Profile){
+			// 	let points = object.points;
+			// 	let box = new THREE.Box3().setFromPoints(points);
+			// 	if(box.getSize(new THREE.Vector3()).length() > 0){
+			// 		let node = new THREE.Object3D();
+			// 		node.boundingBox = box;
+			// 		this.viewer.zoomTo(node, 1, 500);
+			// 	}
+			// }
+			else if(object instanceof Volume){
 				
 				let box = object.boundingBox.clone().applyMatrix4(object.matrixWorld);
 
@@ -463,13 +465,13 @@ export class Sidebar{
 
 		let onMeasurementAdded = (e) => {
 			let measurement = e.measurement;
-			let icon = Utils.getMeasurementIcon(measurement);
+			let icon = getMeasurementIcon(measurement);
 			createNode(measurementID, measurement.name, icon, measurement);
 		};
 
 		let onVolumeAdded = (e) => {
 			let volume = e.volume;
-			let icon = Utils.getMeasurementIcon(volume);
+			let icon = getMeasurementIcon(volume);
 			let node = createNode(measurementID, volume.name, icon, volume);
 
 			volume.addEventListener("visibility_changed", () => {
@@ -483,7 +485,7 @@ export class Sidebar{
 
 		let onProfileAdded = (e) => {
 			let profile = e.profile;
-			let icon = Utils.getMeasurementIcon(profile);
+			let icon = getMeasurementIcon(profile);
 			createNode(measurementID, profile.name, icon, profile);
 		};
 
@@ -775,8 +777,8 @@ export class Sidebar{
 			let range = this.viewer.filterGPSTimeRange;
 
 			let precision = 1;
-			let from = `${Utils.addCommas(range[0].toFixed(precision))}`;
-			let to = `${Utils.addCommas(range[1].toFixed(precision))}`;
+			let from = `${addCommas(range[0].toFixed(precision))}`;
+			let to = `${addCommas(range[1].toFixed(precision))}`;
 			lblGPSTime[0].innerHTML = `${from} to ${to}`;
 			
 			slider.setRange(range);
@@ -906,7 +908,7 @@ export class Sidebar{
 		});
 
 		this.viewer.addEventListener('point_budget_changed', (event) => {
-			$('#lblPointBudget')[0].innerHTML = Utils.addCommas(this.viewer.getPointBudget());
+			$('#lblPointBudget')[0].innerHTML = addCommas(this.viewer.getPointBudget());
 			$('#sldPointBudget').slider({value: this.viewer.getPointBudget()});
 		});
 
@@ -929,7 +931,7 @@ export class Sidebar{
 			$("input[name=background][value='" + this.viewer.getBackground() + "']").prop('checked', true);
 		});
 
-		$('#lblPointBudget')[0].innerHTML = Utils.addCommas(this.viewer.getPointBudget());
+		$('#lblPointBudget')[0].innerHTML = addCommas(this.viewer.getPointBudget());
 		$('#lblFOV')[0].innerHTML = parseInt(this.viewer.getFOV());
 		$('#lblEDLRadius')[0].innerHTML = this.viewer.getEDLRadius().toFixed(1);
 		$('#lblEDLStrength')[0].innerHTML = this.viewer.getEDLStrength().toFixed(1);

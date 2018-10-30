@@ -1,7 +1,7 @@
 
 
 import {BoxVolume} from "./Volume.js";
-import {Utils} from "../utils.js";
+import {mouseToRay} from "../utils.js";
 import {PointSizeType} from "../defines.js";
 import { EventDispatcher } from "../EventDispatcher.js";
 
@@ -65,7 +65,7 @@ export class ScreenBoxSelectTool extends EventDispatcher{
 				camera.top - camera.bottom);
 
 			let screenCentroid = new THREE.Vector2().addVectors(e.drag.end, e.drag.start).multiplyScalar(0.5);
-			let ray = Utils.mouseToRay(screenCentroid, camera, size.width, size.height);
+			let ray = mouseToRay(screenCentroid, camera, size.width, size.height);
 
 			let diff = new THREE.Vector2().subVectors(e.drag.end, e.drag.start);
 			diff.divide(size).multiply(frustumSize);
@@ -91,7 +91,7 @@ export class ScreenBoxSelectTool extends EventDispatcher{
 				e.viewer.renderer.getSize().width,
 				e.viewer.renderer.getSize().height);
 			let screenCentroid = new THREE.Vector2().addVectors(e.drag.end, e.drag.start).multiplyScalar(0.5);
-			let ray = Utils.mouseToRay(screenCentroid, camera, size.width, size.height);
+			let ray = mouseToRay(screenCentroid, camera, size.width, size.height);
 
 			let line = new THREE.Line3(ray.origin, new THREE.Vector3().addVectors(ray.origin, ray.direction));
 

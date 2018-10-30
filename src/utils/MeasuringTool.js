@@ -1,6 +1,6 @@
 
 import {Measure} from "./Measure.js";
-import {Utils} from "../utils.js";
+import {projectedRadius} from "../utils.js";
 import {CameraMode} from "../defines.js";
 import { EventDispatcher } from "../EventDispatcher.js";
 
@@ -130,7 +130,7 @@ export class MeasuringTool extends EventDispatcher{
 			// spheres
 			for(let sphere of measure.spheres){			
 				let distance = camera.position.distanceTo(sphere.getWorldPosition(new THREE.Vector3()));
-				let pr = Utils.projectedRadius(1, camera, distance, clientWidth, clientHeight);
+				let pr = projectedRadius(1, camera, distance, clientWidth, clientHeight);
 				let scale = (15 / pr);
 				sphere.scale.set(scale, scale, scale);
 			}
@@ -139,7 +139,7 @@ export class MeasuringTool extends EventDispatcher{
 			let labels = measure.edgeLabels.concat(measure.angleLabels);
 			for(let label of labels){
 				let distance = camera.position.distanceTo(label.getWorldPosition(new THREE.Vector3()));
-				let pr = Utils.projectedRadius(1, camera, distance, clientWidth, clientHeight);
+				let pr = projectedRadius(1, camera, distance, clientWidth, clientHeight);
 				let scale = (70 / pr);
 				label.scale.set(scale, scale, scale);
 			}
@@ -170,7 +170,7 @@ export class MeasuringTool extends EventDispatcher{
 
 				}
 				label.position.copy(labelPos);
-				let pr = Utils.projectedRadius(1, camera, distance, clientWidth, clientHeight);
+				let pr = projectedRadius(1, camera, distance, clientWidth, clientHeight);
 				let scale = (70 / pr);
 				label.scale.set(scale, scale, scale);
 			}
@@ -181,7 +181,7 @@ export class MeasuringTool extends EventDispatcher{
 
 				{
 					let distance = label.position.distanceTo(camera.position);
-					let pr = Utils.projectedRadius(1, camera, distance, clientWidth, clientHeight);
+					let pr = projectedRadius(1, camera, distance, clientWidth, clientHeight);
 					let scale = (70 / pr);
 					label.scale.set(scale, scale, scale);
 				}
@@ -223,7 +223,7 @@ export class MeasuringTool extends EventDispatcher{
 			{ // area label
 				let label = measure.areaLabel;
 				let distance = label.position.distanceTo(camera.position);
-				let pr = Utils.projectedRadius(1, camera, distance, clientWidth, clientHeight);
+				let pr = projectedRadius(1, camera, distance, clientWidth, clientHeight);
 
 				let scale = (70 / pr);
 				label.scale.set(scale, scale, scale);

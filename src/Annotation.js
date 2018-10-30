@@ -1,7 +1,7 @@
 
 
 import {Action} from "./Actions.js";
-import {Utils} from "./utils.js";
+import {moveTo} from "./utils.js";
 import {EventDispatcher} from "./EventDispatcher.js";
 
 export class Annotation extends EventDispatcher {
@@ -529,7 +529,7 @@ export class Annotation extends EventDispatcher {
 		if (this.cameraPosition) {
 			let endPosition = this.cameraPosition;
 
-			Utils.moveTo(this.scene, endPosition, endTarget);
+			moveTo(this.scene, endPosition, endTarget);
 
 			//{ // animate camera position
 			//	let tween = new TWEEN.Tween(view.position).to(endPosition, animationDuration);

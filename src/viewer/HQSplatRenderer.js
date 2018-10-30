@@ -5,7 +5,7 @@ import {NormalizationEDLMaterial} from "../materials/NormalizationEDLMaterial.js
 import {PointCloudMaterial} from "../materials/PointCloudMaterial.js";
 import {PointShape} from "../defines.js";
 import {SphereVolume} from "../utils/Volume.js";
-import {Utils} from "../utils.js";
+import {screenPass} from "../utils.js";
 
 
 export class HQSplatRenderer{
@@ -270,7 +270,7 @@ export class HQSplatRenderer{
 			normalizationMaterial.uniforms.uWeightMap.value = this.rtAttribute.texture;
 			normalizationMaterial.uniforms.uDepthMap.value = this.rtAttribute.depthTexture;
 			
-			Utils.screenPass.render(viewer.renderer, normalizationMaterial);
+			screenPass.render(viewer.renderer, normalizationMaterial);
 		}
 
 		viewer.renderer.render(viewer.scene.scene, camera);

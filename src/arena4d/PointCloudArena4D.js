@@ -3,7 +3,7 @@
 import {PointCloudTree, PointCloudTreeNode} from "../PointCloudTree.js";
 import {PointCloudMaterial} from "../materials/PointCloudMaterial.js";
 import {PointSizeType, PointColorType, ClipTask, TreeType} from "../defines.js";
-import {Utils} from "../utils.js";
+import {computeTransformedBoundingBox} from "../utils.js";
 
 
 
@@ -125,7 +125,7 @@ export class PointCloudArena4D extends PointCloudTree{
 		this.updateMatrixWorld(true);
 		let box = this.boundingBox;
 		let transform = this.matrixWorld;
-		let tBox = Utils.computeTransformedBoundingBox(box, transform);
+		let tBox = computeTransformedBoundingBox(box, transform);
 
 		return tBox;
 	};

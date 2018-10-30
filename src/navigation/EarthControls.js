@@ -1,7 +1,7 @@
 
 
 import {MOUSE} from "../defines.js";
-import {Utils} from "../utils.js";
+import {mouseToRay, getMousePointCloudIntersection, projectedRadius} from "../utils.js";
 import {EventDispatcher} from "../EventDispatcher.js";
 
 export class EarthControls extends EventDispatcher {
@@ -55,7 +55,7 @@ export class EarthControls extends EventDispatcher {
 
 			if (e.drag.mouse === MOUSE.LEFT) {
 
-				let ray = Utils.mouseToRay(mouse, camStart, domElement.clientWidth, domElement.clientHeight);
+				let ray = mouseToRay(mouse, camStart, domElement.clientWidth, domElement.clientHeight);
 				let plane = new THREE.Plane().setFromNormalAndCoplanarPoint(
 					new THREE.Vector3(0, 0, 1),
 					this.pivot);
@@ -115,7 +115,7 @@ export class EarthControls extends EventDispatcher {
 		};
 
 		let onMouseDown = e => {
-			let I = Utils.getMousePointCloudIntersection(
+			let I = getMousePointCloudIntersection(
 				e.mouse, 
 				this.scene.getActiveCamera(), 
 				this.viewer, 
@@ -168,7 +168,7 @@ export class EarthControls extends EventDispatcher {
 	zoomToLocation(mouse){
 		let camera = this.scene.getActiveCamera();
 		
-		let I = Utils.getMousePointCloudIntersection(
+		let I = getMousePointCloudIntersection(
 			mouse,
 			camera,
 			this.viewer,
@@ -183,7 +183,7 @@ export class EarthControls extends EventDispatcher {
 			let minimumJumpDistance = 0.2;
 
 			let domElement = this.renderer.domElement;
-			let ray = Utils.mouseToRay(mouse, camera, domElement.clientWidth, domElement.clientHeight);
+			let ray = mouseToRay(mouse, camera, domElement.clientWidth, domElement.clientHeight);
 
 			let nodes = I.pointcloud.nodesOnRay(I.pointcloud.visibleNodes, ray);
 			let lastNode = nodes[nodes.length - 1];
@@ -236,7 +236,7 @@ export class EarthControls extends EventDispatcher {
 		
 		// compute zoom
 		if (this.wheelDelta !== 0) {
-			let I = Utils.getMousePointCloudIntersection(
+			let I = getMousePointCloudIntersection(
 				this.viewer.inputHandler.mouse, 
 				this.scene.getActiveCamera(), 
 				this.viewer, 
@@ -273,7 +273,7 @@ export class EarthControls extends EventDispatcher {
 			let distance = this.pivotIndicator.position.distanceTo(view.position);
 			let pixelwidth = this.renderer.domElement.clientwidth;
 			let pixelHeight = this.renderer.domElement.clientHeight;
-			let pr = Utils.projectedRadius(1, camera, distance, pixelwidth, pixelHeight);
+			let pr = projectedRadius(1, camera, distance, pixelwidth, pixelHeight);
 			let scale = (10 / pr);
 			this.pivotIndicator.scale.set(scale, scale, scale);
 		}

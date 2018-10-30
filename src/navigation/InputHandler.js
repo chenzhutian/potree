@@ -6,7 +6,7 @@
 
 
 import {KeyCodes} from "../KeyCodes";
-import {Utils} from "../utils";
+import {getMousePointCloudIntersection, mouseToRay} from "../utils";
 import {EventDispatcher} from "../EventDispatcher.js";
 
 export class InputHandler extends EventDispatcher {
@@ -534,7 +534,7 @@ export class InputHandler extends EventDispatcher {
 	}
 
 	getMousePointCloudIntersection (mouse) {
-		return Utils.getMousePointCloudIntersection(
+		return getMousePointCloudIntersection(
 			this.mouse, 
 			this.scene.getActiveCamera(), 
 			this.viewer, 
@@ -661,7 +661,7 @@ export class InputHandler extends EventDispatcher {
 		}
 		
 		let camera = this.scene.getActiveCamera();
-		let ray = Utils.mouseToRay(this.mouse, camera, this.domElement.clientWidth, this.domElement.clientHeight);
+		let ray = mouseToRay(this.mouse, camera, this.domElement.clientWidth, this.domElement.clientHeight);
 		
 		let raycaster = new THREE.Raycaster();
 		raycaster.ray.set(ray.origin, ray.direction);

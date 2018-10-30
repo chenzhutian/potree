@@ -1,6 +1,6 @@
 
 
-import {Utils} from "../../utils.js";
+import {computeTransformedBoundingBox, toMaterialID, toMaterialName} from "../../utils.js";
 import {PointCloudTree} from "../../PointCloudTree.js";
 import {Measure} from "../../utils/Measure.js";
 import {Profile} from "../../utils/Profile.js";
@@ -318,7 +318,7 @@ export class PropertiesPanel{
 
 			let updateMaterialPanel = (event, ui) => {
 				let selectedValue = attributeSelection.selectmenu().val();
-				material.pointColorType = Utils.toMaterialID(selectedValue);
+				material.pointColorType = toMaterialID(selectedValue);
 
 				let blockWeights = $('#materials\\.composite_weight_container');
 				let blockElevation = $('#materials\\.elevation_container');
@@ -362,7 +362,7 @@ export class PropertiesPanel{
 			attributeSelection.selectmenu({change: updateMaterialPanel});
 
 			let update = () => {
-				attributeSelection.val(Utils.toMaterialName(material.pointColorType)).selectmenu('refresh');
+				attributeSelection.val(toMaterialName(material.pointColorType)).selectmenu('refresh');
 			};
 			this.addVolatileListener(material, "point_color_type_changed", update);
 
@@ -527,7 +527,7 @@ export class PropertiesPanel{
 					.find(v => v !== undefined);
 
 				pointcloud.updateMatrixWorld(true);
-				box = Utils.computeTransformedBoundingBox(box, pointcloud.matrixWorld);
+				box = computeTransformedBoundingBox(box, pointcloud.matrixWorld);
 
 				let bWidth = box.max.z - box.min.z;
 				let bMin = box.min.z - 0.2 * bWidth;

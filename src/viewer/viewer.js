@@ -8,9 +8,9 @@ import { HQSplatRenderer } from "./HQSplatRenderer.js";
 import { Scene } from "./Scene.js";
 import { ClippingTool } from "../utils/ClippingTool.js";
 import { TransformationTool } from "../utils/TransformationTool.js";
-import { Utils } from "../utils.js";
-import { MapView } from "./map.js";
-import { ProfileWindow, ProfileWindowController } from "./profile.js";
+import { getParameterByName, projectedRadiusOrtho, loadSkybox } from "../utils.js";
+// import { MapView } from "./map.js";
+// import { ProfileWindow, ProfileWindowController } from "./profile.js";
 import { BoxVolume } from "../utils/Volume.js";
 import { Features } from "../Features.js";
 import { Message } from "../utils/Message.js";
@@ -379,7 +379,7 @@ export class Viewer extends EventDispatcher {
 		}
 
 		if (bg === "skybox") {
-			this.skybox = Utils.loadSkybox(new URL(Potree.resourcePath + '/textures/skybox2/').href);
+			this.skybox = loadSkybox(new URL(Potree.resourcePath + '/textures/skybox2/').href);
 		}
 
 		this.background = bg;
@@ -774,37 +774,37 @@ export class Viewer extends EventDispatcher {
 	}
 
 	loadSettingsFromURL() {
-		if (Utils.getParameterByName("pointSize")) {
-			this.setPointSize(parseFloat(Utils.getParameterByName("pointSize")));
+		if (getParameterByName("pointSize")) {
+			this.setPointSize(parseFloat(getParameterByName("pointSize")));
 		}
 
-		if (Utils.getParameterByName("FOV")) {
-			this.setFOV(parseFloat(Utils.getParameterByName("FOV")));
+		if (getParameterByName("FOV")) {
+			this.setFOV(parseFloat(getParameterByName("FOV")));
 		}
 
-		if (Utils.getParameterByName("opacity")) {
-			this.setOpacity(parseFloat(Utils.getParameterByName("opacity")));
+		if (getParameterByName("opacity")) {
+			this.setOpacity(parseFloat(getParameterByName("opacity")));
 		}
 
-		if (Utils.getParameterByName("edlEnabled")) {
-			let enabled = Utils.getParameterByName("edlEnabled") === "true";
+		if (getParameterByName("edlEnabled")) {
+			let enabled = getParameterByName("edlEnabled") === "true";
 			this.setEDLEnabled(enabled);
 		}
 
-		if (Utils.getParameterByName('edlRadius')) {
-			this.setEDLRadius(parseFloat(Utils.getParameterByName('edlRadius')));
+		if (getParameterByName('edlRadius')) {
+			this.setEDLRadius(parseFloat(getParameterByName('edlRadius')));
 		}
 
-		if (Utils.getParameterByName('edlStrength')) {
-			this.setEDLStrength(parseFloat(Utils.getParameterByName('edlStrength')));
+		if (getParameterByName('edlStrength')) {
+			this.setEDLStrength(parseFloat(getParameterByName('edlStrength')));
 		}
 
-		if (Utils.getParameterByName('pointBudget')) {
-			this.setPointBudget(parseFloat(Utils.getParameterByName('pointBudget')));
+		if (getParameterByName('pointBudget')) {
+			this.setPointBudget(parseFloat(getParameterByName('pointBudget')));
 		}
 
-		if (Utils.getParameterByName('showBoundingBox')) {
-			let enabled = Utils.getParameterByName('showBoundingBox') === 'true';
+		if (getParameterByName('showBoundingBox')) {
+			let enabled = getParameterByName('showBoundingBox') === 'true';
 			if (enabled) {
 				this.setShowBoundingBox(true);
 			} else {
@@ -812,23 +812,23 @@ export class Viewer extends EventDispatcher {
 			}
 		}
 
-		if (Utils.getParameterByName('material')) {
-			let material = Utils.getParameterByName('material');
+		if (getParameterByName('material')) {
+			let material = getParameterByName('material');
 			this.setMaterial(material);
 		}
 
-		if (Utils.getParameterByName('pointSizing')) {
-			let sizing = Utils.getParameterByName('pointSizing');
+		if (getParameterByName('pointSizing')) {
+			let sizing = getParameterByName('pointSizing');
 			this.setPointSizing(sizing);
 		}
 
-		if (Utils.getParameterByName('quality')) {
-			let quality = Utils.getParameterByName('quality');
+		if (getParameterByName('quality')) {
+			let quality = getParameterByName('quality');
 			this.setQuality(quality);
 		}
 
-		if (Utils.getParameterByName('position')) {
-			let value = Utils.getParameterByName('position');
+		if (getParameterByName('position')) {
+			let value = getParameterByName('position');
 			value = value.replace('[', '').replace(']', '');
 			let tokens = value.split(';');
 			let x = parseFloat(tokens[0]);
@@ -838,8 +838,8 @@ export class Viewer extends EventDispatcher {
 			this.scene.view.position.set(x, y, z);
 		}
 
-		if (Utils.getParameterByName('target')) {
-			let value = Utils.getParameterByName('target');
+		if (getParameterByName('target')) {
+			let value = getParameterByName('target');
 			value = value.replace('[', '').replace(']', '');
 			let tokens = value.split(';');
 			let x = parseFloat(tokens[0]);
@@ -849,13 +849,13 @@ export class Viewer extends EventDispatcher {
 			this.scene.view.lookAt(new THREE.Vector3(x, y, z));
 		}
 
-		if (Utils.getParameterByName('background')) {
-			let value = Utils.getParameterByName('background');
+		if (getParameterByName('background')) {
+			let value = getParameterByName('background');
 			this.setBackground(value);
 		}
 
-		// if(Utils.getParameterByName("elevationRange")){
-		//	let value = Utils.getParameterByName("elevationRange");
+		// if(getParameterByName("elevationRange")){
+		//	let value = getParameterByName("elevationRange");
 		//	value = value.replace("[", "").replace("]", "");
 		//	let tokens = value.split(";");
 		//	let x = parseFloat(tokens[0]);
@@ -968,19 +968,19 @@ export class Viewer extends EventDispatcher {
 			imgMapToggle.id = 'potree_map_toggle';
 			viewer.renderArea.insertBefore(imgMapToggle, viewer.renderArea.children[0]);
 
-			this.mapView = new MapView(this);
-			this.mapView.init();
+			// this.mapView = new MapView(this);
+			// this.mapView.init();
 
-			i18n.init({
-				lng: 'en',
-				resGetPath: Potree.resourcePath + '/lang/__lng__/__ns__.json',
-				preload: ['en', 'fr', 'de', 'jp'],
-				getAsync: true,
-				debug: false
-			}, function (t) {
-				// Start translation once everything is loaded
-				$('body').i18n();
-			});
+			// i18n.init({
+			// 	lng: 'en',
+			// 	resGetPath: Potree.resourcePath + '/lang/__lng__/__ns__.json',
+			// 	preload: ['en', 'fr', 'de', 'jp'],
+			// 	getAsync: true,
+			// 	debug: false
+			// }, function (t) {
+			// 	// Start translation once everything is loaded
+			// 	$('body').i18n();
+			// });
 
 			$(() => {
 				//initSidebar(this);
@@ -991,19 +991,28 @@ export class Viewer extends EventDispatcher {
 				//	$(callback);
 				//}
 
-				let elProfile = $('<div>').load(new URL(Potree.scriptPath + '/profile.html').href, () => {
-					$(document.body).append(elProfile.children());
-					this.profileWindow = new ProfileWindow(this);
-					this.profileWindowController = new ProfileWindowController(this);
+				// let elProfile = $('<div>').load(new URL(Potree.scriptPath + '/profile.html').href, () => {
+				// 	$(document.body).append(elProfile.children());
+				// 	this.profileWindow = new ProfileWindow(this);
+				// 	this.profileWindowController = new ProfileWindowController(this);
 
-					$('#profile_window').draggable({
-						handle: $('#profile_titlebar'),
-						containment: $(document.body)
-					});
-					$('#profile_window').resizable({
-						containment: $(document.body),
-						handles: 'n, e, s, w'
-					});
+				// 	$('#profile_window').draggable({
+				// 		handle: $('#profile_titlebar'),
+				// 		containment: $(document.body)
+				// 	});
+				// 	$('#profile_window').resizable({
+				// 		containment: $(document.body),
+				// 		handles: 'n, e, s, w'
+				// 	});
+
+				// 	$(() => {
+				// 		this.guiLoaded = true;
+				// 		for (let task of this.guiLoadTasks) {
+				// 			task();
+				// 		}
+
+				// 	});
+				// });
 
 					$(() => {
 						this.guiLoaded = true;
@@ -1012,7 +1021,6 @@ export class Viewer extends EventDispatcher {
 						}
 
 					});
-				});
 
 
 
@@ -1023,8 +1031,8 @@ export class Viewer extends EventDispatcher {
 	}
 
 	setLanguage(lang) {
-		i18n.setLng(lang);
-		$('body').i18n();
+		// i18n.setLng(lang);
+		// $('body').i18n();
 	}
 
 	setServer(server) {
@@ -1151,7 +1159,7 @@ export class Viewer extends EventDispatcher {
 					let projFactor = 0.5 * renderAreaHeight / (slope * distance);
 					screenSize = radius * projFactor;
 				} else {
-					screenSize = Utils.projectedRadiusOrtho(radius, viewer.scene.cameraO.projectionMatrix, renderAreaWidth, renderAreaHeight);
+					screenSize = projectedRadiusOrtho(radius, viewer.scene.cameraO.projectionMatrix, renderAreaWidth, renderAreaHeight);
 				}
 			}
 
@@ -1213,7 +1221,7 @@ export class Viewer extends EventDispatcher {
 		//	if(window.urlToggle > 1){
 		//		{
 		//
-		//			let currentValue = Utils.getParameterByName("position");
+		//			let currentValue = getParameterByName("position");
 		//			let strPosition = "["
 		//				+ this.scene.view.position.x.toFixed(3) + ";"
 		//				+ this.scene.view.position.y.toFixed(3) + ";"
@@ -1225,7 +1233,7 @@ export class Viewer extends EventDispatcher {
 		//		}
 		//
 		//		{
-		//			let currentValue = Utils.getParameterByName("target");
+		//			let currentValue = getParameterByName("target");
 		//			let pivot = this.scene.view.getPivot();
 		//			let strTarget = "["
 		//				+ pivot.x.toFixed(3) + ";"

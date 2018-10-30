@@ -1,7 +1,7 @@
 
 
 import {Profile} from "./Profile.js";
-import {Utils} from "../utils.js";
+import {projectedRadius} from "../utils.js";
 import { EventDispatcher } from "../EventDispatcher.js";
 
 
@@ -73,7 +73,7 @@ export class ProfileTool extends EventDispatcher {
 					let camera = this.viewer.scene.getActiveCamera();
 					let distance = camera.position.distanceTo(profile.points[0]);
 					let clientSize = this.viewer.renderer.getSize();
-					let pr = Utils.projectedRadius(1, camera, distance, clientSize.width, clientSize.height);
+					let pr = projectedRadius(1, camera, distance, clientSize.width, clientSize.height);
 					let width = (10 / pr);
 
 					profile.setWidth(width);
@@ -118,7 +118,7 @@ export class ProfileTool extends EventDispatcher {
 		for(let profile of profiles){
 			for(let sphere of profile.spheres){				
 				let distance = camera.position.distanceTo(sphere.getWorldPosition(new THREE.Vector3()));
-				let pr = Utils.projectedRadius(1, camera, distance, clientWidth, clientHeight);
+				let pr = projectedRadius(1, camera, distance, clientWidth, clientHeight);
 				let scale = (15 / pr);
 				sphere.scale.set(scale, scale, scale);
 			}

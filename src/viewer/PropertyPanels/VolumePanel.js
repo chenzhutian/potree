@@ -1,5 +1,5 @@
 
-import {Utils} from "../../utils.js";
+import {clipboardCopy, addCommas} from "../../utils.js";
 import {Volume, BoxVolume, SphereVolume} from "../../utils/Volume.js";
 
 import {MeasurePanel} from "./MeasurePanel.js";
@@ -116,7 +116,7 @@ export class VolumePanel extends MeasurePanel{
 		this.elCopyRotation.click( () => {
 			let rotation = this.measurement.rotation.toArray().slice(0, 3);
 			let msg = rotation.map(c => c.toFixed(3)).join(", ");
-			Utils.clipboardCopy(msg);
+			clipboardCopy(msg);
 
 			this.viewer.postMessage(
 					`Copied value to clipboard: <br>'${msg}'`,
@@ -127,7 +127,7 @@ export class VolumePanel extends MeasurePanel{
 		this.elCopyScale.click( () => {
 			let scale = this.measurement.scale.toArray();
 			let msg = scale.map(c => c.toFixed(3)).join(", ");
-			Utils.clipboardCopy(msg);
+			clipboardCopy(msg);
 
 			this.viewer.postMessage(
 					`Copied value to clipboard: <br>'${msg}'`,
@@ -363,7 +363,7 @@ export class VolumePanel extends MeasurePanel{
 
 		{
 			let dimensions = this.measurement.scale.toArray();
-			dimensions = dimensions.map(v => Utils.addCommas(v.toFixed(2)));
+			dimensions = dimensions.map(v => addCommas(v.toFixed(2)));
 
 			let elLength = this.elContent.find(`#cell_length`);
 			let elWidth = this.elContent.find(`#cell_width`);
@@ -377,7 +377,7 @@ export class VolumePanel extends MeasurePanel{
 		{
 			let elVolume = this.elContent.find(`#measurement_volume`);
 			let volume = this.measurement.getVolume();
-			elVolume.html(Utils.addCommas(volume.toFixed(2)));
+			elVolume.html(addCommas(volume.toFixed(2)));
 		}
 
 		this.elCheckClip.prop("checked", this.measurement.clip);

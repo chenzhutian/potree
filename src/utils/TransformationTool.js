@@ -1,6 +1,6 @@
 
 
-import {Utils} from "../utils.js";
+import {moveTo, mouseToRay, projectedRadius} from "../utils.js";
 
 export class TransformationTool {
 	constructor(viewer) {
@@ -285,7 +285,7 @@ export class TransformationTool {
 				let newCamPos = alignment;
 				let newCamTarget = selected.getWorldPosition(new THREE.Vector3());
 
-				Utils.moveTo(this.viewer.scene, newCamPos, newCamTarget);
+				moveTo(this.viewer.scene, newCamPos, newCamTarget);
 			});
 
 			pickSphere.addEventListener("mouseover", e => {
@@ -473,7 +473,7 @@ export class TransformationTool {
 
 		let mouse = drag.end;
 		let domElement = this.viewer.renderer.domElement;
-		let ray = Utils.mouseToRay(mouse, camera, domElement.clientWidth, domElement.clientHeight);
+		let ray = mouseToRay(mouse, camera, domElement.clientWidth, domElement.clientHeight);
 		
 		let I = ray.intersectPlane(drag.dragPlane, new THREE.Vector3());
 
@@ -539,7 +539,7 @@ export class TransformationTool {
 		{
 			let mouse = drag.end;
 			let domElement = this.viewer.renderer.domElement;
-			let ray = Utils.mouseToRay(mouse, camera, domElement.clientWidth, domElement.clientHeight);
+			let ray = mouseToRay(mouse, camera, domElement.clientWidth, domElement.clientHeight);
 			let I = ray.intersectPlane(drag.dragPlane, new THREE.Vector3());
 
 			if (I) {
@@ -602,7 +602,7 @@ export class TransformationTool {
 		{
 			let mouse = drag.end;
 			let domElement = this.viewer.renderer.domElement;
-			let ray = Utils.mouseToRay(mouse, camera, domElement.clientWidth, domElement.clientHeight);
+			let ray = mouseToRay(mouse, camera, domElement.clientWidth, domElement.clientHeight);
 			let I = ray.intersectPlane(drag.dragPlane, new THREE.Vector3());
 
 			if (I) {
@@ -763,7 +763,7 @@ export class TransformationTool {
 
 					let handlePos = node.getWorldPosition(new THREE.Vector3());
 					let distance = handlePos.distanceTo(camera.position);
-					let pr = Utils.projectedRadius(1, camera, distance, domElement.clientWidth, domElement.clientHeight);
+					let pr = projectedRadius(1, camera, distance, domElement.clientWidth, domElement.clientHeight);
 
 					let ws = node.parent.getWorldScale(new THREE.Vector3());
 
@@ -838,7 +838,7 @@ export class TransformationTool {
 				}
 
 				{
-					let ray = Utils.mouseToRay(mouse, camera, domElement.clientWidth, domElement.clientHeight);
+					let ray = mouseToRay(mouse, camera, domElement.clientWidth, domElement.clientHeight);
 					let raycaster = new THREE.Raycaster(ray.origin, ray.direction);
 					let intersects = raycaster.intersectObjects(this.pickVolumes.filter(v => v.visible), true);
 

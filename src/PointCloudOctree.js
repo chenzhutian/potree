@@ -1,7 +1,7 @@
 
 import {PointCloudTree, PointCloudTreeNode} from "./PointCloudTree.js";
 import {PointCloudOctreeGeometryNode} from "./PointCloudOctreeGeometry.js";
-import {Utils} from "./utils.js";
+import {computeTransformedBoundingBox, getValid} from "./utils.js";
 import {PointCloudMaterial} from "./materials/PointCloudMaterial.js";
 import {PointColorType} from './defines'
 
@@ -131,7 +131,7 @@ export class PointCloudOctree extends PointCloudTree {
 				.find(v => v !== undefined);
 
 			this.updateMatrixWorld(true);
-			box = Utils.computeTransformedBoundingBox(box, this.matrixWorld);
+			box = computeTransformedBoundingBox(box, this.matrixWorld);
 
 			let bMin = box.min.z;
 			let bMax = box.max.z;
@@ -449,7 +449,7 @@ export class PointCloudOctree extends PointCloudTree {
 		this.updateMatrixWorld(true);
 		let box = this.boundingBox;
 		let transform = this.matrixWorld;
-		let tBox = Utils.computeTransformedBoundingBox(box, transform);
+		let tBox = computeTransformedBoundingBox(box, transform);
 		this.position.set(0, 0, 0).sub(tBox.getCenter(new THREE.Vector3()));
 	};
 
@@ -457,7 +457,7 @@ export class PointCloudOctree extends PointCloudTree {
 		this.updateMatrixWorld(true);
 		let box = this.boundingBox;
 		let transform = this.matrixWorld;
-		let tBox = Utils.computeTransformedBoundingBox(box, transform);
+		let tBox = computeTransformedBoundingBox(box, transform);
 		this.position.y += -tBox.min.y;
 	};
 
@@ -465,7 +465,7 @@ export class PointCloudOctree extends PointCloudTree {
 		this.updateMatrixWorld(true);
 		let box = this.boundingBox;
 		let transform = this.matrixWorld;
-		let tBox = Utils.computeTransformedBoundingBox(box, transform);
+		let tBox = computeTransformedBoundingBox(box, transform);
 
 		return tBox;
 	};
@@ -610,18 +610,18 @@ export class PointCloudOctree extends PointCloudTree {
 		
 		performance.mark("pick-start");
 
-		let pickWindowSize = Utils.getValid(params.pickWindowSize, 17);
-		let pickOutsideClipRegion = Utils.getValid(params.pickOutsideClipRegion, false);
+		let pickWindowSize = getValid(params.pickWindowSize, 17);
+		let pickOutsideClipRegion = getValid(params.pickOutsideClipRegion, false);
 
 		pickWindowSize = 65;
 
 		let size = renderer.getSize();
 
-		let width = Math.ceil(Utils.getValid(params.width, size.width));
-		let height = Math.ceil(Utils.getValid(params.height, size.height));
+		let width = Math.ceil(getValid(params.width, size.width));
+		let height = Math.ceil(getValid(params.height, size.height));
 
-		let pointSizeType = Utils.getValid(params.pointSizeType, this.material.pointSizeType);
-		let pointSize = Utils.getValid(params.pointSize, this.material.size);
+		let pointSizeType = getValid(params.pointSizeType, this.material.pointSizeType);
+		let pointSize = getValid(params.pointSize, this.material.size);
 
 		let nodes = this.nodesOnRay(this.visibleNodes, ray);
 
@@ -765,28 +765,28 @@ export class PointCloudOctree extends PointCloudTree {
 			}
 		}
 		
-		// DEBUG: show panel with pick image
-		{ 
-			let img = Utils.pixelsArrayToImage(buffer, w, h);
-			let screenshot = img.src;
+		// // DEBUG: show panel with pick image
+		// { 
+		// 	let img = Utils.pixelsArrayToImage(buffer, w, h);
+		// 	let screenshot = img.src;
 		
-			if(!this.debugDIV){
-				this.debugDIV = $(`
-					<div id="pickDebug"
-					style="position: absolute;
-					right: 400px; width: 300px;
-					bottom: 44px; width: 300px;
-					z-index: 1000;
-					"></div>`);
-				$(document.body).append(this.debugDIV);
-			}
+		// 	if(!this.debugDIV){
+		// 		this.debugDIV = $(`
+		// 			<div id="pickDebug"
+		// 			style="position: absolute;
+		// 			right: 400px; width: 300px;
+		// 			bottom: 44px; width: 300px;
+		// 			z-index: 1000;
+		// 			"></div>`);
+		// 		$(document.body).append(this.debugDIV);
+		// 	}
 		
-			this.debugDIV.empty();
-			this.debugDIV.append($(`<img src="${screenshot}"
-				style="transform: scaleY(-1); width: 300px"/>`));
-			// $(this.debugWindow.document).append($(`<img src="${screenshot}"/>`));
-			// this.debugWindow.document.write('<img src="'+screenshot+'"/>');
-		}
+		// 	this.debugDIV.empty();
+		// 	this.debugDIV.append($(`<img src="${screenshot}"
+		// 		style="transform: scaleY(-1); width: 300px"/>`));
+		// 	// $(this.debugWindow.document).append($(`<img src="${screenshot}"/>`));
+		// 	// this.debugWindow.document.write('<img src="'+screenshot+'"/>');
+		// }
 		
 
 		for(let hit of hits){

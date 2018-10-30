@@ -1,6 +1,6 @@
 
 
-import {Utils} from "../utils.js";
+import {getValid, generateDataTexture} from "../utils.js";
 import {Gradients} from "./Gradients.js";
 import {Shaders} from '__buildFolder__/shaders/shaders.js'
 import {ClassificationScheme} from "./ClassificationScheme.js";
@@ -16,14 +16,14 @@ export class PointCloudMaterial extends THREE.RawShaderMaterial {
 	constructor (parameters = {}) {
 		super();
 
-		this.visibleNodesTexture = Utils.generateDataTexture(2048, 1, new THREE.Color(0xffffff));
+		this.visibleNodesTexture = generateDataTexture(2048, 1, new THREE.Color(0xffffff));
 		this.visibleNodesTexture.minFilter = THREE.NearestFilter;
 		this.visibleNodesTexture.magFilter = THREE.NearestFilter;
 
-		let pointSize = Utils.getValid(parameters.size, 1.0);
-		let minSize = Utils.getValid(parameters.minSize, 2.0);
-		let maxSize = Utils.getValid(parameters.maxSize, 50.0);
-		let treeType = Utils.getValid(parameters.treeType, TreeType.OCTREE);
+		let pointSize = getValid(parameters.size, 1.0);
+		let minSize = getValid(parameters.minSize, 2.0);
+		let maxSize = getValid(parameters.maxSize, 50.0);
+		let treeType = getValid(parameters.treeType, TreeType.OCTREE);
 
 		this._pointSizeType = PointSizeType.FIXED;
 		this._shape = PointShape.SQUARE;

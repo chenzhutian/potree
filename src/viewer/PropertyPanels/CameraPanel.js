@@ -1,5 +1,5 @@
 
-import {Utils} from "../../utils.js";
+import {clipboardCopy, addCommas} from "../../utils.js";
 
 export class CameraPanel{
 	constructor(viewer, propertiesPanel){
@@ -44,7 +44,7 @@ export class CameraPanel{
 		this.elCopyPosition.click( () => {
 			let pos = this.viewer.scene.getActiveCamera().position.toArray();
 			let msg = pos.map(c => c.toFixed(3)).join(", ");
-			Utils.clipboardCopy(msg);
+			clipboardCopy(msg);
 
 			this.viewer.postMessage(
 					`Copied value to clipboard: <br>'${msg}'`,
@@ -55,7 +55,7 @@ export class CameraPanel{
 		this.elCopyTarget.click( () => {
 			let pos = this.viewer.scene.view.getPivot().toArray();
 			let msg = pos.map(c => c.toFixed(3)).join(", ");
-			Utils.clipboardCopy(msg);
+			clipboardCopy(msg);
 
 			this.viewer.postMessage(
 					`Copied value to clipboard: <br>'${msg}'`,
@@ -73,12 +73,12 @@ export class CameraPanel{
 		let camera = this.viewer.scene.getActiveCamera();
 		let view = this.viewer.scene.view;
 
-		let pos = camera.position.toArray().map(c => Utils.addCommas(c.toFixed(3)));
+		let pos = camera.position.toArray().map(c => addCommas(c.toFixed(3)));
 		this.elContent.find("#camera_position_x").html(pos[0]);
 		this.elContent.find("#camera_position_y").html(pos[1]);
 		this.elContent.find("#camera_position_z").html(pos[2]);
 
-		let target = view.getPivot().toArray().map(c => Utils.addCommas(c.toFixed(3)));
+		let target = view.getPivot().toArray().map(c => addCommas(c.toFixed(3)));
 		this.elContent.find("#camera_target_x").html(target[0]);
 		this.elContent.find("#camera_target_y").html(target[1]);
 		this.elContent.find("#camera_target_z").html(target[2]);

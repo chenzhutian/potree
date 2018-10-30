@@ -15,7 +15,7 @@
 
 
 import {MOUSE} from "../defines.js";
-import {Utils} from "../utils.js";
+import {getMousePointCloudIntersection, mouseToRay} from "../utils.js";
 import {EventDispatcher} from "../EventDispatcher.js";
 
 
@@ -118,7 +118,7 @@ export class FirstPersonControls extends EventDispatcher {
 	zoomToLocation(mouse){
 		let camera = this.scene.getActiveCamera();
 		
-		let I = Utils.getMousePointCloudIntersection(
+		let I = getMousePointCloudIntersection(
 			mouse,
 			camera,
 			this.viewer,
@@ -133,7 +133,7 @@ export class FirstPersonControls extends EventDispatcher {
 			let minimumJumpDistance = 0.2;
 
 			let domElement = this.renderer.domElement;
-			let ray = Utils.mouseToRay(mouse, camera, domElement.clientWidth, domElement.clientHeight);
+			let ray = mouseToRay(mouse, camera, domElement.clientWidth, domElement.clientHeight);
 
 			let nodes = I.pointcloud.nodesOnRay(I.pointcloud.visibleNodes, ray);
 			let lastNode = nodes[nodes.length - 1];

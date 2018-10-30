@@ -3,9 +3,9 @@
 import {PointCloudOctreeGeometry, PointCloudOctreeGeometryNode} from "../PointCloudOctreeGeometry.js";
 import {Version} from "../Version.js";
 import {XHRFactory} from "../XHRFactory.js";
-import {LasLazLoader} from "./LasLazLoader.js";
+// import {LasLazLoader} from "./LasLazLoader.js";
 import {BinaryLoader} from "./BinaryLoader.js";
-import {Utils} from "../utils.js";
+import {createChildAABB} from "../utils.js";
 import {PointAttribute, PointAttributes} from "./PointAttributes.js";
 
 export class POCLoader {
@@ -59,14 +59,14 @@ export class POCLoader {
 					pco.boundingSphere = boundingBox.getBoundingSphere(new THREE.Sphere());
 					pco.tightBoundingSphere = tightBoundingBox.getBoundingSphere(new THREE.Sphere());
 					pco.offset = offset;
-					if (fMno.pointAttributes === 'LAS') {
-						pco.loader = new LasLazLoader(fMno.version);
-					} else if (fMno.pointAttributes === 'LAZ') {
-						pco.loader = new LasLazLoader(fMno.version);
-					} else {
+					// if (fMno.pointAttributes === 'LAS') {
+					// 	pco.loader = new LasLazLoader(fMno.version);
+					// } else if (fMno.pointAttributes === 'LAZ') {
+					// 	pco.loader = new LasLazLoader(fMno.version);
+					// } else {
 						pco.loader = new BinaryLoader(fMno.version, boundingBox, fMno.scale);
 						pco.pointAttributes = new PointAttributes(pco.pointAttributes);
-					}
+					// }
 
 					let nodes = {};
 
@@ -97,7 +97,7 @@ export class POCLoader {
 							let parentNode = nodes[parentName];
 							let level = name.length - 1;
 							//let boundingBox = POCLoader.createChildAABB(parentNode.boundingBox, index);
-							let boundingBox = Utils.createChildAABB(parentNode.boundingBox, index);
+							let boundingBox = createChildAABB(parentNode.boundingBox, index);
 
 							let node = new PointCloudOctreeGeometryNode(name, pco, boundingBox);
 							node.level = level;

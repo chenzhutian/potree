@@ -1,7 +1,7 @@
 
 
 import {Volume, BoxVolume} from "./Volume.js";
-import {Utils} from "../utils.js";
+import {getMousePointCloudIntersection, addCommas, projectedRadius} from "../utils.js";
 import { EventDispatcher } from "../EventDispatcher.js";
 
 export class VolumeTool extends EventDispatcher{
@@ -83,7 +83,7 @@ export class VolumeTool extends EventDispatcher{
 		let drag = e => {
 			let camera = this.viewer.scene.getActiveCamera();
 			
-			let I = Utils.getMousePointCloudIntersection(
+			let I = getMousePointCloudIntersection(
 				e.drag.end, 
 				this.viewer.scene.getActiveCamera(), 
 				this.viewer, 
@@ -138,13 +138,13 @@ export class VolumeTool extends EventDispatcher{
 			{
 
 				let distance = label.position.distanceTo(camera.position);
-				let pr = Utils.projectedRadius(1, camera, distance, clientWidth, clientHeight);
+				let pr = projectedRadius(1, camera, distance, clientWidth, clientHeight);
 
 				let scale = (70 / pr);
 				label.scale.set(scale, scale, scale);
 			}
 
-			let text = Utils.addCommas(volume.getVolume().toFixed(3)) + '\u00B3';
+			let text = addCommas(volume.getVolume().toFixed(3)) + '\u00B3';
 			label.setText(text);
 		}
 	}

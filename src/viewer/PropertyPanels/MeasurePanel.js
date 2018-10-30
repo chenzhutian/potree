@@ -1,6 +1,6 @@
 
 
-import {Utils} from "../../utils.js";
+import {addCommas, clipboardCopy} from "../../utils.js";
 
 export class MeasurePanel{
 
@@ -27,9 +27,9 @@ export class MeasurePanel{
 		let copyIconPath = Potree.resourcePath + '/icons/copy.svg';
 
 		for (let point of points) {
-			let x = Utils.addCommas(point.x.toFixed(3));
-			let y = Utils.addCommas(point.y.toFixed(3));
-			let z = Utils.addCommas(point.z.toFixed(3));
+			let x = addCommas(point.x.toFixed(3));
+			let y = addCommas(point.y.toFixed(3));
+			let z = addCommas(point.z.toFixed(3));
 
 			let row = $(`
 				<tr>
@@ -45,7 +45,7 @@ export class MeasurePanel{
 			this.elCopy = row.find("img[name=copy]");
 			this.elCopy.click( () => {
 				let msg = point.toArray().map(c => c.toFixed(3)).join(", ");
-				Utils.clipboardCopy(msg);
+				clipboardCopy(msg);
 
 				this.viewer.postMessage(
 					`Copied value to clipboard: <br>'${msg}'`,
