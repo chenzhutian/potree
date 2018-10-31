@@ -4,7 +4,7 @@ import { ClipTask, ClipMethod, CameraMode } from "../defines.js";
 import { Renderer } from "../PotreeRenderer.js";
 import { PotreeRenderer } from "./PotreeRenderer.js";
 import { EDLRenderer } from "./EDLRenderer.js";
-import { HQSplatRenderer } from "./HQSplatRenderer.js";
+// import { HQSplatRenderer } from "./HQSplatRenderer.js";
 import { Scene } from "./Scene.js";
 import { ClippingTool } from "../utils/ClippingTool.js";
 import { TransformationTool } from "../utils/TransformationTool.js";
@@ -971,16 +971,16 @@ export class Viewer extends EventDispatcher {
 			// this.mapView = new MapView(this);
 			// this.mapView.init();
 
-			// i18n.init({
-			// 	lng: 'en',
-			// 	resGetPath: Potree.resourcePath + '/lang/__lng__/__ns__.json',
-			// 	preload: ['en', 'fr', 'de', 'jp'],
-			// 	getAsync: true,
-			// 	debug: false
-			// }, function (t) {
-			// 	// Start translation once everything is loaded
-			// 	$('body').i18n();
-			// });
+			i18n.init({
+				lng: 'en',
+				resGetPath: Potree.resourcePath + '/lang/__lng__/__ns__.json',
+				preload: ['en', 'fr', 'de', 'jp'],
+				getAsync: true,
+				debug: false
+			}, function (t) {
+				// Start translation once everything is loaded
+				$('body').i18n();
+			});
 
 			$(() => {
 				//initSidebar(this);
@@ -1031,8 +1031,8 @@ export class Viewer extends EventDispatcher {
 	}
 
 	setLanguage(lang) {
-		// i18n.setLng(lang);
-		// $('body').i18n();
+		i18n.setLng(lang);
+		$('body').i18n();
 	}
 
 	setServer(server) {
@@ -1600,13 +1600,15 @@ export class Viewer extends EventDispatcher {
 					this.repRenderer = new RepRenderer(this);
 				}
 				this.repRenderer.render(this.renderer);
-			} else if (this.useHQ) {
-				if (!this.hqRenderer) {
-					this.hqRenderer = new HQSplatRenderer(this);
-				}
-				this.hqRenderer.useEDL = this.useEDL;
-				this.hqRenderer.render(this.renderer);
-			} else {
+			} 
+			// else if (this.useHQ) {
+			// 	if (!this.hqRenderer) {
+			// 		this.hqRenderer = new HQSplatRenderer(this);
+			// 	}
+			// 	this.hqRenderer.useEDL = this.useEDL;
+			// 	this.hqRenderer.render(this.renderer);
+			// } 
+			else {
 				if (this.useEDL && Features.SHADER_EDL.isSupported()) {
 					if (!this.edlRenderer) {
 						this.edlRenderer = new EDLRenderer(this);

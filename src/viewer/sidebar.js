@@ -54,9 +54,9 @@ export class Sidebar{
 		this.initToolbar();
 		// this.initScene();
 		this.initNavigation();
-		this.initFilters();
+		//this.initFilters();
 		this.initClippingTool();
-		this.initSettings();
+		//this.initSettings();
 		
 		$('#potree_version_number').html(Potree.version.major + "." + Potree.version.minor + Potree.version.suffix);
 		$('.perfect_scrollbar').perfectScrollbar();
@@ -1090,37 +1090,37 @@ export class Sidebar{
 
 	initSettings(){
 
-		{
-			$('#sldMinNodeSize').slider({
-				value: this.viewer.getMinNodeSize(),
-				min: 0,
-				max: 1000,
-				step: 0.01,
-				slide: (event, ui) => { this.viewer.setMinNodeSize(ui.value); }
-			});
+		// {
+		// 	$('#sldMinNodeSize').slider({
+		// 		value: this.viewer.getMinNodeSize(),
+		// 		min: 0,
+		// 		max: 1000,
+		// 		step: 0.01,
+		// 		slide: (event, ui) => { this.viewer.setMinNodeSize(ui.value); }
+		// 	});
 
-			this.viewer.addEventListener('minnodesize_changed', (event) => {
-				$('#lblMinNodeSize').html(parseInt(this.viewer.getMinNodeSize()));
-				$('#sldMinNodeSize').slider({value: this.viewer.getMinNodeSize()});
-			});
-			$('#lblMinNodeSize').html(parseInt(this.viewer.getMinNodeSize()));
-		}
+		// 	this.viewer.addEventListener('minnodesize_changed', (event) => {
+		// 		$('#lblMinNodeSize').html(parseInt(this.viewer.getMinNodeSize()));
+		// 		$('#sldMinNodeSize').slider({value: this.viewer.getMinNodeSize()});
+		// 	});
+		// 	$('#lblMinNodeSize').html(parseInt(this.viewer.getMinNodeSize()));
+		// }
 
-		{
-			let elSplatQuality = $("#splat_quality_options");
-			elSplatQuality.selectgroup({title: "Splat Quality"});
+		// {
+		// 	let elSplatQuality = $("#splat_quality_options");
+		// 	elSplatQuality.selectgroup({title: "Splat Quality"});
 
-			elSplatQuality.find("input").click( (e) => {
-				if(e.target.value === "standard"){
-					this.viewer.useHQ = false;
-				}else if(e.target.value === "hq"){
-					this.viewer.useHQ = true;
-				}
-			});
+		// 	elSplatQuality.find("input").click( (e) => {
+		// 		if(e.target.value === "standard"){
+		// 			this.viewer.useHQ = false;
+		// 		}else if(e.target.value === "hq"){
+		// 			this.viewer.useHQ = true;
+		// 		}
+		// 	});
 
-			let currentQuality = this.viewer.useHQ ? "hq" : "standard";
-			elSplatQuality.find(`input[value=${currentQuality}]`).trigger("click");
-		}
+		// 	let currentQuality = this.viewer.useHQ ? "hq" : "standard";
+		// 	elSplatQuality.find(`input[value=${currentQuality}]`).trigger("click");
+		// }
 
 		$('#show_bounding_box').click(() => {
 			this.viewer.setShowBoundingBox($('#show_bounding_box').prop("checked"));
