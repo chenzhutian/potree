@@ -1,13 +1,15 @@
-import replace from 'rollup-plugin-replace';
-import commonjs from "rollup-plugin-commonjs";
-import resolve from 'rollup-plugin-node-resolve';
+import replace from 'rollup-plugin-replace'
+import commonjs from "rollup-plugin-commonjs"
+import resolve from 'rollup-plugin-node-resolve'
+import { plugin as analyze } from 'rollup-plugin-analyzer'
+import { terser } from "rollup-plugin-terser"
 import { relative, join } from 'path'
 const buildFolder = require('./buildConfig').buildFolder
 
 export default [
 	{
 		input: 'src/Potree.js',
-		treeshake: false,
+		treeshake: true,
 		output: {
 			file: join(buildFolder, 'potree.js'),
 			format: 'umd',
@@ -19,6 +21,8 @@ export default [
 			), buildFolder) }),
 			resolve(),
 			commonjs(),
+			// analyze(),
+			// terser({sourcemap:true})
 		]
 	}, {
 		input: 'src/workers/BinaryDecoderWorker.js',
@@ -32,6 +36,8 @@ export default [
 			replace({ __buildFolder__: buildFolder }),
 			resolve(),
 			commonjs(),
+			// analyze(),
+			terser()
 		]
 	}/*,{
 		input: 'src/workers/LASDecoderWorker.js',
