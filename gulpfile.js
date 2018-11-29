@@ -9,7 +9,7 @@ const concat = require('gulp-concat');
 const gutil = require('gulp-util');
 const through = require('through');
 const File = gutil.File;
-const connect = require('gulp-connect');
+// const connect = require('gulp-connect');
 const watch = require('glob-watcher');
 const buildFolder = require('./buildConfig').buildFolder
 
@@ -98,9 +98,9 @@ gulp.task("build", ['workers','shaders', "icons_viewer"], function(){
 
 // For development, it is now possible to use 'gulp webserver'
 // from the command line to start the server (default port is 8080)
-gulp.task('webserver', function() {
-	server = connect.server({port: 1234});
-});
+// gulp.task('webserver', function() {
+// 	server = connect.server({port: 1234});
+// });
 
 gulp.task('examples_page', function() {
 
