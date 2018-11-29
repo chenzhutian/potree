@@ -57,17 +57,14 @@ export class Sidebar{
 		//this.initFilters();
 		this.initClippingTool();
 		//this.initSettings();
-		
 		$('#potree_version_number').html(Potree.version.major + "." + Potree.version.minor + Potree.version.suffix);
 		$('.perfect_scrollbar').perfectScrollbar();
 	}
 
-		
-
 	initToolbar(){
 
 		// ANGLE
-		let elToolbar = $('#tools');
+		let elToolbar = $('#tools')
 		elToolbar.append(this.createToolIcon(
 			Potree.resourcePath + '/icons/angle.png',
 			'[title]tt.angle_measurement',

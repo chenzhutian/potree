@@ -64,26 +64,24 @@ let shaders = [
 ];
 
 
-gulp.task("workers", function(){
+gulp.task("workers", function (done) {
 
-	for(let workerName of Object.keys(workers)){
-		
+	for (let workerName of Object.keys(workers)) {
+
 		gulp.src(workers[workerName])
 			.pipe(concat(`${workerName}.js`))
 			.pipe(gulp.dest(path.join(buildFolder, 'workers')));
-		
 	}
-
+	done()
 });
 
-gulp.task("shaders", function(){
+gulp.task("shaders", function () {
 	return gulp.src(shaders)
 		.pipe(encodeShader('shaders.js', "Potree.Shader"))
 		.pipe(gulp.dest(path.join(buildFolder, 'shaders')));
 });
 
-gulp.task("build", ['workers','shaders', "icons_viewer"], function(){
-
+function output(done) {
 	gulp.src(paths.html)
 		.pipe(gulp.dest(buildFolder));
 
@@ -92,9 +90,9 @@ gulp.task("build", ['workers','shaders', "icons_viewer"], function(){
 
 	gulp.src(["LICENSE"])
 		.pipe(gulp.dest(buildFolder));
+	done()
+}
 
-	return;
-});
 
 // For development, it is now possible to use 'gulp webserver'
 // from the command line to start the server (default port is 8080)
@@ -102,7 +100,7 @@ gulp.task("build", ['workers','shaders', "icons_viewer"], function(){
 // 	server = connect.server({port: 1234});
 // });
 
-gulp.task('examples_page', function() {
+gulp.task('examples_page', function () {
 
 	let settings = JSON.parse(fs.readFileSync("examples/page.json", 'utf8'));
 	let files = fs.readdirSync("./examples");
@@ -115,16 +113,16 @@ gulp.task('examples_page', function() {
 	{
 		let urls = settings.examples.map(e => e.url);
 		let unhandled = [];
-		for(let file of files){
+		for (let file of files) {
 			let isHandled = false;
-			for(let url of urls){
-				
-				if(file.indexOf(url) !== -1){
+			for (let url of urls) {
+
+				if (file.indexOf(url) !== -1) {
 					isHandled = true;
 				}
 			}
 
-			if(!isHandled){
+			if (!isHandled) {
 				unhandled.push(file);
 			}
 		}
@@ -132,15 +130,15 @@ gulp.task('examples_page', function() {
 			.filter(file => file.indexOf(".html") > 0)
 			.filter(file => file !== "page.html");
 
-		
-		for(let file of unhandled){
+
+		for (let file of unhandled) {
 			unhandledCode += `
 				<a href="${file}" class="unhandled">${file}</a>
 			`;
 		}
 	}
 
-	for(let example of settings.examples){
+	for (let example of settings.examples) {
 		exampleCode += `
 		<a href="${example.url}" target="_blank" style="display: inline-block">
 			<div class="thumb" style="background-image: url('${example.thumb}'); ">
@@ -150,7 +148,7 @@ gulp.task('examples_page', function() {
 		`;
 	}
 
-	for(let showcaseItem of settings.showcase){
+	for (let showcaseItem of settings.showcase) {
 		showcaseCode += `<a href="${showcaseItem.url}" target="_blank" style="display: inline-block">
 			<div class="thumb" style="background-image: url('${showcaseItem.thumb}'); ">
 				<div class="thumb-label">${showcaseItem.label}</div>
@@ -159,7 +157,7 @@ gulp.task('examples_page', function() {
 		`;
 	}
 
-	for(let item of settings.thirdparty){
+	for (let item of settings.thirdparty) {
 		thirdpartyCode += `<a href="${item.url}" target="_blank" style="display: inline-block">
 			<div class="thumb" style="background-image: url('${item.thumb}'); ">
 				<div class="thumb-label">${item.label}</div>
@@ -167,7 +165,7 @@ gulp.task('examples_page', function() {
 		</a>
 		`;
 	}
-	
+
 
 	let page = `
 		<html>
@@ -311,9 +309,9 @@ gulp.task('examples_page', function() {
 	`;
 
 	fs.writeFile(`examples/page.html`, page, (err) => {
-		if(err){
+		if (err) {
 			console.log(err);
-		}else{
+		} else {
 			console.log(`created examples/page.html`);
 		}
 	});
@@ -322,20 +320,20 @@ gulp.task('examples_page', function() {
 
 });
 
-gulp.task('icons_viewer', function() {
+gulp.task('icons_viewer', function (done) {
 	let iconsPath = "resources/icons";
 
-	fs.readdir(iconsPath, function(err, items) {
-		
+	fs.readdir(iconsPath, function (err, items) {
+
 		let svgs = items.filter(item => item.endsWith(".svg"));
 		let other = items.filter(item => !item.endsWith(".svg"));
 
 		items = [...svgs, ...other];
-	
+
 		let iconsCode = ``;
-		for(let item of items){
+		for (let item of items) {
 			let extension = path.extname(item);
-			if(![".png", ".svg", ".jpg", ".jpeg"].includes(extension)){
+			if (![".png", ".svg", ".jpg", ".jpeg"].includes(extension)) {
 				continue;
 			}
 
@@ -372,77 +370,73 @@ gulp.task('icons_viewer', function() {
 		`;
 
 		fs.writeFile(`${iconsPath}/index.html`, page, (err) => {
-			if(err){
+			if (err) {
 				console.log(err);
-			}else{
+			} else {
+				done()
 				console.log(`created ${iconsPath}/index.html`);
 			}
 		});
 
 	});
 
-});
+})
 
-gulp.task('watch', ["build"], function() {
-	//gulp.run("build");
+function rollup(done) {
+
+	// let blacklist = [
+	// 	'resources/icons/index.html'
+	// ];
+
+	// if (typeof cb === 'string') { // abort if blacklisted
+	// 	let file = cb.replace(/\\/g, "/");
+	// 	let isOnBlacklist = blacklist.some(blacklisted => file.indexOf(blacklisted) >= 0);
+	// 	if (isOnBlacklist) {
+	// 		return;
+	// 	}
+	// }
 
 	exec('rollup -c', function (err, stdout, stderr) {
 		console.log(stdout);
 		console.log(stderr);
 	});
 
+	done()
+}
+
+gulp.task("build", gulp.series(gulp.parallel(['workers', 'shaders', "icons_viewer"]), output, rollup));
+
+gulp.task('watch', gulp.series("build", function rollup(done) {
+	//gulp.run("build");
+
 	//gulp.run("webserver");
 
 	let watchlist = [
-		'src/**/*.js', 
-		'src/**/*.css', 
-		'src/**/*.html', 
-		'src/**/*.vs', 
-		'src/**/*.fs', 
+		'src/**/*.js',
+		'src/**/*.css',
+		'src/**/*.html',
+		'src/**/*.vs',
+		'src/**/*.fs',
 		'resources/**/*',
 		'examples//**/*.json',
 	];
 
-	let blacklist = [
-		'resources/icons/index.html'
-	];
-	
-	let watcher = watch(watchlist, cb => {
-
-		{ // abort if blacklisted
-			let file = cb.path.replace(/\\/g, "/");
-			let isOnBlacklist = blacklist.some(blacklisted => file.indexOf(blacklisted) >= 0);
-			if(isOnBlacklist){
-				return;
-			}
-		}
-
-		console.log("===============================");
-		console.log("watch event:");
-		console.log(cb);
-		gulp.run("build");
-
-		exec('rollup -c', function (err, stdout, stderr) {
-			console.log(stdout);
-			console.log(stderr);
-			//cb(err);
-		});
-	});
-
-});
+	gulp.watch(watchlist, {ignored: 'resources/icons/index.html'}, gulp.series('build'));
+	// done()
+}))
 
 
-let encodeWorker = function(fileName, opt){
-	if (!fileName) throw new PluginError('gulp-concat',  'Missing fileName option for gulp-concat');
+let encodeWorker = function (fileName, opt) {
+	if (!fileName) throw new PluginError('gulp-concat', 'Missing fileName option for gulp-concat');
 	if (!opt) opt = {};
 	if (!opt.newLine) opt.newLine = gutil.linefeed;
 
 	let buffer = [];
 	let firstFile = null;
 
-	function bufferContents(file){
+	function bufferContents(file) {
 		if (file.isNull()) return; // ignore
-		if (file.isStream()) return this.emit('error', new PluginError('gulp-concat',  'Streaming not supported'));
+		if (file.isStream()) return this.emit('error', new PluginError('gulp-concat', 'Streaming not supported'));
 
 		if (!firstFile) firstFile = file;
 
@@ -450,7 +444,7 @@ let encodeWorker = function(fileName, opt){
 		buffer.push(string);
 	}
 
-	function endStream(){
+	function endStream() {
 		if (buffer.length === 0) return this.emit('end');
 
 		let joinedContents = buffer.join("");
@@ -472,8 +466,8 @@ let encodeWorker = function(fileName, opt){
 	return through(bufferContents, endStream);
 };
 
-let encodeShader = function(fileName, varname, opt){
-	if (!fileName) throw new PluginError('gulp-concat',  'Missing fileName option for gulp-concat');
+let encodeShader = function (fileName, varname, opt) {
+	if (!fileName) throw new PluginError('gulp-concat', 'Missing fileName option for gulp-concat');
 	if (!opt) opt = {};
 	if (!opt.newLine) opt.newLine = gutil.linefeed;
 
@@ -481,9 +475,9 @@ let encodeShader = function(fileName, varname, opt){
 	let files = [];
 	let firstFile = null;
 
-	function bufferContents(file){
+	function bufferContents(file) {
 		if (file.isNull()) return; // ignore
-		if (file.isStream()) return this.emit('error', new PluginError('gulp-concat',  'Streaming not supported'));
+		if (file.isStream()) return this.emit('error', new PluginError('gulp-concat', 'Streaming not supported'));
 
 		if (!firstFile) firstFile = file;
 
@@ -492,11 +486,11 @@ let encodeShader = function(fileName, varname, opt){
 		files.push(file);
 	}
 
-	function endStream(){
+	function endStream() {
 		if (buffer.length === 0) return this.emit('end');
 
 		let joinedContent = `let Shaders = {};\n\n`;
-		for(let i = 0; i < buffer.length; i++){
+		for (let i = 0; i < buffer.length; i++) {
 			let b = buffer[i];
 			let file = files[i];
 
@@ -504,7 +498,7 @@ let encodeShader = function(fileName, varname, opt){
 			//console.log(fname);
 
 			let content = new Buffer(b).toString();
-			
+
 			let prep = `\Shaders["${fname}"] = \`${content}\`\n`;
 
 			joinedContent += prep;

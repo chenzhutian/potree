@@ -4,7 +4,7 @@
   "version": "0.0.1",
   "description": "WebGL point cloud viewer",
   "devDependencies": {
-    "gulp": "^3.9.1",
+    "gulp": "^4.0.0",
     "gulp-concat": "^2.6.1",
     "gulp-util": "^3.0.8",
     "rollup": "^0.66.6",
