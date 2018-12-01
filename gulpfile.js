@@ -494,8 +494,7 @@ let encodeShader = function (fileName, varname, opt) {
 			let b = buffer[i];
 			let file = files[i];
 
-			let fname = file.path.replace(file.base, "");
-			//console.log(fname);
+			let fname = file.path.split('/').pop() // file.path.replace(file.base, "");
 
 			let content = new Buffer(b).toString();
 
