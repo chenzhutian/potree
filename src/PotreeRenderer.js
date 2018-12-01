@@ -639,6 +639,9 @@ export class Renderer {
 		return result;
 	}
 
+	/**
+	 * the entry to render nodes, call every frame
+	 */
 	renderNodes(octree, nodes, visibilityTextureData, camera, target, shader, params) {
 
 		if (exports.measureTimings) performance.mark("renderNodes-start");
@@ -727,47 +730,47 @@ export class Renderer {
 			}
 			gl.uniformMatrix4fv(lModelView, false, mat4holder);
 
-			{ // Clip Polygons
-				if (material.clipPolygons && material.clipPolygons.length > 0) {
+			// Clip Polygons
+			if (material.clipPolygons && material.clipPolygons.length > 0) {
 
-					let clipPolygonVCount = [];
-					let worldViewProjMatrices = [];
+				let clipPolygonVCount = [];
+				let worldViewProjMatrices = [];
 
-					for (let clipPolygon of material.clipPolygons) {
+				for (let clipPolygon of material.clipPolygons) {
 
-						let view = clipPolygon.viewMatrix;
-						let proj = clipPolygon.projMatrix;
+					let view = clipPolygon.viewMatrix;
+					let proj = clipPolygon.projMatrix;
 
-						let worldViewProj = proj.clone().multiply(view).multiply(world);
+					let worldViewProj = proj.clone().multiply(view).multiply(world);
 
-						clipPolygonVCount.push(clipPolygon.markers.length);
-						worldViewProjMatrices.push(worldViewProj);
-					}
-
-					let flattenedMatrices = [].concat(...worldViewProjMatrices.map(m => m.elements));
-
-					const maxMarkCount = Math.max(...material.clipPolygons.map(d => d.markers.length))
-					const maxVertCount = maxMarkCount * 3
-					let flattenedVertices = new Array(maxVertCount * material.clipPolygons.length);
-					for (let i = 0; i < material.clipPolygons.length; i++) {
-						let clipPolygon = material.clipPolygons[i];
-						for (let j = 0; j < clipPolygon.markers.length; j++) {
-							flattenedVertices[i * maxVertCount + (j * 3 + 0)] = clipPolygon.markers[j].position.x;
-							flattenedVertices[i * maxVertCount + (j * 3 + 1)] = clipPolygon.markers[j].position.y;
-							flattenedVertices[i * maxVertCount + (j * 3 + 2)] = clipPolygon.markers[j].position.z;
-						}
-					}
-
-					const lClipPolygonVCount = shader.uniformLocations["uClipPolygonVCount[0]"];
-					gl.uniform1iv(lClipPolygonVCount, clipPolygonVCount);
-
-					const lClipPolygonVP = shader.uniformLocations["uClipPolygonWVP[0]"];
-					gl.uniformMatrix4fv(lClipPolygonVP, false, flattenedMatrices);
-
-					const lClipPolygons = shader.uniformLocations["uClipPolygonVertices[0]"];
-					gl.uniform3fv(lClipPolygons, flattenedVertices);
+					clipPolygonVCount.push(clipPolygon.markers.length);
+					worldViewProjMatrices.push(worldViewProj);
 				}
+
+				let flattenedMatrices = [].concat(...worldViewProjMatrices.map(m => m.elements));
+
+				const maxMarkCount = Math.max(...material.clipPolygons.map(d => d.markers.length))
+				const maxVertCount = maxMarkCount * 3
+				let flattenedVertices = new Array(maxVertCount * material.clipPolygons.length);
+				for (let i = 0; i < material.clipPolygons.length; i++) {
+					let clipPolygon = material.clipPolygons[i];
+					for (let j = 0; j < clipPolygon.markers.length; j++) {
+						flattenedVertices[i * maxVertCount + (j * 3 + 0)] = clipPolygon.markers[j].position.x;
+						flattenedVertices[i * maxVertCount + (j * 3 + 1)] = clipPolygon.markers[j].position.y;
+						flattenedVertices[i * maxVertCount + (j * 3 + 2)] = clipPolygon.markers[j].position.z;
+					}
+				}
+
+				const lClipPolygonVCount = shader.uniformLocations["uClipPolygonVCount[0]"];
+				gl.uniform1iv(lClipPolygonVCount, clipPolygonVCount);
+
+				const lClipPolygonVP = shader.uniformLocations["uClipPolygonWVP[0]"];
+				gl.uniformMatrix4fv(lClipPolygonVP, false, flattenedMatrices);
+
+				const lClipPolygons = shader.uniformLocations["uClipPolygonVertices[0]"];
+				gl.uniform3fv(lClipPolygons, flattenedVertices);
 			}
+
 
 			//shader.setUniformMatrix4("modelMatrix", world);
 			//shader.setUniformMatrix4("modelViewMatrix", worldView);
@@ -814,6 +817,7 @@ export class Renderer {
 			}
 
 			let geometry = node.geometryNode.geometry;
+			// _uSaved is triggle in the label tool's index.html
 			if (window._uSaved) {
 				shader.setUniform("uSaved", true);
 				shader.setUniform1i("uMaxVcount", geometry.attributes.indices.count);
@@ -874,24 +878,24 @@ export class Renderer {
 				// console.debug('drawingBufferWidth', gl.drawingBufferWidth, 'drawingBufferHeight', gl.drawingBufferHeight)
 
 				/* Debug view */
-				// {
-				// let canvas = document.getElementById('save')
-				// if (!canvas) {
-				// 	canvas = document.createElement('canvas')
-				// 	canvas.width = gl.drawingBufferWidth
-				// 	canvas.height = gl.drawingBufferHeight
-				// 	canvas.id = 'save'
-				// 	canvas.style.zIndex = 8;
-				// 	canvas.style.position = "absolute";
-				// 	canvas.style.pointerEvents = 'none'
-				// 	document.body.getElementBy
-				// 	document.body.appendChild(canvas)
-				// }
-				// const ctx = canvas.getContext('2d')
-				// ctx.fillStyle = "rgba(255, 0, 0, 0.2)";
-				// ctx.fillRect(0, 0, canvas.width, canvas.height);
-				// const imageData = ctx.createImageData(canvas.width, canvas.height)
-				// }
+				if(window._debugMode) {
+					let canvas = document.getElementById('save')
+					if (!canvas) {
+						canvas = document.createElement('canvas')
+						canvas.width = gl.drawingBufferWidth
+						canvas.height = gl.drawingBufferHeight
+						canvas.id = 'save'
+						canvas.style.zIndex = 8;
+						canvas.style.position = "absolute";
+						canvas.style.pointerEvents = 'none'
+						document.body.getElementBy
+						document.body.appendChild(canvas)
+					}
+					const ctx = canvas.getContext('2d')
+					ctx.fillStyle = "rgba(255, 0, 0, 0.2)";
+					ctx.fillRect(0, 0, canvas.width, canvas.height);
+					const imageData = ctx.createImageData(canvas.width, canvas.height)
+				}
 
 				const points = []
 				let targetNum = 0
@@ -901,23 +905,25 @@ export class Renderer {
 					const g = buffer[i + 1]
 					const b = buffer[i + 2]
 					// Debug view
-					// imageData.data[i] = 255.0 * r
-					// imageData.data[i + 1] = 255.0 * g
-					// imageData.data[i + 2] = 255.0 * b
-					// imageData.data[i + 3] = buffer[i] === 0 ? 0 : 255.0
+					if(window._debugMode) {
+						imageData.data[i] = 255.0 * r
+						imageData.data[i + 1] = 255.0 * g
+						imageData.data[i + 2] = 255.0 * b
+						imageData.data[i + 3] = buffer[i] === 0 ? 0 : 255.0
+					}
 					if (r !== 0 || g !== 0 || b !== 0) {
-						const inside = (Math.abs(r - 0.7797) < 0.0001
+						const inside = +(Math.abs(r - 0.7797) < 0.0001
 							&& Math.abs(g - 0.4464) < 0.0001
 							// && Math.abs(b - 0.1131) < 0.0001)
 						)
-							? 1
-							: 0;
+						const idx = buffer[i + 3]
+						// b is classification, which is "is target or not"
+						// a is the index of point
 						points.push({
 							in: inside,
-							idx: buffer[i + 3],
-							// class: classification[buffer[i + 3]],
+							idx,
 							highlight: b === 1 ? 1 : 0, // 1 target, 2 not
-							label: window._label[buffer[i + 3]]
+							label: window._label[idx]
 							// r, g
 						})
 						if (b === 1) targetNum++
@@ -925,9 +931,11 @@ export class Renderer {
 					}
 				}
 				// Debug view
-				// ctx.putImageData(imageData, 0, 0)
-				// console.debug('numPoints', numPoints)
-				// console.debug(points); // Uint8Array
+				if(window._debugMode) {
+					// ctx.putImageData(imageData, 0, 0)
+					// console.debug('numPoints', numPoints)
+					// console.debug(points); // Uint8Array
+				}
 
 				window._saveRecord = {
 					points,

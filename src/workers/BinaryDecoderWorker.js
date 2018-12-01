@@ -442,10 +442,10 @@ onmessage = function (event) {
 
 	}
 
-	{ // add indices
-		// TODO keypoint
-		let buff = new ArrayBuffer(numPoints * 4);
-		let indices = new Uint32Array(buff);
+	{ 	// add indices
+		// keypoint - by czt
+		const buff = new ArrayBuffer(numPoints * 4);
+		const indices = new Uint32Array(buff);
 
 		for (let i = 0; i < numPoints; i++) {
 			indices[i] = i;
@@ -454,29 +454,42 @@ onmessage = function (event) {
 		attributeBuffers[PointAttribute.INDICES.name] = { buffer: buff, attribute: PointAttribute.INDICES };
 	}
 
-	{ // add label & swap with classification 
+	{
+		// add manullySelected
+		const buff = new ArrayBuffer(numPoints)
+		const picked = new Uint8Array(buff).fill(0);
+		// this.console.log(buff)
+		attributeBuffers[PointAttribute.PICKED.name] = { buffer: buff, attribute: PointAttribute.PICKED }
+	}
 
-		// swap classification to label
+	{ // add label & swap with classification -- by czt
+		// swap classification to label -- by czt
 		const attrs = attributeBuffers[PointAttribute.CLASSIFICATION.name]
-		const classes = new Uint8Array(attrs.buffer)
-		const classesSet = new Set()
 
 		if (attrs) {
+			console.log('swaping', attrs)
 			attributeBuffers[PointAttribute.LABEL.name] = {
 				buffer: attrs.buffer, attribute: PointAttribute.LABEL
 			}
-			for (const l of classes) {
-				classesSet.add(l)
-			}
+			const classes = new Uint8Array(attrs.buffer)
+			const classesSet = new Set(classes)
+			this.console.log(classesSet)
+			// for (const c of classes) {
+			// 	classesSet.add(c)
+			// }
+
+			// random pick a class as target
 			const targetClass = Array.from(classesSet)[Math.floor(classesSet.size * Math.random())]
 
 			// add selected or not to classification
-			let buff = new ArrayBuffer(numPoints);
-			let labels = new Uint8Array(buff);
+			const buff = new ArrayBuffer(numPoints);
+			// 1 based
+			const labels = new Uint8Array(buff)
 
 			for (let j = 0; j < numPoints; j++) {
 				labels[j] = classes[j] === targetClass ? 1 : 2;
 			}
+			// set to classification for easy rendering
 			attributeBuffers[PointAttribute.CLASSIFICATION.name] = {
 				buffer: buff, attribute: PointAttribute.CLASSIFICATION
 			};

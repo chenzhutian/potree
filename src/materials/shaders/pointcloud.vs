@@ -12,10 +12,10 @@ attribute float classification; // 3
 attribute float returnNumber; // 4
 attribute float numberOfReturns; // 5
 attribute float pointSourceID; // 6
-attribute vec4 indices; // 7
+attribute vec4 indices; // 7 in (255, 255, 255, 255) format
 attribute float spacing; // 9
 attribute float gpsTime; // 10
-attribute float pointIndex;
+attribute float pointIndex; // the same meaning to indices, in integer format
 
 uniform mat4 modelMatrix;
 uniform mat4 modelViewMatrix;
@@ -36,7 +36,6 @@ uniform int uMaxVcount;
 uniform bool uUseOrthographicCamera;
 uniform float uOrthoWidth;
 uniform float uOrthoHeight;
-
 
 #define CLIPTASK_NONE 0
 #define CLIPTASK_HIGHLIGHT 1
@@ -395,7 +394,6 @@ vec3 getRGB(){
 	//rgb = indices.rgb;
 	//rgb.b = pcIndex / 255.0;
 	
-	
 	return rgb;
 }
 
@@ -635,7 +633,6 @@ void doClipping(){
 		vec4 cl = getClassification(); 
 		if(cl.a == 0.0){
 			gl_Position = vec4(100.0, 100.0, 100.0, 0.0);
-			
 			return;
 		}
 	#endif
@@ -645,7 +642,6 @@ void doClipping(){
 		vec2 range = uFilterReturnNumberRange;
 		if(returnNumber < range.x || returnNumber > range.y){
 			gl_Position = vec4(100.0, 100.0, 100.0, 0.0);
-			
 			return;
 		}
 	}
@@ -662,6 +658,7 @@ void doClipping(){
 	}
 	#endif
 
+	// seems useless
 	#if defined(clip_gps_enabled)
 	{ // GPS time filter
 		float time = gpsTime + uGPSOffset;
@@ -669,7 +666,6 @@ void doClipping(){
 
 		if(time < range.x || time > range.y){
 			gl_Position = vec4(100.0, 100.0, 100.0, 0.0);
-			
 			return;
 		}
 	}
@@ -747,8 +743,10 @@ void main() {
 		float idx = pointIndex;  // ((((indices.w * 256.0) + indices.z) * 256.0 + indices.y) * 256.0 + indices.x);
 		// maxmum = maxColumn * maxRow (600 * 500 = 30w)
 		float maxColumn = 500.0;
+		// use 0.625 to resize the range to [-0.8, 0.8]
 		float x = -0.8 + mod(idx, maxColumn) / (0.625 * maxColumn);
 		float maxRow = 500.0; 
+		// use 1.8 to resize the range to [-0.9, 0.9]
 		float y = -0.9 + float(int(idx / (maxColumn))) * (1.8 / maxRow);
 		vIndex = idx;
 		gl_Position = vec4(x, y, 0.0, 1.0);

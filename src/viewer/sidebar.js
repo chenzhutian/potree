@@ -643,11 +643,11 @@ export class Sidebar{
 			"[title]tt.clip_polygon",
 			() => {
 				let item = this.viewer.clippingTool.startInsertion({type: "polygon"});
-				// try to understand
-				let measurementsRoot = $("#jstree_scene").jstree().get_json("measurements");
-				let jsonNode = measurementsRoot.children.find(child => child.data.uuid === item.uuid);
-				$.jstree.reference(jsonNode.id).deselect_all();
-				$.jstree.reference(jsonNode.id).select_node(jsonNode.id);
+				// // try to understand
+				// let measurementsRoot = $("#jstree_scene").jstree().get_json("measurements");
+				// let jsonNode = measurementsRoot.children.find(child => child.data.uuid === item.uuid);
+				// $.jstree.reference(jsonNode.id).deselect_all();
+				// $.jstree.reference(jsonNode.id).select_node(jsonNode.id);
 			},
 			'clip_polygon',
 			'clip_polygon'

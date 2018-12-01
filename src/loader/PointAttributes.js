@@ -20,6 +20,7 @@ export const PointAttributeNames = {
 	GPS_TIME: 16,
 	POINT_INDEX: 17,
 	LABEL: 18,
+	PICKED: 19, // represent the pont picked by the user
 };
 
 
@@ -59,7 +60,12 @@ class PointAttribute{
 		this.byteSize = this.numElements * this.type.size;
 	}
 
-};
+}
+
+PointAttribute.PICKED = new PointAttribute(
+	PointAttributeNames.PICKED,
+	PointAttributeTypes.DATA_TYPE_UINT8, 1
+);
 
 PointAttribute.LABEL = new PointAttribute(
 	PointAttributeNames.LABEL,
@@ -146,6 +152,7 @@ export class PointAttributes{
 
 		if (pointAttributes != null) {
 			for (let i = 0; i < pointAttributes.length; i++) {
+				// hack, pointIndex from index, index is self added
 				let pointAttributeName = pointAttributes[i] === "INDEX" ? "POINT_INDEX" : pointAttributes[i];
 				let pointAttribute = PointAttribute[pointAttributeName];
 				this.attributes.push(pointAttribute);

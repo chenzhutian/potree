@@ -228,9 +228,6 @@ export function loadPointCloud(path, name, callback) {
 
 			elGroup.empty();
 			elGroup.append(elFieldset);
-
-
-
 		}
 	});
 })(jQuery);
