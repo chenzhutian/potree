@@ -474,22 +474,63 @@ onmessage = function (event) {
 			}
 			const classes = new Uint8Array(attrs.buffer)
 			const classesSet = new Set(classes)
-			this.console.log(classesSet)
-			// for (const c of classes) {
-			// 	classesSet.add(c)
-			// }
+
+			//@hardcode remove class 4
+			classesSet.delete(4)
 
 			// random pick a class as target
 			const targetClass = Array.from(classesSet)[Math.floor(classesSet.size * Math.random())]
+			this.console.log(classesSet, `targetClass:${targetClass}`)
 
 			// add selected or not to classification
 			const buff = new ArrayBuffer(numPoints);
 			// 1 based
 			const labels = new Uint8Array(buff)
 
+			let tightBoxMin = [Number.POSITIVE_INFINITY, Number.POSITIVE_INFINITY, Number.POSITIVE_INFINITY];
+			let tightBoxMax = [Number.NEGATIVE_INFINITY, Number.NEGATIVE_INFINITY, Number.NEGATIVE_INFINITY];
+			const positions = new Float32Array(attributeBuffers[PointAttribute.POSITION_CARTESIAN.name].buffer);
+			this.console.log(positions)
+
+			// task1: assign labels based on whether it is target class
+			// task2: calculate the 3D bbox of hte target class
+			const targetPointIdx = new Set()
 			for (let j = 0; j < numPoints; j++) {
-				labels[j] = classes[j] === targetClass ? 1 : 2;
+				// labels[j] = classes[j] === targetClass ? 1 : 2;
+				labels[j] = 2
+
+				if (classes[j] === targetClass) {
+					targetPointIdx.add(j)
+					const x = positions[3 * j + 0]
+					const y = positions[3 * j + 1]
+					const z = positions[3 * j + 2]
+
+					tightBoxMin[0] = Math.min(tightBoxMin[0], x);
+					tightBoxMin[1] = Math.min(tightBoxMin[1], y);
+					tightBoxMin[2] = Math.min(tightBoxMin[2], z);
+
+					tightBoxMax[0] = Math.max(tightBoxMax[0], x);
+					tightBoxMax[1] = Math.max(tightBoxMax[1], y);
+					tightBoxMax[2] = Math.max(tightBoxMax[2], z);
+				}
 			}
+			this.console.log('tightBoxMin', tightBoxMin)
+			this.console.log('tightBoxMax', tightBoxMax)
+
+			// @TODO, generate random bbox
+
+			// 
+			for(const j of targetPointIdx) {
+				const x = positions[3 * j + 0]
+				const y = positions[3 * j + 1]
+				const z = positions[3 * j + 2]
+				// only the point within the target bbox are targted
+				// @TODO, within function
+				if(withBBox(tightBoxMin, tightBoxMax, [x, y, z])) {
+					labels[j] = 1
+				} 
+			}
+
 			// set to classification for easy rendering
 			attributeBuffers[PointAttribute.CLASSIFICATION.name] = {
 				buffer: buff, attribute: PointAttribute.CLASSIFICATION
