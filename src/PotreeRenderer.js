@@ -126,7 +126,8 @@ let attributeLocations = {
 	"normal": 8,
 	"spacing": 9,
 	"gpsTime": 10,
-	"pointIndex": 11
+	"pointIndex": 11,
+	"picked": 12,
 };
 
 class Shader {
@@ -629,7 +630,6 @@ export class Renderer {
 
 			let visibleChildren = node.children.filter(c => c.visible);
 			stack.push(...visibleChildren);
-
 		}
 
 		let result = {

@@ -457,6 +457,7 @@ onmessage = function (event) {
 	{
 		// add manullySelected
 		const buff = new ArrayBuffer(numPoints)
+		// 0 - natrual, 1 - picked, 2 - unpicked
 		const picked = new Uint8Array(buff).fill(0);
 		// this.console.log(buff)
 		attributeBuffers[PointAttribute.PICKED.name] = { buffer: buff, attribute: PointAttribute.PICKED }

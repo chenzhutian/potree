@@ -16,6 +16,7 @@ attribute vec4 indices; // 7 in (255, 255, 255, 255) format
 attribute float spacing; // 9
 attribute float gpsTime; // 10
 attribute float pointIndex; // the same meaning to indices, in integer format
+attribute float picked; // picked or not
 
 uniform mat4 modelMatrix;
 uniform mat4 modelViewMatrix;
@@ -697,7 +698,7 @@ void doClipping(){
 
 	bool insideAny = insideCount > 0;
 	bool insideAll = (clipVolumesCount > 0) && (clipVolumesCount == insideCount);
-
+	vec3 oRGB = vColor;
 	if(clipMethod == CLIPMETHOD_INSIDE_ANY){
 		if(insideAny && clipTask == CLIPTASK_HIGHLIGHT){
 			if(uSaved) {
@@ -705,7 +706,9 @@ void doClipping(){
 				vColor.g = 0.4464;
 				vColor.b = 0.1131;
 			} else {
-				vColor.r += 0.5;
+				vColor.r = 231.0 / 255.0;
+				vColor.g = 76.0 / 255.0;
+				vColor.b = 60.0 / 255.0;
 			}
 		}else if(!insideAny && clipTask == CLIPTASK_SHOW_INSIDE){
 			gl_Position = vec4(100.0, 100.0, 100.0, 1.0);
@@ -719,6 +722,27 @@ void doClipping(){
 			gl_Position = vec4(100.0, 100.0, 100.0, 1.0);
 		}else if(insideAll && clipTask == CLIPTASK_SHOW_OUTSIDE){
 			gl_Position = vec4(100.0, 100.0, 100.0, 1.0);
+		}
+	}
+
+	// higher pirority of picked
+	if(picked == 1.0) {
+		// if saved, should be set to picked
+		if(uSaved) {
+			vColor.r = 0.7797;
+			vColor.g = 0.4464;
+			vColor.b = 0.1131;
+		} else {
+			vColor.r = 231.0 / 255.0;
+			vColor.g = 76.0 / 255.0;
+			vColor.b = 60.0 / 255.0;
+		}
+	} else if(picked == 2.0) {
+		// if saved, should be set to unPicked
+		if(uSaved) {
+			vColor = vec3(0.1, 0.1, 0.1);
+		} else {
+			vColor = oRGB;
 		}
 	}
 }
