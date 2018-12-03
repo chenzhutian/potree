@@ -146,7 +146,9 @@ export class Measure extends THREE.Object3D {
 			this.add(coordinateLabel);
 		}
 
-		{ // Event Listeners
+		{ 
+			let currentPoint
+			// Event Listeners
 			let drag = (e) => {
 				let I = getMousePointCloudIntersection(
 					e.drag.end, 
@@ -156,8 +158,10 @@ export class Measure extends THREE.Object3D {
 					{pickClipped: true});
 					
 				if (I) {
+					// @findHere
 					let i = this.spheres.indexOf(e.drag.object);
 					console.debug('Hit Point', I)
+					currentPoint = I.point
 					if (i !== -1) {
 						let point = this.points[i];
 						for (let key of Object.keys(I.point).filter(e => e !== 'position')) {
@@ -172,6 +176,7 @@ export class Measure extends THREE.Object3D {
 			let drop = e => {
 				let i = this.spheres.indexOf(e.drag.object);
 				if (i !== -1) {
+					console.log('drop Point', i, e.drag.object, currentPoint)
 					this.dispatchEvent({
 						'type': 'marker_dropped',
 						'measurement': this,
