@@ -56,7 +56,7 @@ export class Sidebar{
 		this.initNavigation();
 		//this.initFilters();
 		this.initClippingTool();
-		//this.initSettings();
+		this.initSettings();
 		$('#potree_version_number').html(Potree.version.major + "." + Potree.version.minor + Potree.version.suffix);
 		$('.perfect_scrollbar').perfectScrollbar();
 	}
@@ -1039,10 +1039,6 @@ export class Sidebar{
 			() => {this.viewer.setBottomView()}
 		));
 
-
-
-
-
 		let elCameraProjection = $(`
 			<selectgroup id="camera_projection_options">
 				<option id="camera_projection_options_perspective" value="PERSPECTIVE">Perspective</option>
@@ -1103,21 +1099,21 @@ export class Sidebar{
 		// 	$('#lblMinNodeSize').html(parseInt(this.viewer.getMinNodeSize()));
 		// }
 
-		// {
-		// 	let elSplatQuality = $("#splat_quality_options");
-		// 	elSplatQuality.selectgroup({title: "Splat Quality"});
+		{
+			let elSplatQuality = $("#splat_quality_options");
+			elSplatQuality.selectgroup({title: "Splat Quality"});
 
-		// 	elSplatQuality.find("input").click( (e) => {
-		// 		if(e.target.value === "standard"){
-		// 			this.viewer.useHQ = false;
-		// 		}else if(e.target.value === "hq"){
-		// 			this.viewer.useHQ = true;
-		// 		}
-		// 	});
+			elSplatQuality.find("input").click( (e) => {
+				if(e.target.value === "standard"){
+					this.viewer.useHQ = false;
+				}else if(e.target.value === "hq"){
+					this.viewer.useHQ = true;
+				}
+			});
 
-		// 	let currentQuality = this.viewer.useHQ ? "hq" : "standard";
-		// 	elSplatQuality.find(`input[value=${currentQuality}]`).trigger("click");
-		// }
+			let currentQuality = this.viewer.useHQ ? "hq" : "standard";
+			elSplatQuality.find(`input[value=${currentQuality}]`).trigger("click");
+		}
 
 		$('#show_bounding_box').click(() => {
 			this.viewer.setShowBoundingBox($('#show_bounding_box').prop("checked"));

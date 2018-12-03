@@ -4,7 +4,7 @@ import { ClipTask, ClipMethod, CameraMode } from "../defines.js";
 import { Renderer } from "../PotreeRenderer.js";
 import { PotreeRenderer } from "./PotreeRenderer.js";
 import { EDLRenderer } from "./EDLRenderer.js";
-// import { HQSplatRenderer } from "./HQSplatRenderer.js";
+import { HQSplatRenderer } from "./HQSplatRenderer.js";
 import { Scene } from "./Scene.js";
 import { ClippingTool } from "../utils/ClippingTool.js";
 import { TransformationTool } from "../utils/TransformationTool.js";
@@ -34,6 +34,7 @@ export class Viewer extends EventDispatcher {
 		this.renderArea = domElement;
 		this.guiLoaded = false;
 		this.guiLoadTasks = [];
+		this.useHQ = true
 
 		this.messages = [];
 		this.elMessages = $(`
@@ -1593,21 +1594,19 @@ export class Viewer extends EventDispatcher {
 		}
 
 		try {
-
-
 			if (this.useRep) {
 				if (!this.repRenderer) {
 					this.repRenderer = new RepRenderer(this);
 				}
 				this.repRenderer.render(this.renderer);
 			} 
-			// else if (this.useHQ) {
-			// 	if (!this.hqRenderer) {
-			// 		this.hqRenderer = new HQSplatRenderer(this);
-			// 	}
-			// 	this.hqRenderer.useEDL = this.useEDL;
-			// 	this.hqRenderer.render(this.renderer);
-			// } 
+			else if (this.useHQ) {
+				if (!this.hqRenderer) {
+					this.hqRenderer = new HQSplatRenderer(this);
+				}
+				this.hqRenderer.useEDL = this.useEDL;
+				this.hqRenderer.render(this.renderer);
+			} 
 			else {
 				if (this.useEDL && Features.SHADER_EDL.isSupported()) {
 					if (!this.edlRenderer) {
@@ -1622,28 +1621,28 @@ export class Viewer extends EventDispatcher {
 				}
 			}
 
-			//if(this.useRep){
-			//	if (!this.repRenderer) {
-			//		this.repRenderer = new RepRenderer(this);
-			//	}
-			//	this.repRenderer.render(this.renderer);
-			//} else if (this.useHQ && Features.SHADER_SPLATS.isSupported()) {
-			//	if (!this.hqRenderer) {
-			//		this.hqRenderer = new HQSplatRenderer(this);
-			//	}
-			//	this.hqRenderer.render(this.renderer);
-			//} else if (this.useEDL && Features.SHADER_EDL.isSupported()) {
-			//	if (!this.edlRenderer) {
-			//		this.edlRenderer = new EDLRenderer(this);
-			//	}
-			//	this.edlRenderer.render(this.renderer);
-			//} else {
-			//	if (!this.potreeRenderer) {
-			//		this.potreeRenderer = new PotreeRenderer(this);
-			//	}
+			// if(this.useRep){
+			// 	if (!this.repRenderer) {
+			// 		this.repRenderer = new RepRenderer(this);
+			// 	}
+			// 	this.repRenderer.render(this.renderer);
+			// } else if (this.useHQ && Features.SHADER_SPLATS.isSupported()) {
+			// 	if (!this.hqRenderer) {
+			// 		this.hqRenderer = new HQSplatRenderer(this);
+			// 	}
+			// 	this.hqRenderer.render(this.renderer);
+			// } else if (this.useEDL && Features.SHADER_EDL.isSupported()) {
+			// 	if (!this.edlRenderer) {
+			// 		this.edlRenderer = new EDLRenderer(this);
+			// 	}
+			// 	this.edlRenderer.render(this.renderer);
+			// } else {
+			// 	if (!this.potreeRenderer) {
+			// 		this.potreeRenderer = new PotreeRenderer(this);
+			// 	}
 
-			//	this.potreeRenderer.render();
-			//}
+			// 	this.potreeRenderer.render();
+			// }
 
 			this.renderer.render(this.overlay, this.overlayCamera);
 

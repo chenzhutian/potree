@@ -518,15 +518,31 @@ onmessage = function (event) {
 			this.console.log('tightBoxMax', tightBoxMax)
 
 			// @TODO, generate random bbox
+			const ox = tightBoxMin[0] + (Math.random() * 0.5) * (tightBoxMax[0] - tightBoxMin[0])
+			const oy = tightBoxMin[1] + (Math.random() * 0.5) * (tightBoxMax[1] - tightBoxMin[1])
+			const oz = tightBoxMin[2] + (Math.random() * 0.5) * (tightBoxMax[2] - tightBoxMin[2])
+			
+			const ex = ox + (Math.random() * 0.5 + 0.5) * (tightBoxMax[0] - ox)
+			const ey = oy + (Math.random() * 0.5 + 0.5) * (tightBoxMax[1] - oy)
+			const ez = oz + (Math.random() * 0.5 + 0.5) * (tightBoxMax[2] - oz)
 
+			tightBoxMin = [ox, oy, oz]
+			tightBoxMax = [ex, ey, ez]
+			this.console.log('tightBoxMin', tightBoxMin, 'tightBoxMax', tightBoxMax)
 			// 
+			const withinBBox = (minBBox, maxBBox, point) => {
+				return point[0] <= maxBBox[0] && point[0] >= minBBox[0] &&
+						point[1] <= maxBBox[1] && point[1] >= minBBox[1] &&
+						point[2] <= maxBBox[2] && point[2] >= minBBox[2]
+			}
+
 			for(const j of targetPointIdx) {
 				const x = positions[3 * j + 0]
 				const y = positions[3 * j + 1]
 				const z = positions[3 * j + 2]
 				// only the point within the target bbox are targted
 				// @TODO, within function
-				if(withBBox(tightBoxMin, tightBoxMax, [x, y, z])) {
+				if(withinBBox(tightBoxMin, tightBoxMax, [x, y, z])) {
 					labels[j] = 1
 				} 
 			}
