@@ -490,7 +490,6 @@ onmessage = function (event) {
 			let tightBoxMin = [Number.POSITIVE_INFINITY, Number.POSITIVE_INFINITY, Number.POSITIVE_INFINITY];
 			let tightBoxMax = [Number.NEGATIVE_INFINITY, Number.NEGATIVE_INFINITY, Number.NEGATIVE_INFINITY];
 			const positions = new Float32Array(attributeBuffers[PointAttribute.POSITION_CARTESIAN.name].buffer);
-			this.console.log(positions)
 
 			// task1: assign labels based on whether it is target class
 			// task2: calculate the 3D bbox of hte target class

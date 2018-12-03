@@ -605,6 +605,7 @@ export class Renderer {
 				webglBuffer.vbos.get(attributeName).version = bufferAttribute.version;
 			}
 
+			console.debug(attributeName, `normalized:${normalized}`, bufferAttribute)
 			gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
 			gl.bufferData(gl.ARRAY_BUFFER, bufferAttribute.array, gl.STATIC_DRAW);
 			gl.vertexAttribPointer(attributeLocation, bufferAttribute.itemSize, type, normalized, 0, 0);
@@ -857,6 +858,9 @@ export class Renderer {
 				webglBuffer = this.buffers.get(geometry);
 				for (let attributeName in geometry.attributes) {
 					let attribute = geometry.attributes[attributeName];
+					// if(attributeName === 'picked') {
+					// 	console.log(attribute)
+					// }
 
 					if (attribute.version > webglBuffer.vbos.get(attributeName).version) {
 						this.updateBuffer(geometry);

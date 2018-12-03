@@ -158,9 +158,7 @@ export class Measure extends THREE.Object3D {
 					{pickClipped: true});
 					
 				if (I) {
-					// @findHere
 					let i = this.spheres.indexOf(e.drag.object);
-					console.debug('Hit Point', I)
 					currentPoint = I.point
 					if (i !== -1) {
 						let point = this.points[i];
@@ -176,12 +174,18 @@ export class Measure extends THREE.Object3D {
 			let drop = e => {
 				let i = this.spheres.indexOf(e.drag.object);
 				if (i !== -1) {
-					console.log('drop Point', i, e.drag.object, currentPoint)
+					currentPoint.picked = currentPoint.picked.map(d => 1)
 					this.dispatchEvent({
 						'type': 'marker_dropped',
 						'measurement': this,
 						'index': i
 					});
+					// super hardcode
+					const picked = e.viewer.scene.pointclouds[0].root.geometryNode.geometry.attributes.picked
+					const idx = currentPoint.pointIndex[0]
+					picked.array[idx] = 1
+					picked.version++
+					e.viewer.scene.removeAllMeasurements()
 				}
 			};
 

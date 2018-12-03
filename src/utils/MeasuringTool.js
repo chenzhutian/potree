@@ -51,7 +51,6 @@ export class MeasuringTool extends EventDispatcher{
 
 	startInsertion (args = {}) {
 		let domElement = this.viewer.renderer.domElement;
-
 		let measure = new Measure();
 
 		this.dispatchEvent({
@@ -76,6 +75,7 @@ export class MeasuringTool extends EventDispatcher{
 		};
 
 		let insertionCallback = (e) => {
+			console.log('insertionCallback')
 			if (e.button === THREE.MOUSE.LEFT) {
 				measure.addMarker(measure.points[measure.points.length - 1].position.clone());
 
@@ -91,6 +91,7 @@ export class MeasuringTool extends EventDispatcher{
 		};
 
 		cancel.callback = e => {
+			console.log('cancel.callback', cancel.callback)
 			if (cancel.removeLastMarker) {
 				measure.removeMarker(measure.points.length - 1);
 			}

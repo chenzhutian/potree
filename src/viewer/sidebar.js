@@ -82,7 +82,7 @@ export class Sidebar{
 				let jsonNode = measurementsRoot.children.find(child => child.data.uuid === measurement.uuid);
 				$.jstree.reference(jsonNode.id).deselect_all();
 				$.jstree.reference(jsonNode.id).select_node(jsonNode.id);
-			}
+			},
 		));
 
 		// POINT
@@ -91,7 +91,7 @@ export class Sidebar{
 			'[title]tt.point_measurement',
 			() => {
 				// $('#menu_measurements').next().slideDown();
-				let measurement = this.measuringTool.startInsertion({
+				this.measuringTool.startInsertion({
 					showDistances: false,
 					showAngles: false,
 					showCoordinates: true,
@@ -104,67 +104,68 @@ export class Sidebar{
 				// let jsonNode = measurementsRoot.children.find(child => child.data.uuid === measurement.uuid);
 				// $.jstree.reference(jsonNode.id).deselect_all();
 				// $.jstree.reference(jsonNode.id).select_node(jsonNode.id);
-			}
+			},
+			'pointMesurement'
 		));
 
-		// DISTANCE
-		elToolbar.append(this.createToolIcon(
-			Potree.resourcePath + '/icons/distance.svg',
-			'[title]tt.distance_measurement',
-			() => {
-				$('#menu_measurements').next().slideDown();
-				let measurement = this.measuringTool.startInsertion({
-					showDistances: true,
-					showArea: false,
-					closed: false,
-					name: 'Distance'});
+		// // DISTANCE
+		// elToolbar.append(this.createToolIcon(
+		// 	Potree.resourcePath + '/icons/distance.svg',
+		// 	'[title]tt.distance_measurement',
+		// 	() => {
+		// 		$('#menu_measurements').next().slideDown();
+		// 		let measurement = this.measuringTool.startInsertion({
+		// 			showDistances: true,
+		// 			showArea: false,
+		// 			closed: false,
+		// 			name: 'Distance'});
 
-				let measurementsRoot = $("#jstree_scene").jstree().get_json("measurements");
-				let jsonNode = measurementsRoot.children.find(child => child.data.uuid === measurement.uuid);
-				$.jstree.reference(jsonNode.id).deselect_all();
-				$.jstree.reference(jsonNode.id).select_node(jsonNode.id);
-			}
-		));
+		// 		let measurementsRoot = $("#jstree_scene").jstree().get_json("measurements");
+		// 		let jsonNode = measurementsRoot.children.find(child => child.data.uuid === measurement.uuid);
+		// 		$.jstree.reference(jsonNode.id).deselect_all();
+		// 		$.jstree.reference(jsonNode.id).select_node(jsonNode.id);
+		// 	}
+		// ));
 
-		// HEIGHT
-		elToolbar.append(this.createToolIcon(
-			Potree.resourcePath + '/icons/height.svg',
-			'[title]tt.height_measurement',
-			() => {
-				$('#menu_measurements').next().slideDown();
-				let measurement = this.measuringTool.startInsertion({
-					showDistances: false,
-					showHeight: true,
-					showArea: false,
-					closed: false,
-					maxMarkers: 2,
-					name: 'Height'});
+		// // HEIGHT
+		// elToolbar.append(this.createToolIcon(
+		// 	Potree.resourcePath + '/icons/height.svg',
+		// 	'[title]tt.height_measurement',
+		// 	() => {
+		// 		$('#menu_measurements').next().slideDown();
+		// 		let measurement = this.measuringTool.startInsertion({
+		// 			showDistances: false,
+		// 			showHeight: true,
+		// 			showArea: false,
+		// 			closed: false,
+		// 			maxMarkers: 2,
+		// 			name: 'Height'});
 
-				let measurementsRoot = $("#jstree_scene").jstree().get_json("measurements");
-				let jsonNode = measurementsRoot.children.find(child => child.data.uuid === measurement.uuid);
-				$.jstree.reference(jsonNode.id).deselect_all();
-				$.jstree.reference(jsonNode.id).select_node(jsonNode.id);
-			}
-		));
+		// 		let measurementsRoot = $("#jstree_scene").jstree().get_json("measurements");
+		// 		let jsonNode = measurementsRoot.children.find(child => child.data.uuid === measurement.uuid);
+		// 		$.jstree.reference(jsonNode.id).deselect_all();
+		// 		$.jstree.reference(jsonNode.id).select_node(jsonNode.id);
+		// 	}
+		// ));
 
-		// AREA
-		elToolbar.append(this.createToolIcon(
-			Potree.resourcePath + '/icons/area.svg',
-			'[title]tt.area_measurement',
-			() => {
-				$('#menu_measurements').next().slideDown();
-				let measurement = this.measuringTool.startInsertion({
-					showDistances: true,
-					showArea: true,
-					closed: true,
-					name: 'Area'});
+		// // AREA
+		// elToolbar.append(this.createToolIcon(
+		// 	Potree.resourcePath + '/icons/area.svg',
+		// 	'[title]tt.area_measurement',
+		// 	() => {
+		// 		$('#menu_measurements').next().slideDown();
+		// 		let measurement = this.measuringTool.startInsertion({
+		// 			showDistances: true,
+		// 			showArea: true,
+		// 			closed: true,
+		// 			name: 'Area'});
 
-				let measurementsRoot = $("#jstree_scene").jstree().get_json("measurements");
-				let jsonNode = measurementsRoot.children.find(child => child.data.uuid === measurement.uuid);
-				$.jstree.reference(jsonNode.id).deselect_all();
-				$.jstree.reference(jsonNode.id).select_node(jsonNode.id);
-			}
-		));
+		// 		let measurementsRoot = $("#jstree_scene").jstree().get_json("measurements");
+		// 		let jsonNode = measurementsRoot.children.find(child => child.data.uuid === measurement.uuid);
+		// 		$.jstree.reference(jsonNode.id).deselect_all();
+		// 		$.jstree.reference(jsonNode.id).select_node(jsonNode.id);
+		// 	}
+		// ));
 
 		// // VOLUME
 		// elToolbar.append(this.createToolIcon(

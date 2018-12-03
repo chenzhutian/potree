@@ -985,8 +985,8 @@ export class Viewer extends EventDispatcher {
 
 			$(() => {
 				//initSidebar(this);
-				let sidebar = new Sidebar(this);
-				sidebar.init();
+				this.sidebar = new Sidebar(this);
+				this.sidebar.init();
 
 				//if (callback) {
 				//	$(callback);
