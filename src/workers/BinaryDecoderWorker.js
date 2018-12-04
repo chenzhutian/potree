@@ -476,7 +476,7 @@ onmessage = function (event) {
 			const classesSet = new Set(classes)
 
 			//@hardcode remove class 4
-			classesSet.delete(4)
+			// classesSet.delete(4)
 
 			// random pick a class as target
 			const targetClass = Array.from(classesSet)[Math.floor(classesSet.size * Math.random())]
@@ -517,18 +517,18 @@ onmessage = function (event) {
 			// this.console.log('tightBoxMax', tightBoxMax)
 			// this.console.log(targetPointIdx)
 			// @TODO, generate random bbox
-			if(targetPointIdx.size > 200) {
-				const ox = tightBoxMin[0] + (Math.random() * 0.5) * (tightBoxMax[0] - tightBoxMin[0])
-				const oy = tightBoxMin[1] + (Math.random() * 0.5) * (tightBoxMax[1] - tightBoxMin[1])
-				const oz = tightBoxMin[2] + (Math.random() * 0.5) * (tightBoxMax[2] - tightBoxMin[2])
+			// if(targetPointIdx.size > 200000) {
+			// 	const ox = tightBoxMin[0] + (Math.random() * 0.5) * (tightBoxMax[0] - tightBoxMin[0])
+			// 	const oy = tightBoxMin[1] + (Math.random() * 0.5) * (tightBoxMax[1] - tightBoxMin[1])
+			// 	const oz = tightBoxMin[2] + (Math.random() * 0.5) * (tightBoxMax[2] - tightBoxMin[2])
 				
-				const ex = ox + (Math.random() * 0.5 + 0.5) * (tightBoxMax[0] - ox)
-				const ey = oy + (Math.random() * 0.5 + 0.5) * (tightBoxMax[1] - oy)
-				const ez = oz + (Math.random() * 0.5 + 0.5) * (tightBoxMax[2] - oz)
+			// 	const ex = ox + (Math.random() * 0.5 + 0.5) * (tightBoxMax[0] - ox)
+			// 	const ey = oy + (Math.random() * 0.5 + 0.5) * (tightBoxMax[1] - oy)
+			// 	const ez = oz + (Math.random() * 0.5 + 0.5) * (tightBoxMax[2] - oz)
 	
-				tightBoxMin = [ox, oy, oz]
-				tightBoxMax = [ex, ey, ez]
-			}
+			// 	tightBoxMin = [ox, oy, oz]
+			// 	tightBoxMax = [ex, ey, ez]
+			// }
 	
 			// 
 			const withinBBox = (minBBox, maxBBox, point) => {
