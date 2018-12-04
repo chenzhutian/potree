@@ -562,7 +562,7 @@ export class Renderer {
 				type: geometry.attributes.position.array.constructor,
 				version: 0
 			});
-			console.debug(attributeName, `normalized:${normalized}`, bufferAttribute)
+			// console.debug(attributeName, `normalized:${normalized}`, bufferAttribute)
 		}
 
 		gl.bindBuffer(gl.ARRAY_BUFFER, null);
