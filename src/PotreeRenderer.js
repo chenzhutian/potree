@@ -513,6 +513,7 @@ class WebGLBuffer {
 export class Renderer {
 
 	constructor(threeRenderer) {
+		console.log('construct Renderer')
 		this.threeRenderer = threeRenderer;
 		this.gl = this.threeRenderer.context;
 
@@ -568,9 +569,6 @@ export class Renderer {
 		gl.bindBuffer(gl.ARRAY_BUFFER, null);
 		gl.bindVertexArray(null);
 
-		if (randomCameraAngle) {
-			randomCameraAngle()
-		}
 		return webglBuffer;
 	}
 
@@ -1363,10 +1361,12 @@ export class Renderer {
 		gl.activeTexture(gl.TEXTURE1);
 		gl.bindTexture(gl.TEXTURE_2D, null)
 		this.threeRenderer.state.reset();
+		
+		// @randomCamera
+		if (randomCameraAngle) {
+			randomCameraAngle()
+		}
 	}
-
-
-
 };
 
 

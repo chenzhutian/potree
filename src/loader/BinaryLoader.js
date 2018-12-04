@@ -16,6 +16,7 @@ export class BinaryLoader {
 
 		this.boundingBox = boundingBox;
 		this.scale = scale;
+		console.debug('construct BinaryLoader')
 	}
 
 	load(node) {
@@ -52,6 +53,7 @@ export class BinaryLoader {
 	};
 
 	parse(node, buffer) {
+		console.debug('BinaryLoader parse', node)
 		let pointAttributes = node.pcoGeometry.pointAttributes;
 		let numPoints = buffer.byteLength / node.pcoGeometry.pointAttributes.byteSize;
 
@@ -70,6 +72,10 @@ export class BinaryLoader {
 				new THREE.Vector3().fromArray(data.tightBoundingBox.min),
 				new THREE.Vector3().fromArray(data.tightBoundingBox.max)
 			);
+			const { targetClass } = data
+			if(targetClass && !window._targetClass) {
+				window._targetClass = targetClass
+			}
 
 			Potree.workerPool.returnWorker(workerPath, worker);
 
@@ -123,7 +129,6 @@ export class BinaryLoader {
 				}
 			}
 
-
 			tightBoundingBox.max.sub(tightBoundingBox.min);
 			tightBoundingBox.min.set(0, 0, 0);
 
@@ -148,7 +153,8 @@ export class BinaryLoader {
 			scale: this.scale,
 			spacing: node.spacing,
 			hasChildren: node.hasChildren,
-			name: node.name
+			name: node.name,
+			targetClass: window._targetClass
 		};
 		worker.postMessage(message, [message.buffer]);
 	};

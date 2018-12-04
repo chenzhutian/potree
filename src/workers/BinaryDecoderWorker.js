@@ -70,6 +70,7 @@ onmessage = function (event) {
 	let spacing = event.data.spacing;
 	let hasChildren = event.data.hasChildren;
 	let name = event.data.name;
+	let targetClass = event.data.targetClass
 
 	let tightBoxMin = [Number.POSITIVE_INFINITY, Number.POSITIVE_INFINITY, Number.POSITIVE_INFINITY];
 	let tightBoxMax = [Number.NEGATIVE_INFINITY, Number.NEGATIVE_INFINITY, Number.NEGATIVE_INFINITY];
@@ -468,7 +469,6 @@ onmessage = function (event) {
 		const attrs = attributeBuffers[PointAttribute.CLASSIFICATION.name]
 
 		if (attrs) {
-			console.log('swaping', attrs)
 			attributeBuffers[PointAttribute.LABEL.name] = {
 				buffer: attrs.buffer, attribute: PointAttribute.LABEL
 			}
@@ -479,7 +479,9 @@ onmessage = function (event) {
 			// classesSet.delete(4)
 
 			// random pick a class as target
-			const targetClass = Array.from(classesSet)[Math.floor(classesSet.size * Math.random())]
+			if(!targetClass) {
+				targetClass = Array.from(classesSet)[Math.floor(classesSet.size * Math.random())]
+			}
 			this.console.log(classesSet, `targetClass:${targetClass}`)
 
 			// add selected or not to classification
@@ -577,6 +579,7 @@ onmessage = function (event) {
 		attributeBuffers: attributeBuffers,
 		tightBoundingBox: { min: tightBoxMin, max: tightBoxMax },
 		//estimatedSpacing: estimatedSpacing,
+		targetClass
 	};
 
 	let transferables = [];
