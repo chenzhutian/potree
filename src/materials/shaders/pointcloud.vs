@@ -737,7 +737,7 @@ void doClipping(){
 				vColor.g = 0.4464;
 				vColor.b = 0.1131;
 			} else {
-				vColor.r =  0.0; // 231.0 / 255.0;
+				vColor.r = 231.0 / 255.0;
 				vColor.g = 76.0 / 255.0;
 				vColor.b = 60.0 / 255.0;
 			}
