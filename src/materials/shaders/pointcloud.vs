@@ -725,26 +725,31 @@ void doClipping(){
 		}
 	}
 
-	// higher pirority of picked
-	if(picked == 1.0) {
-		// if saved, should be set to picked
-		if(uSaved) {
-			vColor.r = 0.7797;
-			vColor.g = 0.4464;
-			vColor.b = 0.1131;
-		} else {
-			vColor.r = 231.0 / 255.0;
-			vColor.g = 76.0 / 255.0;
-			vColor.b = 60.0 / 255.0;
+
+	// hack, ifdef color_type_point_index means that it is in point picking mode
+	// only when not in point picking mode it works
+	#ifndef color_type_point_index
+		// higher pirority of picked
+		if(picked == 2.0) {
+			// if saved, should be set to picked
+			if(uSaved) {
+				vColor.r = 0.7797;
+				vColor.g = 0.4464;
+				vColor.b = 0.1131;
+			} else {
+				vColor.r =  0.0; // 231.0 / 255.0;
+				vColor.g = 76.0 / 255.0;
+				vColor.b = 60.0 / 255.0;
+			}
+		} else if(picked == 1.0) {
+			// if saved, should be set to unPicked
+			if(uSaved) {
+				vColor = vec3(0.1, 0.1, 0.1);
+			} else {
+				vColor = oRGB;
+			}
 		}
-	} else if(picked == 2.0) {
-		// if saved, should be set to unPicked
-		if(uSaved) {
-			vColor = vec3(0.1, 0.1, 0.1);
-		} else {
-			vColor = oRGB;
-		}
-	}
+	#endif
 }
 
 
@@ -798,7 +803,6 @@ void main() {
 		mvPosition.xyz = mvPosition.xyz * adjust;
 		gl_Position = projectionMatrix * mvPosition;
 	#endif
-
 
 	// CLIPPING
 	doClipping();
