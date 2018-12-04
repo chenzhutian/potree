@@ -563,7 +563,7 @@ export class Renderer {
 				type: geometry.attributes.position.array.constructor,
 				version: 0
 			});
-			// console.debug(attributeName, `normalized:${normalized}`, bufferAttribute)
+			console.debug(attributeName, `normalized:${normalized}`, bufferAttribute)
 		}
 
 		gl.bindBuffer(gl.ARRAY_BUFFER, null);
@@ -642,7 +642,6 @@ export class Renderer {
 	 * the entry to render nodes, call every frame
 	 */
 	renderNodes(octree, nodes, visibilityTextureData, camera, target, shader, params) {
-
 		if (exports.measureTimings) performance.mark("renderNodes-start");
 
 		let gl = this.gl;
@@ -850,6 +849,7 @@ export class Renderer {
 
 			let webglBuffer = null;
 			if (!this.buffers.has(geometry)) {
+				console.log('==============>', i)
 				webglBuffer = this.createBuffer(geometry);
 				this.buffers.set(geometry, webglBuffer);
 			} else {
@@ -874,84 +874,90 @@ export class Renderer {
 			let numPoints = webglBuffer.numElements;
 			gl.drawArrays(gl.POINTS, 0, numPoints);
 
-			if (window._uSaved) {
-				const buffer = new Float32Array(gl.drawingBufferWidth * gl.drawingBufferHeight * 4);
-				gl.readPixels(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight, gl.RGBA, gl.FLOAT, buffer);
-				// console.debug('drawingBufferWidth', gl.drawingBufferWidth, 'drawingBufferHeight', gl.drawingBufferHeight)
+				// assume that only one tree -- by czt
+		if (window._uSaved) {
+			const buffer = new Float32Array(gl.drawingBufferWidth * gl.drawingBufferHeight * 4);
+			gl.readPixels(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight, gl.RGBA, gl.FLOAT, buffer);
+			// console.debug('drawingBufferWidth', gl.drawingBufferWidth, 'drawingBufferHeight', gl.drawingBufferHeight)
 
-				/* Debug view */
-				if(window._debugMode) {
-					let canvas = document.getElementById('save')
-					if (!canvas) {
-						canvas = document.createElement('canvas')
-						canvas.width = gl.drawingBufferWidth
-						canvas.height = gl.drawingBufferHeight
-						canvas.id = 'save'
-						canvas.style.zIndex = 8;
-						canvas.style.position = "absolute";
-						canvas.style.pointerEvents = 'none'
-						document.body.getElementBy
-						document.body.appendChild(canvas)
-					}
-					const ctx = canvas.getContext('2d')
-					ctx.fillStyle = "rgba(255, 0, 0, 0.2)";
-					ctx.fillRect(0, 0, canvas.width, canvas.height);
-					const imageData = ctx.createImageData(canvas.width, canvas.height)
+			/* Debug view */
+			let imageData
+			let ctx
+			if(window._debugMode) {
+				let canvas = document.getElementById('save')
+				if (!canvas) {
+					canvas = document.createElement('canvas')
+					canvas.width = gl.drawingBufferWidth
+					canvas.height = gl.drawingBufferHeight
+					canvas.id = 'save'
+					canvas.style.zIndex = 8;
+					canvas.style.position = "absolute";
+					canvas.style.pointerEvents = 'none'
+					document.body.getElementBy
+					document.body.appendChild(canvas)
 				}
+				ctx = canvas.getContext('2d')
+				ctx.fillStyle = "rgba(255, 0, 0, 0.2)";
+				ctx.fillRect(0, 0, canvas.width, canvas.height);
+				imageData = ctx.createImageData(canvas.width, canvas.height)
+			}
 
-				const points = []
-				let targetNum = 0
-				let targetSelected = 0
-				for (let i = 0; i < buffer.length; i += 4) {
-					const r = buffer[i]
-					const g = buffer[i + 1]
-					const b = buffer[i + 2]
-					// Debug view
-					if(window._debugMode) {
-						imageData.data[i] = 255.0 * r
-						imageData.data[i + 1] = 255.0 * g
-						imageData.data[i + 2] = 255.0 * b
-						imageData.data[i + 3] = buffer[i] === 0 ? 0 : 255.0
-					}
-					if (r !== 0 || g !== 0 || b !== 0) {
-						const inside = +(Math.abs(r - 0.7797) < 0.0001
-							&& Math.abs(g - 0.4464) < 0.0001
-							// && Math.abs(b - 0.1131) < 0.0001)
-						)
-						const idx = buffer[i + 3]
-						// b is classification, which is "is target or not"
-						// a is the index of point
-						points.push({
-							in: inside,
-							idx,
-							highlight: b === 1 ? 1 : 0, // 1 target, 2 not
-							label: window._label[idx]
-							// r, g
-						})
-						if (b === 1) targetNum++
-						if (b === 1 && inside === 1) targetSelected++
-					}
-				}
+			const points = []
+			let targetNum = 0
+			let targetSelected = 0
+			for (let i = 0; i < buffer.length; i += 4) {
+				const r = buffer[i]
+				const g = buffer[i + 1]
+				const b = buffer[i + 2]
 				// Debug view
 				if(window._debugMode) {
-					// ctx.putImageData(imageData, 0, 0)
-					// console.debug('numPoints', numPoints)
-					// console.debug(points); // Uint8Array
+					imageData.data[i] = 255.0 * r
+					imageData.data[i + 1] = 255.0 * g
+					imageData.data[i + 2] = 255.0 * b
+					imageData.data[i + 3] = buffer[i] === 0 ? 0 : 255.0
 				}
-
-				window._saveRecord = {
-					points,
-					coverage: targetSelected / targetNum,
-					ts: Date.now(),
-					canvasWidth: gl.drawingBufferWidth,
-					canvasHeight: gl.drawingBufferHeight,
-					cameraParams: window._strokeCamMat,
-					markers: material.clipPolygons[0].markers.map(d => ({ x: d.position.x, y: d.position.y }))
+				if (r !== 0 || g !== 0 || b !== 0) {
+					const inside = +(Math.abs(r - 0.7797) < 0.0001
+						&& Math.abs(g - 0.4464) < 0.0001
+						// && Math.abs(b - 0.1131) < 0.0001)
+					)
+					const idx = buffer[i + 3]
+					// b is classification, which is "is target or not"
+					// a is the index of point
+					points.push({
+						in: inside,
+						idx,
+						highlight: b === 1 ? 1 : 0, // 1 target, 2 not
+						label: window._label[idx]
+						// r, g
+					})
+					if (b === 1) targetNum++
+					if (b === 1 && inside === 1) targetSelected++
 				}
-				// gl.bindFramebuffer(gl.FRAMEBUFFER, null);
 			}
+			// Debug view
+			if(window._debugMode) {
+				ctx.putImageData(imageData, 0, 0)
+				console.debug('numPoints', numPoints)
+				console.debug(points); // Uint8Array
+			}
+
+			window._saveRecord = {
+				points,
+				coverage: targetSelected / targetNum,
+				ts: Date.now(),
+				canvasWidth: gl.drawingBufferWidth,
+				canvasHeight: gl.drawingBufferHeight,
+				cameraParams: window._strokeCamMat,
+				markers: material.clipPolygons[0].markers.map(d => ({ x: d.position.x, y: d.position.y }))
+			}
+			// gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+		}
+
 			i++;
 		}
+
+	
 
 		gl.bindVertexArray(null);
 
@@ -962,7 +968,6 @@ export class Renderer {
 	}
 
 	renderOctree(octree, nodes, camera, target, params = {}) {
-
 		let gl = this.gl;
 
 		let material = params.material ? params.material : octree.material;
