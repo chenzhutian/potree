@@ -14,7 +14,6 @@ export class POCLoader {
 		try {
 			let pco = new PointCloudOctreeGeometry();
 			pco.url = url;
-			console.debug('POCLoader.url', url)
 			let xhr = XHRFactory.createXMLHttpRequest();
 			xhr.open('GET', url, true);
 

@@ -549,7 +549,7 @@ export class Renderer {
 			// let normalized = attributeName === 'indices' ? false : bufferAttribute.normalized;
 			// whether should normalized is control in the BinaryLoader
 			let normalized = bufferAttribute.normalized
-			
+
 			let type = this.glTypeMapping.get(bufferAttribute.array.constructor);
 
 			gl.vertexAttribPointer(attributeLocation, bufferAttribute.itemSize, type, normalized, 0, 0);
@@ -563,7 +563,7 @@ export class Renderer {
 				type: geometry.attributes.position.array.constructor,
 				version: 0
 			});
-			console.debug(attributeName, `normalized:${normalized}`, bufferAttribute)
+			// console.debug(attributeName, `normalized:${normalized}`, bufferAttribute)
 		}
 
 		gl.bindBuffer(gl.ARRAY_BUFFER, null);
@@ -603,7 +603,7 @@ export class Renderer {
 				webglBuffer.vbos.get(attributeName).version = bufferAttribute.version;
 			}
 
-			console.debug(attributeName, `normalized:${normalized}`, bufferAttribute)
+			// console.debug(attributeName, `normalized:${normalized}`, bufferAttribute)
 			gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
 			gl.bufferData(gl.ARRAY_BUFFER, bufferAttribute.array, gl.STATIC_DRAW);
 			gl.vertexAttribPointer(attributeLocation, bufferAttribute.itemSize, type, normalized, 0, 0);
@@ -673,6 +673,7 @@ export class Renderer {
 		}
 
 		let i = 0;
+		let totalNumberPoints = 0
 		for (let node of nodes) {
 
 			if (exports.debug.allowedNodes !== undefined) {
@@ -680,13 +681,6 @@ export class Renderer {
 					continue;
 				}
 			}
-
-			//if(![
-			//	"r42006420226",
-			//	]
-			//	.includes(node.name)){
-			//	continue;
-			//}
 
 			let world = node.sceneNode.matrixWorld;
 			worldView.multiplyMatrices(view, world);
@@ -849,7 +843,6 @@ export class Renderer {
 
 			let webglBuffer = null;
 			if (!this.buffers.has(geometry)) {
-				console.log('==============>', i)
 				webglBuffer = this.createBuffer(geometry);
 				this.buffers.set(geometry, webglBuffer);
 			} else {
@@ -873,17 +866,22 @@ export class Renderer {
 
 			let numPoints = webglBuffer.numElements;
 			gl.drawArrays(gl.POINTS, 0, numPoints);
+			totalNumberPoints += numPoints
+			i++;
+		}
 
-				// assume that only one tree -- by czt
+		// assume that only one tree -- by czt
 		if (window._uSaved) {
+			// ======> for save records
+
+			// <====== for save records
 			const buffer = new Float32Array(gl.drawingBufferWidth * gl.drawingBufferHeight * 4);
 			gl.readPixels(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight, gl.RGBA, gl.FLOAT, buffer);
-			// console.debug('drawingBufferWidth', gl.drawingBufferWidth, 'drawingBufferHeight', gl.drawingBufferHeight)
-
+			console.debug(`#pixel:${buffer.length * 0.25} = ${gl.drawingBufferWidth} * ${gl.drawingBufferHeight}, buffer.length:${buffer.length}`)
 			/* Debug view */
 			let imageData
 			let ctx
-			if(window._debugMode) {
+			if (window._debugMode) {
 				let canvas = document.getElementById('save')
 				if (!canvas) {
 					canvas = document.createElement('canvas')
@@ -902,48 +900,74 @@ export class Renderer {
 				imageData = ctx.createImageData(canvas.width, canvas.height)
 			}
 
-			const points = []
+			const savePoints = new Set()
 			let targetNum = 0
 			let targetSelected = 0
-			for (let i = 0; i < buffer.length; i += 4) {
-				const r = buffer[i]
-				const g = buffer[i + 1]
-				const b = buffer[i + 2]
-				// Debug view
-				if(window._debugMode) {
-					imageData.data[i] = 255.0 * r
-					imageData.data[i + 1] = 255.0 * g
-					imageData.data[i + 2] = 255.0 * b
-					imageData.data[i + 3] = buffer[i] === 0 ? 0 : 255.0
+			let passPoints = 0
+			// height shift
+			const heightOffset = Math.max(0, (Math.floor(gl.drawingBufferHeight * 0.05) - 1)) * gl.drawingBufferWidth * 4
+			console.debug(`heightOffset:${heightOffset}`)
+			for (let j = heightOffset; j < buffer.length; j += 4) {
+				if (passPoints >= totalNumberPoints) {
+					console.debug(`passPoints: ${passPoints}`)
+					break
 				}
-				if (r !== 0 || g !== 0 || b !== 0) {
+				const r = buffer[j]
+				const g = buffer[j + 1]
+				const b = buffer[j + 2]
+
+				// Debug view
+				if (window._debugMode) {
+					imageData.data[j] = 255.0 * r
+					imageData.data[j + 1] = 255.0 * g
+					imageData.data[j + 2] = 255.0 * b
+					imageData.data[j + 3] = r === 0 ? 0 : 255.0
+				}
+
+				if ((r !== 0 || g !== 0 || b !== 0)) {
 					const inside = +(Math.abs(r - 0.7797) < 0.0001
 						&& Math.abs(g - 0.4464) < 0.0001
 						// && Math.abs(b - 0.1131) < 0.0001)
 					)
-					const idx = buffer[i + 3]
+					if (inside) {
+						const idx = buffer[j + 3]
+						// simplify to only record the idx of inside points
+						if (savePoints.has(idx)) {
+							console.debug(`r:${r}, g:${g}, b:${b}, a:${idx}`)
+							console.error(`Repeat id ${idx} at ${i}`)
+							console.debug(savePoints)
+							console.debug(geometry.attributes.pointIndex)
+							throw new Error()
+						}
+						savePoints.add(idx)
+					}
+
 					// b is classification, which is "is target or not"
 					// a is the index of point
-					points.push({
-						in: inside,
-						idx,
-						highlight: b === 1 ? 1 : 0, // 1 target, 2 not
-						label: window._label[idx]
-						// r, g
-					})
+					// savePoints.push({
+					// 	// in: inside,
+					// 	// idx,
+					// 	// highlight: b === 1 ? 1 : 0, // 1 target, 2 not
+					// 	// label: window._label[idx]
+					// 	// r, g
+					// })
 					if (b === 1) targetNum++
 					if (b === 1 && inside === 1) targetSelected++
+					++passPoints
+					// console.debug(passPointsInThisNode, savePoints.length)
+
 				}
 			}
 			// Debug view
-			if(window._debugMode) {
+			if (window._debugMode) {
 				ctx.putImageData(imageData, 0, 0)
-				console.debug('numPoints', numPoints)
-				console.debug(points); // Uint8Array
+				console.debug('totalNumPoints', totalNumberPoints, `passPoints:${passPoints}`)
+				console.debug('points', savePoints)
 			}
 
+			// gl.bindFramebuffer(gl.FRAMEBUFFER, null);
 			window._saveRecord = {
-				points,
+				points: Array.from(savePoints),
 				coverage: targetSelected / targetNum,
 				ts: Date.now(),
 				canvasWidth: gl.drawingBufferWidth,
@@ -951,13 +975,8 @@ export class Renderer {
 				cameraParams: window._strokeCamMat,
 				markers: material.clipPolygons[0].markers.map(d => ({ x: d.position.x, y: d.position.y }))
 			}
-			// gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+			window._uSaved = false
 		}
-
-			i++;
-		}
-
-	
 
 		gl.bindVertexArray(null);
 
@@ -1366,7 +1385,7 @@ export class Renderer {
 		gl.activeTexture(gl.TEXTURE1);
 		gl.bindTexture(gl.TEXTURE_2D, null)
 		this.threeRenderer.state.reset();
-		
+
 		// @randomCamera
 		if (randomCameraAngle) {
 			randomCameraAngle()

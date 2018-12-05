@@ -482,7 +482,7 @@ onmessage = function (event) {
 			if(!targetClass) {
 				targetClass = Array.from(classesSet)[Math.floor(classesSet.size * Math.random())]
 			}
-			this.console.log(classesSet, `targetClass:${targetClass}`)
+			// this.console.log(classesSet, `targetClass:${targetClass}`)
 
 			// add selected or not to classification
 			const buff = new ArrayBuffer(numPoints);

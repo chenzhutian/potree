@@ -705,6 +705,9 @@ void doClipping(){
 				vColor.r = 0.7797;
 				vColor.g = 0.4464;
 				vColor.b = 0.1131;
+				// vColor.r = 231.0 / 255.0;
+				// vColor.g = 76.0 / 255.0;
+				// vColor.b = 60.0 / 255.0;
 			} else {
 				vColor.r = 231.0 / 255.0;
 				vColor.g = 76.0 / 255.0;
@@ -736,6 +739,9 @@ void doClipping(){
 				vColor.r = 0.7797;
 				vColor.g = 0.4464;
 				vColor.b = 0.1131;
+				// vColor.r = 231.0 / 255.0;
+				// vColor.g = 76.0 / 255.0;
+				// vColor.b = 60.0 / 255.0;
 			} else {
 				vColor.r = 231.0 / 255.0;
 				vColor.g = 76.0 / 255.0;
@@ -771,10 +777,10 @@ void main() {
 	if(uSaved) {
 		float idx = pointIndex;  // ((((indices.w * 256.0) + indices.z) * 256.0 + indices.y) * 256.0 + indices.x);
 		// maxmum = maxColumn * maxRow (600 * 500 = 30w)
-		float maxColumn = 500.0;
+		float maxColumn = 500.0; 
 		// use 0.625 to resize the range to [-0.8, 0.8]
 		float x = -0.8 + mod(idx, maxColumn) / (0.625 * maxColumn);
-		float maxRow = 500.0; 
+		float maxRow = 600.0;
 		// use 1.8 to resize the range to [-0.9, 0.9]
 		float y = -0.9 + float(int(idx / (maxColumn))) * (1.8 / maxRow);
 		vIndex = idx;
@@ -796,12 +802,14 @@ void main() {
 	vColor = getColor();
 
 	#if defined hq_depth_pass
-		float originalDepth = gl_Position.w;
-		float adjustedDepth = originalDepth + 2.0 * vRadius;
-		float adjust = adjustedDepth / originalDepth;
+		if(!uSaved) {
+			float originalDepth = gl_Position.w;
+			float adjustedDepth = originalDepth + 2.0 * vRadius;
+			float adjust = adjustedDepth / originalDepth;
 
-		mvPosition.xyz = mvPosition.xyz * adjust;
-		gl_Position = projectionMatrix * mvPosition;
+			mvPosition.xyz = mvPosition.xyz * adjust;
+			gl_Position = projectionMatrix * mvPosition;
+		}
 	#endif
 
 	// CLIPPING

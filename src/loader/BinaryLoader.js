@@ -16,7 +16,8 @@ export class BinaryLoader {
 
 		this.boundingBox = boundingBox;
 		this.scale = scale;
-		console.debug('construct BinaryLoader')
+		window._pointIdx = new Set()
+		console.debug('will be deprecated in the future _pointIdx')
 	}
 
 	load(node) {
@@ -53,7 +54,6 @@ export class BinaryLoader {
 	};
 
 	parse(node, buffer) {
-		console.debug('BinaryLoader parse', node)
 		let pointAttributes = node.pcoGeometry.pointAttributes;
 		let numPoints = buffer.byteLength / node.pcoGeometry.pointAttributes.byteSize;
 
@@ -80,7 +80,6 @@ export class BinaryLoader {
 			Potree.workerPool.returnWorker(workerPath, worker);
 
 			let geometry = new THREE.BufferGeometry();
-			console.log('try to add attributes')
 			// already finish swapping
 			for (let property in buffers) {
 				let buffer = buffers[property].buffer;
@@ -90,7 +89,14 @@ export class BinaryLoader {
 				} else if (propertyInt === PointAttributeNames.LABEL) {
 					window._label = new Uint8Array(buffer)
 				} else if (propertyInt === PointAttributeNames.POINT_INDEX) {
-					geometry.addAttribute('pointIndex', new THREE.BufferAttribute(new Float32Array(buffer), 1))
+					const idxBuffer = new Float32Array(buffer)
+					geometry.addAttribute('pointIndex', new THREE.BufferAttribute(idxBuffer, 1))
+					for(const idx of idxBuffer) {
+						if(window._pointIdx.has(idx)) {
+							console.error(`idx ${idx} repeated at ${node.name}`)
+						}
+						window._pointIdx.add(idx)
+					}
 				} else if (propertyInt === PointAttributeNames.POSITION_CARTESIAN) {
 					geometry.addAttribute('position', new THREE.BufferAttribute(new Float32Array(buffer), 3));
 				} else if (propertyInt === PointAttributeNames.COLOR_PACKED) {
