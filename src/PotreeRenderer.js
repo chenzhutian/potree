@@ -953,8 +953,8 @@ export class Renderer {
 					// })
 					if (b === 1) targetNum++
 					if (b === 1 && inside === 1) targetSelected++
-					++passPoints
 					// console.debug(passPointsInThisNode, savePoints.length)
+					++passPoints
 
 				}
 			}
@@ -1055,11 +1055,11 @@ export class Renderer {
 					}
 
 					if (attributes.returnNumber) {
-						defines.push("#define clip_return_number_enabled");
+						// defines.push("#define clip_return_number_enabled");
 					}
 
 					if (attributes.numberOfReturns) {
-						defines.push("#define clip_number_of_returns_enabled");
+						// defines.push("#define clip_number_of_returns_enabled");
 					}
 				}
 

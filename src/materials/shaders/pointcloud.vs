@@ -777,12 +777,12 @@ void main() {
 	if(uSaved) {
 		float idx = pointIndex;  // ((((indices.w * 256.0) + indices.z) * 256.0 + indices.y) * 256.0 + indices.x);
 		// maxmum = maxColumn * maxRow (600 * 500 = 30w)
-		float maxColumn = 500.0; 
+		float maxColumn = 600.0; 
 		// use 0.625 to resize the range to [-0.8, 0.8]
 		float x = -0.8 + mod(idx, maxColumn) / (0.625 * maxColumn);
-		float maxRow = 600.0;
+		float maxRow = 500.0;
 		// use 1.8 to resize the range to [-0.9, 0.9]
-		float y = -0.9 + float(int(idx / (maxColumn))) * (1.8 / maxRow);
+		float y = -0.8 + (float(int(idx / maxColumn)) * 1.6 / maxRow);
 		vIndex = idx;
 		gl_Position = vec4(x, y, 0.0, 1.0);
 		pointSize = 1.0;
