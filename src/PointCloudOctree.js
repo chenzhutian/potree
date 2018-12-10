@@ -839,6 +839,9 @@ export class PointCloudOctree extends PointCloudTree {
 				
 			}
 
+			// Pointer to attribute
+			point.attributes = geometry.attributes
+			point.pIndex = hit.pIndex
 			hit.point = point;
 		}
 
@@ -1005,13 +1008,3 @@ export class PointCloudOctree extends PointCloudTree {
 	}
 
 }
-
-
-
-
-
-
-
-
-
-

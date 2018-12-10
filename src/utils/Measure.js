@@ -180,8 +180,9 @@ export class Measure extends THREE.Object3D {
 					// 	'index': i
 					// });
 					// super hardcode
-					const picked = e.viewer.scene.pointclouds[0].root.geometryNode.geometry.attributes.picked
-					const idx = currentPoint.pointIndex[0]
+					// const picked = e.viewer.scene.pointclouds[0].root.geometryNode.geometry.attributes.picked
+					const picked = point.attributes.picked
+					const idx = currentPoint.pIndex
 					picked.array[idx] = window._pickPoint || 0
 					picked.version++
 					e.viewer.scene.removeAllMeasurements()
