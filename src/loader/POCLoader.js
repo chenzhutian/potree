@@ -22,11 +22,12 @@ export class POCLoader {
 					let fMno = JSON.parse(xhr.responseText);
 					let version = new Version(fMno.version);
 					// @find targetClass
-					if(window._targetClass === undefined) {
+					//if(window._targetClass === undefined) {
 						// zero based
-						const classesSet = Array(fMno.classes+1).fill(0).map((d, i) => i);
-						window._targetClass = classesSet[Math.round((classesSet.length - 1) * Math.random())]
-					}
+					const classOffset = location.hash.endsWith('.pts') ? 0 : 1
+					const classesSet = Array(fMno.classes+classOffset).fill(0).map((d, i) => i);
+					window._targetClass = classesSet[Math.round((classesSet.length - 1) * Math.random())]
+					//}
 
 					// assume octreeDir is absolute if it starts with http
 					if (fMno.octreeDir.indexOf('http') === 0) {
@@ -52,18 +53,18 @@ export class POCLoader {
 
 					let offset = min.clone();
 
-					boundingBox.min.sub(offset);
-					boundingBox.max.sub(offset);
+					boundingBox.min.sub(classOffset);
+					boundingBox.max.sub(classOffset);
 
-					tightBoundingBox.min.sub(offset);
-					tightBoundingBox.max.sub(offset);
+					tightBoundingBox.min.sub(classOffset);
+					tightBoundingBox.max.sub(classOffset);
 
 					pco.projection = fMno.projection;
 					pco.boundingBox = boundingBox;
 					pco.tightBoundingBox = tightBoundingBox;
 					pco.boundingSphere = boundingBox.getBoundingSphere(new THREE.Sphere());
 					pco.tightBoundingSphere = tightBoundingBox.getBoundingSphere(new THREE.Sphere());
-					pco.offset = offset;
+					pco.offset = classOffset;
 					// if (fMno.pointAttributes === 'LAS') {
 					// 	pco.loader = new LasLazLoader(fMno.version);
 					// } else if (fMno.pointAttributes === 'LAZ') {
