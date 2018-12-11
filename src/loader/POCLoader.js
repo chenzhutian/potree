@@ -53,18 +53,18 @@ export class POCLoader {
 
 					let offset = min.clone();
 
-					boundingBox.min.sub(classOffset);
-					boundingBox.max.sub(classOffset);
+					boundingBox.min.sub(offset);
+					boundingBox.max.sub(offset);
 
-					tightBoundingBox.min.sub(classOffset);
-					tightBoundingBox.max.sub(classOffset);
+					tightBoundingBox.min.sub(offset);
+					tightBoundingBox.max.sub(offset);
 
 					pco.projection = fMno.projection;
 					pco.boundingBox = boundingBox;
 					pco.tightBoundingBox = tightBoundingBox;
 					pco.boundingSphere = boundingBox.getBoundingSphere(new THREE.Sphere());
 					pco.tightBoundingSphere = tightBoundingBox.getBoundingSphere(new THREE.Sphere());
-					pco.offset = classOffset;
+					pco.offset = offset;
 					// if (fMno.pointAttributes === 'LAS') {
 					// 	pco.loader = new LasLazLoader(fMno.version);
 					// } else if (fMno.pointAttributes === 'LAZ') {
