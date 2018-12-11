@@ -71,6 +71,7 @@ onmessage = function (event) {
 	let hasChildren = event.data.hasChildren;
 	let name = event.data.name;
 	let targetClass = event.data.targetClass
+	this.console.debug('targetClass', targetClass)
 
 	let tightBoxMin = [Number.POSITIVE_INFINITY, Number.POSITIVE_INFINITY, Number.POSITIVE_INFINITY];
 	let tightBoxMax = [Number.NEGATIVE_INFINITY, Number.NEGATIVE_INFINITY, Number.NEGATIVE_INFINITY];
@@ -147,11 +148,11 @@ onmessage = function (event) {
 
 			attributeBuffers[pointAttribute.name] = { buffer: buff, attribute: pointAttribute };
 		} else if (pointAttribute.name === PointAttribute.CLASSIFICATION.name) {
-			let buff = new ArrayBuffer(numPoints);
-			let classifications = new Uint8Array(buff);
+			let buff = new ArrayBuffer(numPoints * 4);
+			let classifications = new Float32Array(buff);
 
 			for (let j = 0; j < numPoints; j++) {
-				let classification = cv.getUint8(inOffset + j * pointAttributes.byteSize);
+				let classification = cv.getUint32(inOffset + j * pointAttributes.byteSize);
 				classifications[j] = classification;
 			}
 
@@ -469,12 +470,13 @@ onmessage = function (event) {
 		const attrs = attributeBuffers[PointAttribute.CLASSIFICATION.name]
 
 		if (attrs) {
+			// set classirication to label
 			attributeBuffers[PointAttribute.LABEL.name] = {
 				buffer: attrs.buffer, attribute: PointAttribute.LABEL
 			}
-			const classes = new Uint8Array(attrs.buffer)
+			const classes = new Float32Array(attrs.buffer)
 			const classesSet = new Set(classes)
-
+			this.console.debug(classesSet)
 			//@hardcode remove class 4
 			// classesSet.delete(4)
 
@@ -497,8 +499,8 @@ onmessage = function (event) {
 			// task2: calculate the 3D bbox of hte target class
 			const targetPointIdx = new Set()
 			for (let j = 0; j < numPoints; j++) {
-				// labels[j] = classes[j] === targetClass ? 1 : 2;
-				labels[j] = 2
+				labels[j] = classes[j] === targetClass ? 1 : 2;
+				// labels[j] = 2
 
 				if (classes[j] === targetClass) {
 					targetPointIdx.add(j)
@@ -539,16 +541,16 @@ onmessage = function (event) {
 						point[2] <= maxBBox[2] && point[2] >= minBBox[2]
 			}
 
-			for(const j of targetPointIdx) {
-				const x = positions[3 * j + 0]
-				const y = positions[3 * j + 1]
-				const z = positions[3 * j + 2]
-				// only the point within the target bbox are targted
-				// @TODO, within function
-				if(withinBBox(tightBoxMin, tightBoxMax, [x, y, z])) {
-					labels[j] = 1
-				} 
-			}
+			// for(const j of targetPointIdx) {
+			// 	const x = positions[3 * j + 0]
+			// 	const y = positions[3 * j + 1]
+			// 	const z = positions[3 * j + 2]
+			// 	// only the point within the target bbox are targted
+			// 	// @TODO, within function
+			// 	if(withinBBox(tightBoxMin, tightBoxMax, [x, y, z])) {
+			// 		labels[j] = 1
+			// 	} 
+			// }
 
 			// set to classification for easy rendering
 			attributeBuffers[PointAttribute.CLASSIFICATION.name] = {

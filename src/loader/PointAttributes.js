@@ -103,7 +103,7 @@ PointAttribute.INTENSITY = new PointAttribute(
 
 PointAttribute.CLASSIFICATION = new PointAttribute(
 	PointAttributeNames.CLASSIFICATION,
-	PointAttributeTypes.DATA_TYPE_UINT8, 1);
+	PointAttributeTypes.DATA_TYPE_FLOAT, 1);
 
 PointAttribute.NORMAL_SPHEREMAPPED = new PointAttribute(
 	PointAttributeNames.NORMAL_SPHEREMAPPED,
