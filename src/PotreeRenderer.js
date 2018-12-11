@@ -872,108 +872,108 @@ export class Renderer {
 
 		// assume that only one tree -- by czt
 		if (window._uSaved) {
-			// ======> for save records
-
-			// <====== for save records
-			const buffer = new Float32Array(gl.drawingBufferWidth * gl.drawingBufferHeight * 4);
-			gl.readPixels(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight, gl.RGBA, gl.FLOAT, buffer);
-			console.debug(`#pixel:${buffer.length * 0.25} = ${gl.drawingBufferWidth} * ${gl.drawingBufferHeight}, buffer.length:${buffer.length}`)
-			/* Debug view */
-			let imageData
-			let ctx
-			if (window._debugMode) {
-				let canvas = document.getElementById('save')
-				if (!canvas) {
-					canvas = document.createElement('canvas')
-					canvas.width = gl.drawingBufferWidth
-					canvas.height = gl.drawingBufferHeight
-					canvas.id = 'save'
-					canvas.style.zIndex = 8;
-					canvas.style.position = "absolute";
-					canvas.style.pointerEvents = 'none'
-					document.body.getElementBy
-					document.body.appendChild(canvas)
-				}
-				ctx = canvas.getContext('2d')
-				ctx.fillStyle = "rgba(255, 0, 0, 0.2)";
-				ctx.fillRect(0, 0, canvas.width, canvas.height);
-				imageData = ctx.createImageData(canvas.width, canvas.height)
-			}
-
-			const savePoints = new Set()
-			let targetNum = 0
-			let targetSelected = 0
-			let passPoints = 0
-			// height shift
-			const heightOffset = Math.max(0, (Math.floor(gl.drawingBufferHeight * 0.05) - 1)) * gl.drawingBufferWidth * 4
-			console.debug(`heightOffset:${heightOffset}`)
-			for (let j = heightOffset; j < buffer.length; j += 4) {
-				if (passPoints >= totalNumberPoints) {
-					console.debug(`passPoints: ${passPoints}`)
-					break
-				}
-				const r = buffer[j]
-				const g = buffer[j + 1]
-				const b = buffer[j + 2]
-
-				// Debug view
+			if (material.clipPolygons.length < 1) {
+				alert('Please draw the lossa first!')
+			} else {
+				const buffer = new Float32Array(gl.drawingBufferWidth * gl.drawingBufferHeight * 4);
+				gl.readPixels(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight, gl.RGBA, gl.FLOAT, buffer);
+				console.debug(`#pixel:${buffer.length * 0.25} = ${gl.drawingBufferWidth} * ${gl.drawingBufferHeight}, buffer.length:${buffer.length}`)
+				/* Debug view */
+				let imageData
+				let ctx
 				if (window._debugMode) {
-					imageData.data[j] = 255.0 * r
-					imageData.data[j + 1] = 255.0 * g
-					imageData.data[j + 2] = 255.0 * b
-					imageData.data[j + 3] = r === 0 ? 0 : 255.0
+					let canvas = document.getElementById('save')
+					if (!canvas) {
+						canvas = document.createElement('canvas')
+						canvas.width = gl.drawingBufferWidth
+						canvas.height = gl.drawingBufferHeight
+						canvas.id = 'save'
+						canvas.style.zIndex = 8;
+						canvas.style.position = "absolute";
+						canvas.style.pointerEvents = 'none'
+						document.body.getElementBy
+						document.body.appendChild(canvas)
+					}
+					ctx = canvas.getContext('2d')
+					ctx.fillStyle = "rgba(255, 0, 0, 0.2)";
+					ctx.fillRect(0, 0, canvas.width, canvas.height);
+					imageData = ctx.createImageData(canvas.width, canvas.height)
 				}
 
-				if ((r !== 0 || g !== 0 || b !== 0)) {
-					const inside = +(Math.abs(r - 0.7797) < 0.0001
-						&& Math.abs(g - 0.4464) < 0.0001
-						// && Math.abs(b - 0.1131) < 0.0001)
-					)
-					if (inside) {
-						const idx = buffer[j + 3]
-						// simplify to only record the idx of inside points
-						if (savePoints.has(idx)) {
-							console.debug(`r:${r}, g:${g}, b:${b}, a:${idx}`)
-							console.error(`Repeat id ${idx} at ${i}`)
-							console.debug(savePoints)
-							console.debug(geometry.attributes.pointIndex)
-							throw new Error()
-						}
-						savePoints.add(idx)
+				const savePoints = new Set()
+				let targetNum = 0
+				let targetSelected = 0
+				let passPoints = 0
+				// height shift
+				const heightOffset = Math.max(0, (Math.floor(gl.drawingBufferHeight * 0.05) - 1)) * gl.drawingBufferWidth * 4
+				console.debug(`heightOffset:${heightOffset}`)
+				for (let j = heightOffset; j < buffer.length; j += 4) {
+					if (passPoints >= totalNumberPoints) {
+						console.debug(`passPoints: ${passPoints}`)
+						break
+					}
+					const r = buffer[j]
+					const g = buffer[j + 1]
+					const b = buffer[j + 2]
+
+					// Debug view
+					if (window._debugMode) {
+						imageData.data[j] = 255.0 * r
+						imageData.data[j + 1] = 255.0 * g
+						imageData.data[j + 2] = 255.0 * b
+						imageData.data[j + 3] = r === 0 ? 0 : 255.0
 					}
 
-					// b is classification, which is "is target or not"
-					// a is the index of point
-					// savePoints.push({
-					// 	// in: inside,
-					// 	// idx,
-					// 	// highlight: b === 1 ? 1 : 0, // 1 target, 2 not
-					// 	// label: window._label[idx]
-					// 	// r, g
-					// })
-					if (b === 1) targetNum++
-					if (b === 1 && inside === 1) targetSelected++
-					// console.debug(passPointsInThisNode, savePoints.length)
-					++passPoints
+					if ((r !== 0 || g !== 0 || b !== 0)) {
+						const inside = +(Math.abs(r - 0.7797) < 0.0001
+							&& Math.abs(g - 0.4464) < 0.0001
+							// && Math.abs(b - 0.1131) < 0.0001)
+						)
+						if (inside) {
+							const idx = buffer[j + 3]
+							// simplify to only record the idx of inside points
+							if (savePoints.has(idx)) {
+								console.debug(`r:${r}, g:${g}, b:${b}, a:${idx}`)
+								console.error(`Repeat id ${idx} at ${i}`)
+								console.debug(savePoints)
+								console.debug(geometry.attributes.pointIndex)
+								throw new Error()
+							}
+							savePoints.add(idx)
+						}
 
+						// b is classification, which is "is target or not"
+						// a is the index of point
+						// savePoints.push({
+						// 	// in: inside,
+						// 	// idx,
+						// 	// highlight: b === 1 ? 1 : 0, // 1 target, 2 not
+						// 	// label: window._label[idx]
+						// 	// r, g
+						// })
+						if (b === 1) targetNum++
+						if (b === 1 && inside === 1) targetSelected++
+						// console.debug(passPointsInThisNode, savePoints.length)
+						++passPoints
+					}
 				}
-			}
-			// Debug view
-			if (window._debugMode) {
-				ctx.putImageData(imageData, 0, 0)
-				console.debug('totalNumPoints', totalNumberPoints, `passPoints:${passPoints}`)
-				console.debug('points', savePoints)
-			}
+				// Debug view
+				if (window._debugMode) {
+					ctx.putImageData(imageData, 0, 0)
+					console.debug('totalNumPoints', totalNumberPoints, `passPoints:${passPoints}`)
+					console.debug('points', savePoints)
+				}
 
-			// gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-			window._saveRecord = {
-				points: Array.from(savePoints),
-				coverage: targetSelected / targetNum,
-				ts: Date.now(),
-				canvasWidth: gl.drawingBufferWidth,
-				canvasHeight: gl.drawingBufferHeight,
-				cameraParams: window._strokeCamMat,
-				markers: material.clipPolygons[0].markers.map(d => ({ x: d.position.x, y: d.position.y }))
+				// gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+				window._saveRecord = {
+					points: Array.from(savePoints),
+					coverage: targetSelected / targetNum,
+					ts: Date.now(),
+					canvasWidth: gl.drawingBufferWidth,
+					canvasHeight: gl.drawingBufferHeight,
+					cameraParams: window._strokeCamMat,
+					markers: material.clipPolygons[0].markers.map(d => ({ x: d.position.x, y: d.position.y }))
+				}
 			}
 			window._uSaved = false
 		}
