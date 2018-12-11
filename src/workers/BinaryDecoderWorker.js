@@ -71,6 +71,7 @@ onmessage = function (event) {
 	let hasChildren = event.data.hasChildren;
 	let name = event.data.name;
 	let targetClass = event.data.targetClass
+	let _picked = event.data.picked
 
 	let tightBoxMin = [Number.POSITIVE_INFINITY, Number.POSITIVE_INFINITY, Number.POSITIVE_INFINITY];
 	let tightBoxMax = [Number.NEGATIVE_INFINITY, Number.NEGATIVE_INFINITY, Number.NEGATIVE_INFINITY];
@@ -460,6 +461,15 @@ onmessage = function (event) {
 		const buff = new ArrayBuffer(numPoints)
 		// 0 - natrual, 1 - picked, 2 - unpicked
 		const picked = new Uint8Array(buff).fill(0);
+		if(_picked) {
+			const pointIds = new Float32Array(attributeBuffers[PointAttribute.POINT_INDEX.name].buffer)
+			for(let i = 0, len = picked.length; i < len; ++i) {
+				const pointId = pointIds[i]
+				if(_picked.has(pointId)) {
+					picked[i] = 1
+				}
+			}
+		}
 		// this.console.log(buff)
 		attributeBuffers[PointAttribute.PICKED.name] = { buffer: buff, attribute: PointAttribute.PICKED }
 	}
@@ -474,8 +484,8 @@ onmessage = function (event) {
 				buffer: attrs.buffer, attribute: PointAttribute.LABEL
 			}
 			const classes = new Float32Array(attrs.buffer)
-			const classesSet = new Set(classes)
-			this.console.debug(classesSet)
+			// const classesSet = new Set(classes)
+	
 			//@hardcode remove class 4
 			// classesSet.delete(4)
 

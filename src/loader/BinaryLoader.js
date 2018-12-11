@@ -160,7 +160,8 @@ export class BinaryLoader {
 			spacing: node.spacing,
 			hasChildren: node.hasChildren,
 			name: node.name,
-			targetClass: window._targetClass
+			targetClass: window._targetClass,
+			picked: window._picked,
 		};
 		worker.postMessage(message, [message.buffer]);
 	};

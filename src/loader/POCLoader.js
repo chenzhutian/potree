@@ -22,12 +22,12 @@ export class POCLoader {
 					let fMno = JSON.parse(xhr.responseText);
 					let version = new Version(fMno.version);
 					// @find targetClass
-					//if(window._targetClass === undefined) {
+					if(window._targetClass === undefined) {
 						// zero based
-					const classOffset = location.hash.endsWith('.pts') ? 0 : 1
-					const classesSet = Array(fMno.classes+classOffset).fill(0).map((d, i) => i);
-					window._targetClass = classesSet[Math.round((classesSet.length - 1) * Math.random())]
-					//}
+						const classOffset = location.hash.endsWith('.pts') ? 0 : 1
+						const classesSet = Array(fMno.classes+classOffset).fill(0).map((d, i) => i);
+						window._targetClass = classesSet[Math.round((classesSet.length - 1) * Math.random())]
+					}
 
 					// assume octreeDir is absolute if it starts with http
 					if (fMno.octreeDir.indexOf('http') === 0) {
