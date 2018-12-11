@@ -72,10 +72,10 @@ export class BinaryLoader {
 				new THREE.Vector3().fromArray(data.tightBoundingBox.min),
 				new THREE.Vector3().fromArray(data.tightBoundingBox.max)
 			);
-			const { targetClass } = data
-			if(targetClass && !window._targetClass) {
-				window._targetClass = targetClass
-			}
+			// const { targetClass } = data
+			// if(targetClass && !window._targetClass) {
+			// 	window._targetClass =  targetClass
+			// }
 
 			Potree.workerPool.returnWorker(workerPath, worker);
 

@@ -20,8 +20,13 @@ export class POCLoader {
 			xhr.onreadystatechange = function () {
 				if (xhr.readyState === 4 && (xhr.status === 200 || xhr.status === 0)) {
 					let fMno = JSON.parse(xhr.responseText);
-
 					let version = new Version(fMno.version);
+					// @find targetClass
+					if(window._targetClass === undefined) {
+						// zero based
+						const classesSet = Array(fMno.classes+1).fill(0).map((d, i) => i);
+						window._targetClass = classesSet[Math.round((classesSet.length - 1) * Math.random())]
+					}
 
 					// assume octreeDir is absolute if it starts with http
 					if (fMno.octreeDir.indexOf('http') === 0) {

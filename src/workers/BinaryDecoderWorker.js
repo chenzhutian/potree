@@ -71,7 +71,6 @@ onmessage = function (event) {
 	let hasChildren = event.data.hasChildren;
 	let name = event.data.name;
 	let targetClass = event.data.targetClass
-	this.console.debug('targetClass', targetClass)
 
 	let tightBoxMin = [Number.POSITIVE_INFINITY, Number.POSITIVE_INFINITY, Number.POSITIVE_INFINITY];
 	let tightBoxMax = [Number.NEGATIVE_INFINITY, Number.NEGATIVE_INFINITY, Number.NEGATIVE_INFINITY];
@@ -481,9 +480,9 @@ onmessage = function (event) {
 			// classesSet.delete(4)
 
 			// random pick a class as target
-			if(!targetClass) {
-				targetClass = Array.from(classesSet)[Math.floor(classesSet.size * Math.random())]
-			}
+			// if(!targetClass) {
+			// 	targetClass = Array.from(classesSet)[Math.floor(classesSet.size * Math.random())]
+			// }
 			// this.console.log(classesSet, `targetClass:${targetClass}`)
 
 			// add selected or not to classification
@@ -581,7 +580,7 @@ onmessage = function (event) {
 		attributeBuffers: attributeBuffers,
 		tightBoundingBox: { min: tightBoxMin, max: tightBoxMax },
 		//estimatedSpacing: estimatedSpacing,
-		targetClass
+		// targetClass
 	};
 
 	let transferables = [];
