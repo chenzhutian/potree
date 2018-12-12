@@ -131,12 +131,15 @@ export function loadPointCloud(path, name, callback) {
 				console.error(new Error(`failed to load point cloud from URL: ${path}`));
 			} else {
 				let pointcloud = new PointCloudOctree(geometry);
-				pointcloud.applyMatrix(new THREE.Matrix4().set(
-					1, 0, 0, 0,
-					0, 0, 1, 0,
-					0, 1, 0, 0,
-					0, 0, 0, 1
-				));
+				// @find
+				if(location.hash.endsWith('.pts')) {
+					pointcloud.applyMatrix(new THREE.Matrix4().set(
+						1, 0, 0, 0,
+						0, 0, 1, 0,
+						0, 1, 0, 0,
+						0, 0, 0, 1
+					));
+				}
 				loaded(pointcloud);
 			}
 		});
