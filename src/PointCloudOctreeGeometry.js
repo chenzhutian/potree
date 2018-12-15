@@ -120,7 +120,6 @@ export class PointCloudOctreeGeometryNode extends PointCloudTreeNode{
 		if (this.loading === true || this.loaded === true || Potree.numNodesLoading >= Potree.maxNodesLoading) {
 			return;
 		}
-
 		this.loading = true;
 
 		Potree.numNodesLoading++;
@@ -210,7 +209,6 @@ export class PointCloudOctreeGeometryNode extends PointCloudTreeNode{
 		if ((node.level % node.pcoGeometry.hierarchyStepSize) === 0) {
 			// let hurl = node.pcoGeometry.octreeDir + "/../hierarchy/" + node.name + ".hrc";
 			let hurl = node.pcoGeometry.octreeDir + '/' + node.getHierarchyPath() + '/' + node.name + '.hrc';
-
 			let xhr = XHRFactory.createXMLHttpRequest();
 			xhr.open('GET', hurl, true);
 			xhr.responseType = 'arraybuffer';

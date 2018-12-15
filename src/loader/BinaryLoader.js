@@ -148,6 +148,11 @@ export class BinaryLoader {
 			node.loading = false;
 			node.estimatedSpacing = data.estimatedSpacing;
 			Potree.numNodesLoading--;
+			window._numToLoad--;
+			// @find
+			if(window._numToLoad === 0) {
+				window.onLoadAllPC && window.onLoadAllPC()
+			}
 		};
 
 		let message = {

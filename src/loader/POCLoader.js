@@ -27,6 +27,8 @@ export class POCLoader {
 						const classesSet = Array(fMno.classes).fill(0).map((d, i) => i+1);
 						window._targetClass = classesSet[Math.round((classesSet.length - 1) * Math.random())]
 					}
+					// @find set num to load
+					window._numToLoad = fMno.numToLoad
 
 					// assume octreeDir is absolute if it starts with http
 					if (fMno.octreeDir.indexOf('http') === 0) {
@@ -114,7 +116,7 @@ export class POCLoader {
 					}
 
 					pco.nodes = nodes;
-
+					
 					callback(pco);
 				}
 			};
