@@ -23,9 +23,8 @@ export class POCLoader {
 					let version = new Version(fMno.version);
 					// @find targetClass
 					if(window._targetClass === undefined) {
-						// zero based
-						const classOffset = location.hash.endsWith('.pts') ? 0 : 1
-						const classesSet = Array(fMno.classes+classOffset).fill(0).map((d, i) => i);
+						// 1 based
+						const classesSet = Array(fMno.classes).fill(0).map((d, i) => i+1);
 						window._targetClass = classesSet[Math.round((classesSet.length - 1) * Math.random())]
 					}
 

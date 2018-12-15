@@ -873,7 +873,7 @@ export class Renderer {
 		// assume that only one tree -- by czt
 		if (window._uSaved) {
 			if (material.clipPolygons.length < 1) {
-				alert('Please draw the lossa first!')
+				console.warn('Please draw the lossa first!')
 			} else {
 				const buffer = new Float32Array(gl.drawingBufferWidth * gl.drawingBufferHeight * 4);
 				gl.readPixels(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight, gl.RGBA, gl.FLOAT, buffer);
