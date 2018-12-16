@@ -179,6 +179,10 @@ export class ClippingTool extends EventDispatcher {
 				this.viewer.scene.removePolygonClipVolume(polyClipVol);
 			}
 			this.cancelReset()
+			// @find manully trigger
+			if(e.manulTrigger && window.keyupSave) {
+				window.keyupSave()
+			}
 		};
 
 		this.viewer.addEventListener("cancel_insertions", cancel.callback);
