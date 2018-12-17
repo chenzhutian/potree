@@ -903,6 +903,7 @@ export class Renderer {
 				const savePoints = new Set()
 				let targetNum = 0
 				let targetSelected = 0
+				let nonTargetSelected = 0
 				let passPoints = 0
 				// height shift
 				const heightOffset = Math.max(0, (Math.floor(gl.drawingBufferHeight * 0.05) - 1)) * gl.drawingBufferWidth * 4
@@ -953,6 +954,7 @@ export class Renderer {
 						// })
 						if (b === 1) targetNum++
 						if (b === 1 && inside === 1) targetSelected++
+						if (b !== 1 && inside === 1) nonTargetSelected++
 						++passPoints
 					}
 				}
@@ -966,12 +968,13 @@ export class Renderer {
 				// gl.bindFramebuffer(gl.FRAMEBUFFER, null);
 				window._saveRecord = {
 					points: Array.from(savePoints),
-					coverage: targetSelected / targetNum,
+					crate: targetSelected / targetNum,
+					erate: nonTargetSelected/ totalNumberPoints,
 					ts: Date.now(),
-					canvasWidth: gl.drawingBufferWidth,
-					canvasHeight: gl.drawingBufferHeight,
+					cW: gl.drawingBufferWidth,
+					cH: gl.drawingBufferHeight,
 					cameraParams: window._strokeCamMat,
-					markers: material.clipPolygons[0].markers.map(d => ({ x: d.position.x, y: d.position.y }))
+					markers: material.clipPolygons[0].markers.map(d => ([d.position.x, d.position.y]))
 				}
 			}
 			window._uSaved = false
