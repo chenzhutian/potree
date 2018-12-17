@@ -953,7 +953,6 @@ export class Renderer {
 						// })
 						if (b === 1) targetNum++
 						if (b === 1 && inside === 1) targetSelected++
-						// console.debug(passPointsInThisNode, savePoints.length)
 						++passPoints
 					}
 				}

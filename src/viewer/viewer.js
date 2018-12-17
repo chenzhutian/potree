@@ -34,7 +34,7 @@ export class Viewer extends EventDispatcher {
 		this.renderArea = domElement;
 		this.guiLoaded = false;
 		this.guiLoadTasks = [];
-		this.useHQ = true
+		this.useHQ = false
 
 		this.messages = [];
 		this.elMessages = $(`

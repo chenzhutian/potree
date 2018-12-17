@@ -794,7 +794,6 @@ void main() {
 	vLogDepth = log2(-mvPosition.z);
 
 	// POINT SIZE
-	// float pointSize =  10.0; // getPointSize();
 	gl_PointSize = pointSize;
 	vPointSize = pointSize;
 
@@ -901,5 +900,4 @@ void main() {
 	//	vColor.r = 1.0;
 	//	vColor.g = 1.0;
 	//}
-
 }
