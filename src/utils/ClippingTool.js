@@ -153,7 +153,7 @@ export class ClippingTool extends EventDispatcher {
 		};
 		const onMouseDown = () => {
 			click = true
-
+			window._countTimeT1 = performance.now()
 		}
 		const onMouseUp = e => {
 			console.debug('onMouseUp')
