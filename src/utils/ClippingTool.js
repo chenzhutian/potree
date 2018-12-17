@@ -88,19 +88,19 @@ export class ClippingTool extends EventDispatcher {
 			<defs>
 				 <marker id="diamond" markerWidth="24" markerHeight="24" refX="12" refY="12"
 						markerUnits="userSpaceOnUse">
-					<circle cx="12" cy="12" r="3" fill="white" stroke="black" stroke-width="1.5"/>
+					<circle cx="12" cy="12" r="3" fill="red" stroke="#e74c3c" stroke-width="1.5"/>
 				</marker>
 			</defs>
 
 			<polyline fill="none" stroke="black" 
-				style="stroke:rgb(255, 255, 255);
+				style="stroke:red;
 				stroke-width:6;"
 				stroke-dasharray="9, 6"
 				stroke-dashoffset="2"
 				/>
 
 			<polyline fill="none" stroke="black" 
-				style="stroke:rgb(255, 255, 255);
+				style="stroke:red;
 				stroke-width:2;"
 				stroke-dasharray="5, 10"
 				marker-start="url(#diamond)" 
