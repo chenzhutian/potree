@@ -873,7 +873,8 @@ export class Renderer {
 		// assume that only one tree -- by czt
 		if (window._uSaved) {
 			if (material.clipPolygons.length < 1) {
-				console.warn('Please draw the lossa first!')
+				console.warn('PotreeRenderer >> Please draw the lossa first!')
+				window._uSaved = false
 			} else {
 				const buffer = new Float32Array(gl.drawingBufferWidth * gl.drawingBufferHeight * 4);
 				gl.readPixels(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight, gl.RGBA, gl.FLOAT, buffer);
@@ -943,15 +944,6 @@ export class Renderer {
 							savePoints.add(idx)
 						}
 
-						// b is classification, which is "is target or not"
-						// a is the index of point
-						// savePoints.push({
-						// 	// in: inside,
-						// 	// idx,
-						// 	// highlight: b === 1 ? 1 : 0, // 1 target, 2 not
-						// 	// label: window._label[idx]
-						// 	// r, g
-						// })
 						if (b === 1) targetNum++
 						if (b === 1 && inside === 1) targetSelected++
 						if (b !== 1 && inside === 1) nonTargetSelected++
@@ -976,8 +968,12 @@ export class Renderer {
 					cameraParams: window._strokeCamMat,
 					markers: material.clipPolygons[0].markers.map(d => ([d.position.x, d.position.y]))
 				}
+				window._uSaved = false
+				if(window.keyupSave) {
+					// @find
+					window.keyupSave()
+				}
 			}
-			window._uSaved = false
 		}
 
 		gl.bindVertexArray(null);

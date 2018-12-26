@@ -180,8 +180,8 @@ export class ClippingTool extends EventDispatcher {
 			}
 			this.cancelReset()
 			// @find manully trigger
-			if(e.manulTrigger && window.keyupSave) {
-				window.keyupSave()
+			if(e.manulTrigger) {
+				window._uSaved = true;
 			}
 		};
 
