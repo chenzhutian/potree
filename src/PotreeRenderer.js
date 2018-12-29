@@ -1385,8 +1385,8 @@ export class Renderer {
 		this.threeRenderer.state.reset();
 
 		// @randomCamera
-		if (randomCameraAngle) {
-			randomCameraAngle()
+		if (window.randomCameraAngle) {
+			window.randomCameraAngle()
 		}
 	}
 };
