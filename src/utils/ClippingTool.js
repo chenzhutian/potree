@@ -192,9 +192,15 @@ export class ClippingTool extends EventDispatcher {
 		// this.viewer.renderer.domElement.addEventListener("mouseup", insertionCallback, true);
 		this.viewer.inputHandler.enabled = false;
 
+		const { yawDelta, pitchDelta, radiusDelta, panDelta } = this.viewer.orbitControls
 		window._strokeCamMat = {
 			position: this.viewer.scene.view.position.clone(),
-			yaw: this.viewer.scene.view.yaw, pitch: this.viewer.scene.view.pitch
+			yaw: this.viewer.scene.view.yaw, 
+			pitch: this.viewer.scene.view.pitch,
+			radius: this.viewer.scene.view.radius,
+			orbit: {  yawDelta, pitchDelta, radiusDelta, 
+				panDelta: {x: panDelta.x, y: panDelta.y} 
+			}
 		}
 		// console.debug('position', this.viewer.scene.cameraP.position)
 		// console.debug('rotation', this.viewer.scene.cameraP.rotation)

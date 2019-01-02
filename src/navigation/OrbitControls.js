@@ -31,8 +31,8 @@ export class OrbitControls extends EventDispatcher {
 		this.sceneControls = new THREE.Scene();
 
 		this.rotationSpeed = 5;
-
 		this.fadeFactor = 10;
+		
 		this.yawDelta = 0;
 		this.pitchDelta = 0;
 		this.panDelta = new THREE.Vector2(0, 0);
