@@ -624,6 +624,11 @@ bool pointInClipPolygon(vec3 point, int polyIdx) {
 		maxCount = i;
 	}
 
+	// further check in frustum
+	if(c) {
+		c = pointNDC.z > 0.0 && pointNDC.z < pointNDC.w;
+	}
+
 	return c;
 }
 #endif
