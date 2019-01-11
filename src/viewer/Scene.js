@@ -247,6 +247,12 @@ export class Scene extends EventDispatcher{
 
 		this.cameraP.up.set(0, 0, 1);
 		this.cameraP.position.set(1000, 1000, 1000);
+
+		// ===> for debug
+		const cameraHelper = new THREE.CameraHelper(this.cameraP);
+		this.scene.add(cameraHelper)
+		this.scene.add(this.cameraP)
+
 		this.cameraO.up.set(0, 0, 1);
 		this.cameraO.position.set(1000, 1000, 1000);
 		//this.camera.rotation.y = -Math.PI / 4;

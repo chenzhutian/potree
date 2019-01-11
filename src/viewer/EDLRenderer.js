@@ -17,6 +17,15 @@ export class EDLRenderer{
 		this.gl = viewer.renderer.context;
 
 		this.shadowMap = new PointCloudSM(this.viewer.pRenderer);
+
+		// for debug
+		this._debugCamera = new THREE.OrthographicCamera(-10, 10, 10, -10);
+		this._debugCamera.position.z = 30;
+		this._debugCamera.position.x = -20;
+		this._debugCamera.position.y = 30;
+
+		// this._debugCameraHelper = new THREE.CameraHelper(this.viewer.getActiveCamera());
+		// this.viewer.scene.scene.add(this._debugCameraHelper)
 	}
 
 	initEDL(){
@@ -174,6 +183,7 @@ export class EDLRenderer{
 			viewer.renderer.clear();
 		}
 
+		
 		// TODO adapt to multiple lights
 		if(lights.length > 0 && !(lights[0].disableShadowUpdates)){
 			let light = lights[0];
@@ -201,7 +211,7 @@ export class EDLRenderer{
 
 		}
 
-		viewer.renderer.render(viewer.scene.scene, camera);
+		// viewer.renderer.render(viewer.scene.scene, camera);
 		
 		//viewer.renderer.clearTarget( this.rtColor, true, true, true );
 		viewer.renderer.clearTarget(this.rtEDL, true, true, true);
@@ -240,8 +250,9 @@ export class EDLRenderer{
 			});
 		}
 
+		viewer.renderer.setViewport(0, 0, width / 2, height);
 		viewer.renderer.render(viewer.scene.scene, camera, this.rtRegular);
-
+		
 		//viewer.renderer.setRenderTarget(this.rtColor);
 		viewer.dispatchEvent({type: "render.pass.scene", viewer: viewer, renderTarget: this.rtRegular});
 
@@ -282,6 +293,12 @@ export class EDLRenderer{
 									height - viewer.navigationCube.width, 
 									viewer.navigationCube.width, viewer.navigationCube.width);
 		viewer.renderer.render(viewer.navigationCube, viewer.navigationCube.camera);		
+		
+		viewer.renderer.setViewport(width / 2, 0, width / 2, height);
+		viewer.renderer.render(viewer.scene.scene, this._debugCamera);
+		viewer.pRenderer.render(viewer.scene.scenePointCloud, this._debugCamera);
+
+		// reset
 		viewer.renderer.setViewport(0, 0, width, height);
 
 		viewer.dispatchEvent({type: "render.pass.end",viewer: viewer});

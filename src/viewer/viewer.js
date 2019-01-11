@@ -1599,15 +1599,13 @@ export class Viewer extends EventDispatcher {
 					this.repRenderer = new RepRenderer(this);
 				}
 				this.repRenderer.render(this.renderer);
-			} 
-			else if (this.useHQ) {
+			}  else if (this.useHQ) {
 				if (!this.hqRenderer) {
 					this.hqRenderer = new HQSplatRenderer(this);
 				}
 				this.hqRenderer.useEDL = this.useEDL;
 				this.hqRenderer.render(this.renderer);
-			} 
-			else {
+			}  else {
 				if (this.useEDL && Features.SHADER_EDL.isSupported()) {
 					if (!this.edlRenderer) {
 						this.edlRenderer = new EDLRenderer(this);
