@@ -193,12 +193,25 @@ export class ClippingTool extends EventDispatcher {
 		this.viewer.inputHandler.enabled = false;
 
 		const { yawDelta, pitchDelta, radiusDelta, panDelta } = this.viewer.orbitControls
+		const cam = this.viewer.getActiveCamera()
+		cam.updateProjectionMatrix()
+		cam.updateMatrixWorld()
+		const projectionMatrix = cam.projectionMatrix.toArray()
+		const worldInverseMatrix = cam.matrixWorldInverse.toArray()
+		const rotation = { x: cam.rotation.x, y: cam.rotation.y, z: cam.rotation.z }
+		const position = { x: cam.position.x, y: cam.position.y, z: cam.position.z }
+
 		window._strokeCamMat = {
-			position: this.viewer.scene.view.position.clone(),
+			position,
+			rotation,
+			worldInverseMatrix,
+			projectionMatrix,
+			//
 			yaw: this.viewer.scene.view.yaw, 
 			pitch: this.viewer.scene.view.pitch,
 			radius: this.viewer.scene.view.radius,
-			orbit: {  yawDelta, pitchDelta, radiusDelta, 
+			orbit: {  
+				yawDelta, pitchDelta, radiusDelta, 
 				panDelta: {x: panDelta.x, y: panDelta.y} 
 			}
 		}
