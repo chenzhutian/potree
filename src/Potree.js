@@ -132,14 +132,14 @@ export function loadPointCloud(path, name, callback) {
 			} else {
 				let pointcloud = new PointCloudOctree(geometry);
 				// @find
-				if(location.hash.endsWith('.pts')) {
-					pointcloud.applyMatrix(new THREE.Matrix4().set(
-						1, 0, 0, 0,
-						0, 0, 1, 0,
-						0, 1, 0, 0,
-						0, 0, 0, 1
-					));
-				}
+				// if(location.hash.includes('d1_')) {
+				// 	pointcloud.applyMatrix(new THREE.Matrix4().set(
+				// 		1, 0, 0, 0,
+				// 		0, 0, 1, 0,
+				// 		0, 1, 0, 0,
+				// 		0, 0, 0, 1
+				// 	));
+				// }
 				loaded(pointcloud);
 			}
 		});
